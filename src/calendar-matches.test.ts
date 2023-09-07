@@ -9,7 +9,7 @@ test("new match, no calendar event", () => {
 
     const result = calendarMatches([match], [])
 
-    expect(result).toStrictEqual([{ type: "NEW", match }])
+    expect(result).toStrictEqual([{ _tag: "NEW", match }])
 })
 
 test("match time updated", () => {
@@ -27,7 +27,7 @@ test("match time updated", () => {
 
     expect(result).toStrictEqual([
         {
-            type: "UPDATED",
+            _tag: "UPDATED",
             match,
             originalCalendarEvent: calendarEvent.originalEvent,
         },
@@ -49,7 +49,7 @@ test("match date updated", () => {
 
     expect(result).toStrictEqual([
         {
-            type: "UPDATED",
+            _tag: "UPDATED",
             match,
             originalCalendarEvent: calendarEvent.originalEvent,
         },
@@ -71,7 +71,7 @@ test("match not changed", () => {
 
     expect(result).toStrictEqual([
         {
-            type: "NOTHING_CHANGED",
+            _tag: "NOTHING_CHANGED",
             matchId: match1.id,
         },
     ])
@@ -109,16 +109,16 @@ test("many matches, many calendar events", () => {
 
     expect(result).toStrictEqual([
         {
-            type: "NEW",
+            _tag: "NEW",
             match: newMatch,
         },
         {
-            type: "UPDATED",
+            _tag: "UPDATED",
             match: updatedMatch,
             originalCalendarEvent: originalEvent("1234"),
         },
         {
-            type: "NOTHING_CHANGED",
+            _tag: "NOTHING_CHANGED",
             matchId: sameMatch.id,
         },
     ])

@@ -2,6 +2,7 @@ import * as Effect from "@effect/io/Effect"
 import * as Context from "@effect/data/Context"
 import * as F from "@effect/data/Function"
 import * as ROA from "@effect/data/ReadonlyArray"
+import * as Match from "@effect/match"
 import {
     CalendarEvent,
     CalendarMatch,
@@ -36,14 +37,14 @@ export const calendarMatchesHandler = (teamId: number): Effect.Effect<Deps, neve
                     F.pipe(
                         calendarMatches(matches, calendarEvents),
                         ROA.filter(
-                            (x): x is Exclude<CalendarMatch, { type: "NOTHING_CHANGED" }> =>
-                                x.type !== "NOTHING_CHANGED",
+                            (x): x is Exclude<CalendarMatch, { _tag: "NOTHING_CHANGED" }> =>
+                                x._tag !== "NOTHING_CHANGED",
                         ),
                     ),
                 ),
                 Effect.flatMap(
                     // TODO: replace with pattern matching
-                    Effect.forEach((x) => (x.type === "NEW" ? createCalendarEvent(x) : updateCalendarEvent(x)), {
+                    Effect.forEach((x) => (x._tag === "NEW" ? createCalendarEvent(x) : updateCalendarEvent(x)), {
                         discard: true,
                     }),
                 ),

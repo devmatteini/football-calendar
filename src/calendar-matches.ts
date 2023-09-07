@@ -14,18 +14,18 @@ export type CalendarEvent = {
 }
 
 export type NewCalendarMatch = {
-    type: "NEW"
+    _tag: "NEW"
     match: FootballMatch
 }
 export type UpdatedCalendarMatch = {
-    type: "UPDATED"
+    _tag: "UPDATED"
     match: FootballMatch
     originalCalendarEvent: CalendarEvent["originalEvent"]
 }
 export type CalendarMatch =
     | NewCalendarMatch
     | UpdatedCalendarMatch
-    | { type: "NOTHING_CHANGED"; matchId: FootballMatch["id"] }
+    | { _tag: "NOTHING_CHANGED"; matchId: FootballMatch["id"] }
 
 export const calendarMatches = (
     matches: readonly FootballMatch[],
@@ -38,11 +38,11 @@ export const calendarMatches = (
                 calendarEvents,
                 ROA.findFirst((x) => x.matchId === match.id),
                 O.match({
-                    onNone: () => ({ type: "NEW", match }),
+                    onNone: () => ({ _tag: "NEW", match }),
                     onSome: (event) =>
                         isSameDate(match.date, event.startDate)
-                            ? { type: "NOTHING_CHANGED", matchId: match.id }
-                            : { type: "UPDATED", match, originalCalendarEvent: event.originalEvent },
+                            ? { _tag: "NOTHING_CHANGED", matchId: match.id }
+                            : { _tag: "UPDATED", match, originalCalendarEvent: event.originalEvent },
                 }),
             ),
         ),
