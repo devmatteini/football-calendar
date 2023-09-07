@@ -43,10 +43,17 @@ export const calendarMatchesHandler = (teamId: number): Effect.Effect<Deps, neve
                     ),
                 ),
                 Effect.flatMap(
-                    // TODO: replace with pattern matching
-                    Effect.forEach((x) => (x._tag === "NEW" ? createCalendarEvent(x) : updateCalendarEvent(x)), {
-                        discard: true,
-                    }),
+                    Effect.forEach(
+                        F.flow(
+                            Match.value,
+                            Match.tag("NEW", (x) => createCalendarEvent(x)),
+                            Match.tag("UPDATED", (x) => updateCalendarEvent(x)),
+                            Match.exhaustive,
+                        ),
+                        {
+                            discard: true,
+                        },
+                    ),
                 ),
             ),
         ),
