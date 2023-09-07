@@ -13,9 +13,18 @@ export type CalendarEvent = {
     originalEvent: Record<string, unknown>
 }
 
-type CalendarMatch =
-    | { type: "NEW"; match: FootballMatch }
-    | { type: "UPDATED"; match: FootballMatch; originalCalendarEvent: CalendarEvent["originalEvent"] }
+export type NewCalendarMatch = {
+    type: "NEW"
+    match: FootballMatch
+}
+export type UpdatedCalendarMatch = {
+    type: "UPDATED"
+    match: FootballMatch
+    originalCalendarEvent: CalendarEvent["originalEvent"]
+}
+export type CalendarMatch =
+    | NewCalendarMatch
+    | UpdatedCalendarMatch
     | { type: "NOTHING_CHANGED"; matchId: FootballMatch["id"] }
 
 export const calendarMatches = (
