@@ -36,6 +36,7 @@ export const AuthenticatedGoogleCalendarLive = Layer.effect(
     ),
 )
 
+// https://developers.google.com/calendar/api/v3/reference/events/list
 export const listEvents = (freeTextSearch?: string, today: Date = new Date()) =>
     F.pipe(
         AuthenticatedGoogleCalendar,
