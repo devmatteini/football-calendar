@@ -27,15 +27,9 @@ export const ApiFootballClientLive = Layer.effect(
 
 export const currentSeason = (team: number) =>
     ApiFootballClient.pipe(
-        Effect.flatMap((client) =>
-            F.pipe(
-                Effect.promise(() => get(client, "/teams/seasons", { team })),
-                Effect.flatMap((response) => decode(Response(S.number), response.data)),
-                Effect.flatMap((data) =>
-                    isResponseOk(data)
-                        ? Effect.succeed(data.response)
-                        : Effect.fail(new Error(`Response failed with ${ResponseErrorPrint(data.errors)}`)),
-                ),
+        Effect.flatMap(
+            F.flow(
+                get("/teams/seasons", { team }, S.number),
                 Effect.flatMap(
                     ROA.match({
                         onEmpty: () => Effect.fail(new Error(`No seasons for team ${team}`)),
@@ -47,19 +41,31 @@ export const currentSeason = (team: number) =>
     )
 
 export const fixtures = (team: number, season: number, status: string) =>
-    ApiFootballClient.pipe(
-        Effect.flatMap((client) =>
-            F.pipe(
-                Effect.promise(() => get(client, "/fixtures", { team, season, status })),
-                Effect.flatMap((response) => decode(Response(Fixture), response.data)),
-                Effect.flatMap((data) =>
-                    isResponseOk(data)
-                        ? Effect.succeed(data.response)
-                        : Effect.fail(new Error(`Response failed with ${ResponseErrorPrint(data.errors)}`)),
-                ),
+    ApiFootballClient.pipe(Effect.flatMap(get("/fixtures", { team, season, status }, Fixture)))
+
+type QueryParams = Record<string, string | number>
+const get =
+    <F, T>(endpoint: string, queryParams: QueryParams, schema: S.Schema<F, T>) =>
+    (client: ApiFootballClient) =>
+        F.pipe(
+            Effect.promise(() =>
+                axios({
+                    method: "GET",
+                    baseURL: client.baseUrl,
+                    url: endpoint,
+                    params: queryParams,
+                    headers: {
+                        "x-apisports-key": client.token,
+                    },
+                }),
             ),
-        ),
-    )
+            Effect.flatMap((response) => decode(Response(schema), response.data)),
+            Effect.flatMap((data) =>
+                isResponseOk(data)
+                    ? Effect.succeed(data.response)
+                    : Effect.fail(new Error(`Response for ${endpoint} failed with ${ResponseErrorPrint(data.errors)}`)),
+            ),
+        )
 
 const FixtureTeam = S.struct({
     id: S.number,
@@ -97,14 +103,3 @@ const decode = <F, T>(schema: S.Schema<F, T>, input: unknown) =>
         S.parseEither(schema)(input, { onExcessProperty: "ignore", errors: "all" }),
         E.mapLeft((x) => new Error(formatErrors(x.errors))),
     )
-
-const get = (client: ApiFootballClient, endpoint: string, queryParams?: Record<string, string | number>) =>
-    axios({
-        method: "GET",
-        baseURL: client.baseUrl,
-        url: endpoint,
-        params: queryParams,
-        headers: {
-            "x-apisports-key": client.token,
-        },
-    })
