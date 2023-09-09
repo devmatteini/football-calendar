@@ -2,6 +2,9 @@ import * as F from "@effect/data/Function"
 import * as ROA from "@effect/data/ReadonlyArray"
 import * as Effect from "@effect/io/Effect"
 import * as Layer from "@effect/io/Layer"
+import * as S from "@effect/schema/Schema"
+import { formatErrors } from "@effect/schema/TreeFormatter"
+import * as E from "@effect/data/Either"
 import { ApiFootballClientLive, currentSeason, fixtures } from "./api-football"
 import { CalendarEvent } from "./calendar-matches"
 import { Deps as CalendarMatchesHandlerDeps } from "./calendar-matches-handler"
@@ -26,17 +29,44 @@ export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandl
     loadCalendarEventsByTeam: (teamId) =>
         F.pipe(
             listEvents(`FC-${teamId}`),
-            Effect.map(
-                ROA.map((event): CalendarEvent => {
-                    // TODO: validate event with Schema
-                    // NOTE: description can contain HTML
-                    const parts = (event.description || "").split("@")
-                    const matchId = parseInt(parts[1])
-                    // TODO: check originalEvent and event type error
-                    return { matchId, startDate: new Date(event.start?.dateTime || ""), originalEvent: event as any }
-                }),
+            Effect.flatMap(
+                Effect.forEach((originalEvent) =>
+                    F.pipe(
+                        Effect.Do,
+                        Effect.bind("validated", () => decode(CalendarListEvent, originalEvent)),
+                        Effect.bind("matchId", ({ validated }) => parseFootballMatchId(validated.description)),
+                        Effect.map(
+                            ({ validated, matchId }): CalendarEvent => ({
+                                matchId,
+                                startDate: validated.start.dateTime,
+                                // TODO: check originalEvent and event type error
+                                originalEvent: originalEvent as any,
+                            }),
+                        ),
+                    ),
+                ),
             ),
             Effect.provideLayer(AuthenticatedGoogleCalendarLive),
             Effect.orDie,
         ),
 })
+
+const NonEmptyString = S.string.pipe(S.nonEmpty())
+type NonEmptyString = S.Schema.To<typeof NonEmptyString>
+const CalendarListEvent = S.struct({
+    description: NonEmptyString,
+    start: S.struct({
+        dateTime: S.Date,
+    }),
+})
+
+const parseFootballMatchId = (input: NonEmptyString) => {
+    const parts = input.split("@")
+    return decode(S.NumberFromString, parts[1])
+}
+
+const decode = <F, T>(schema: S.Schema<F, T>, input: unknown) =>
+    F.pipe(
+        S.parseEither(schema)(input, { onExcessProperty: "ignore", errors: "all" }),
+        E.mapLeft((x) => new Error(formatErrors(x.errors))),
+    )
