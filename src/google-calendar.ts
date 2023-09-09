@@ -35,3 +35,21 @@ export const AuthenticatedGoogleCalendarLive = Layer.effect(
         Effect.map(({ calendarId, client }) => AuthenticatedGoogleCalendar.of({ calendarId, client })),
     ),
 )
+
+export const listEvents = (freeTextSearch?: string, today: Date = new Date()) =>
+    F.pipe(
+        AuthenticatedGoogleCalendar,
+        Effect.flatMap(({ client, calendarId }) =>
+            Effect.tryPromise({
+                try: () =>
+                    client.events.list({
+                        calendarId,
+                        timeMin: today.toISOString(),
+                        q: freeTextSearch,
+                        timeZone: "UTC",
+                    }),
+                catch: (e) => new Error(`Unable to retrieve list of google calendar events: ${e}`),
+            }),
+        ),
+        Effect.map((response) => response.data.items || []),
+    )
