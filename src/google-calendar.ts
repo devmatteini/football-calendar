@@ -54,3 +54,20 @@ export const listEvents = (freeTextSearch?: string, today: Date = new Date()) =>
         ),
         Effect.map((response) => response.data.items || []),
     )
+
+// https://developers.google.com/calendar/api/v3/reference/events/insert
+export const insertEvent = (event: calendar_v3.Schema$Event) =>
+    F.pipe(
+        AuthenticatedGoogleCalendar,
+        Effect.flatMap(({ client, calendarId }) =>
+            Effect.tryPromise({
+                try: () =>
+                    client.events.insert({
+                        calendarId,
+                        requestBody: event,
+                    }),
+                catch: (e) => new Error(`Unable to insert google calendar event: ${e}`),
+            }),
+        ),
+        Effect.asUnit,
+    )
