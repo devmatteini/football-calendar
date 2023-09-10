@@ -71,3 +71,21 @@ export const insertEvent = (event: calendar_v3.Schema$Event) =>
         ),
         Effect.asUnit,
     )
+
+// https://developers.google.com/calendar/api/v3/reference/events/update
+export const updateEvent = (eventId: string, updatedEvent: calendar_v3.Schema$Event) =>
+    F.pipe(
+        AuthenticatedGoogleCalendar,
+        Effect.flatMap(({ client, calendarId }) =>
+            Effect.tryPromise({
+                try: () =>
+                    client.events.update({
+                        calendarId,
+                        eventId,
+                        requestBody: updatedEvent,
+                    }),
+                catch: (e) => new Error(`Unable to update google calendar event: ${e}`),
+            }),
+        ),
+        Effect.asUnit,
+    )
