@@ -106,8 +106,8 @@ test("many matches, many calendar events", () => {
 const date = (date: `${number}-${number}-${number}`, time?: `${number}:${number}`) =>
     new Date(`${date}T${time || "00:00"}Z`)
 
-const anyOriginalEvent: CalendarEvent["originalEvent"] = { eventId: "1234" }
-const originalEvent = (id: string): CalendarEvent["originalEvent"] => ({ eventId: id })
+const anyOriginalEvent: CalendarEvent["originalEvent"] = { id: "1234" }
+const originalEvent = (id: string): CalendarEvent["originalEvent"] => ({ id })
 
 const footballMatch = (id: number, date: Date): FootballMatch => ({
     id,

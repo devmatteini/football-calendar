@@ -55,5 +55,5 @@ const calendarEvent = (matchId: number, startDate: Date, eventId?: string): Cale
 
 const date = (date: `${number}-${number}-${number}`, time?: `${number}:${number}`) =>
     new Date(`${date}T${time || "00:00"}Z`)
-const originalEvent = (id: string): CalendarEvent["originalEvent"] => ({ eventId: id })
+const originalEvent = (id: string): CalendarEvent["originalEvent"] => ({ id })
 const anyTeam = 1

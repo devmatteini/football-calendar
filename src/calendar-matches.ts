@@ -14,7 +14,7 @@ export type FootballMatch = {
 export type CalendarEvent = {
     matchId: number
     startDate: Date
-    originalEvent: Record<string, unknown>
+    originalEvent: { id: string } & Record<string, unknown>
 }
 
 export type NewCalendarMatch = {

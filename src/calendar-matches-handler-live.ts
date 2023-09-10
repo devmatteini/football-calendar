@@ -8,7 +8,7 @@ import * as E from "@effect/data/Either"
 import { ApiFootballClientLive, currentSeason, fixtures } from "./api-football"
 import { CalendarEvent, FootballMatch } from "./calendar-matches"
 import { Deps as CalendarMatchesHandlerDeps } from "./calendar-matches-handler"
-import { AuthenticatedGoogleCalendarLive, listEvents, insertEvent } from "./google-calendar"
+import { AuthenticatedGoogleCalendarLive, listEvents, insertEvent, updateEvent } from "./google-calendar"
 
 export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandlerDeps, {
     createCalendarEvent: ({ match }) =>
@@ -28,10 +28,20 @@ export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandl
             Effect.provideLayer(AuthenticatedGoogleCalendarLive),
             Effect.orDie,
         ),
-    updateCalendarEvent: (event) =>
-        Effect.logInfo(
-            `Update match ${event.match.id} from ${(event.originalCalendarEvent as any)?.start
-                .dateTime} to ${event.match.date.toISOString()}`,
+    updateCalendarEvent: ({ match, originalCalendarEvent }) =>
+        F.pipe(
+            updateEvent(originalCalendarEvent.id, {
+                ...originalCalendarEvent,
+                start: {
+                    dateTime: match.date.toISOString(),
+                },
+                end: {
+                    dateTime: addHours(match.date, 2).toISOString(),
+                },
+            }),
+            Effect.tap(() => Effect.logInfo(`Updated event for match ${match.homeTeam}-${match.awayTeam}`)),
+            Effect.provideLayer(AuthenticatedGoogleCalendarLive),
+            Effect.orDie,
         ),
     loadMatchesByTeam: (teamId) =>
         F.pipe(
