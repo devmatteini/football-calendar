@@ -8,11 +8,26 @@ import * as E from "@effect/data/Either"
 import { ApiFootballClientLive, currentSeason, fixtures } from "./api-football"
 import { CalendarEvent, FootballMatch } from "./calendar-matches"
 import { Deps as CalendarMatchesHandlerDeps } from "./calendar-matches-handler"
-import { AuthenticatedGoogleCalendarLive, listEvents } from "./google-calendar"
+import { AuthenticatedGoogleCalendarLive, listEvents, insertEvent } from "./google-calendar"
 
 export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandlerDeps, {
-    createCalendarEvent: (event) =>
-        Effect.logInfo(`Create match ${event.match.id} at ${event.match.date.toISOString()}`),
+    createCalendarEvent: ({ match }) =>
+        F.pipe(
+            insertEvent({
+                summary: `${match.homeTeam}-${match.awayTeam} (${match.competition})`,
+                // TODO: group encode+decode of description (+ tests)
+                description: `FC-${match.teamId}@${match.id}`,
+                start: {
+                    dateTime: match.date.toISOString(),
+                },
+                end: {
+                    dateTime: addHours(match.date, 2).toISOString(),
+                },
+            }),
+            Effect.tap(() => Effect.logInfo(`Created event for match ${match.homeTeam}-${match.awayTeam}`)),
+            Effect.provideLayer(AuthenticatedGoogleCalendarLive),
+            Effect.orDie,
+        ),
     updateCalendarEvent: (event) =>
         Effect.logInfo(
             `Update match ${event.match.id} from ${(event.originalCalendarEvent as any)?.start
@@ -81,3 +96,9 @@ const decode = <F, T>(schema: S.Schema<F, T>, input: unknown) =>
         S.parseEither(schema)(input, { onExcessProperty: "ignore", errors: "all" }),
         E.mapLeft((x) => new Error(formatErrors(x.errors))),
     )
+
+const addHours = (date: Date, hours: number) => {
+    const newDate = new Date(date)
+    newDate.setHours(date.getHours() + hours)
+    return newDate
+}
