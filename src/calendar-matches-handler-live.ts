@@ -9,14 +9,14 @@ import { ApiFootballClientLive, currentSeason, fixtures } from "./api-football"
 import { CalendarEvent, FootballMatch } from "./calendar-matches"
 import { Deps as CalendarMatchesHandlerDeps } from "./calendar-matches-handler"
 import { AuthenticatedGoogleCalendarLive, listEvents, insertEvent, updateEvent } from "./google-calendar"
+import * as EventMatchId from "./event-match-id"
 
 export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandlerDeps, {
     createCalendarEvent: ({ match }) =>
         F.pipe(
             insertEvent({
                 summary: `${match.homeTeam}-${match.awayTeam} (${match.competition})`,
-                // TODO: group encode+decode of description (+ tests)
-                description: `FC-${match.teamId}@${match.id}`,
+                description: EventMatchId.encode({ teamId: match.teamId, matchId: match.id }),
                 start: {
                     dateTime: match.date.toISOString(),
                 },
@@ -64,16 +64,16 @@ export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandl
         ),
     loadCalendarEventsByTeam: (teamId) =>
         F.pipe(
-            listEvents(`FC-${teamId}`),
+            listEvents(EventMatchId.encodeTeam(teamId)),
             Effect.flatMap(
                 Effect.forEach((originalEvent) =>
                     F.pipe(
                         Effect.Do,
                         Effect.bind("validated", () => decode(CalendarListEvent, originalEvent)),
-                        Effect.bind("matchId", ({ validated }) => parseFootballMatchId(validated.description)),
+                        Effect.bind("eventMatchId", ({ validated }) => EventMatchId.decode(validated.description)),
                         Effect.map(
-                            ({ validated, matchId }): CalendarEvent => ({
-                                matchId,
+                            ({ validated, eventMatchId }): CalendarEvent => ({
+                                matchId: eventMatchId.matchId,
                                 startDate: validated.start.dateTime,
                                 // TODO: check originalEvent and event type error
                                 originalEvent: originalEvent as any,
@@ -95,11 +95,6 @@ const CalendarListEvent = S.struct({
         dateTime: S.Date,
     }),
 })
-
-const parseFootballMatchId = (input: NonEmptyString) => {
-    const parts = input.split("@")
-    return decode(S.NumberFromString, parts[1])
-}
 
 const decode = <F, T>(schema: S.Schema<F, T>, input: unknown) =>
     F.pipe(

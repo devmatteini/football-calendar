@@ -2,13 +2,14 @@ import * as Effect from "@effect/io/Effect"
 import * as F from "@effect/data/Function"
 import { AuthenticatedGoogleCalendar, AuthenticatedGoogleCalendarLive, listEvents } from "../src/google-calendar"
 import { calendar_v3 } from "googleapis"
+import * as EventMatchId from "../src/event-match-id"
 
 const main = () => {
-    const teamId = process.argv[2]
-    if (!teamId) throw new Error("Missing teamId as argument")
+    const teamId = Number(process.argv[2])
+    if (Number.isNaN(teamId)) throw new Error("Missing teamId as argument or not a number")
 
     return F.pipe(
-        listEvents(`FC-${teamId}`),
+        listEvents(EventMatchId.encodeTeam(teamId)),
         Effect.flatMap(Effect.forEach(deleteEvent, { discard: true, concurrency: 2 })),
         Effect.provideLayer(AuthenticatedGoogleCalendarLive),
         Effect.runPromise,
