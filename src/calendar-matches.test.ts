@@ -2,10 +2,7 @@ import { test, expect } from "vitest"
 import { CalendarEvent, FootballMatch, calendarMatches } from "./calendar-matches"
 
 test("new match, no calendar event", () => {
-    const match: FootballMatch = {
-        id: 1,
-        date: date("2023-09-03", "18:30"),
-    }
+    const match = footballMatch(1, date("2023-09-03", "18:30"))
 
     const result = calendarMatches([match], [])
 
@@ -13,10 +10,7 @@ test("new match, no calendar event", () => {
 })
 
 test("match time updated", () => {
-    const match: FootballMatch = {
-        id: 1,
-        date: date("2023-09-03", "18:30"),
-    }
+    const match = footballMatch(1, date("2023-09-03", "18:30"))
 
     const calendarEvent = {
         matchId: match.id,
@@ -35,10 +29,7 @@ test("match time updated", () => {
 })
 
 test("match date updated", () => {
-    const match: FootballMatch = {
-        id: 1,
-        date: date("2023-09-03", "18:30"),
-    }
+    const match = footballMatch(1, date("2023-09-03", "18:30"))
 
     const calendarEvent = {
         matchId: match.id,
@@ -57,10 +48,7 @@ test("match date updated", () => {
 })
 
 test("match not changed", () => {
-    const match1: FootballMatch = {
-        id: 1,
-        date: date("2023-09-03", "18:30"),
-    }
+    const match1 = footballMatch(1, date("2023-09-03", "18:30"))
 
     const calendarEvent = {
         matchId: match1.id,
@@ -78,18 +66,9 @@ test("match not changed", () => {
 })
 
 test("many matches, many calendar events", () => {
-    const newMatch: FootballMatch = {
-        id: 1,
-        date: date("2023-09-03", "18:30"),
-    }
-    const updatedMatch: FootballMatch = {
-        id: 2,
-        date: date("2023-09-17", "15:00"),
-    }
-    const sameMatch: FootballMatch = {
-        id: 3,
-        date: date("2023-09-24", "20:45"),
-    }
+    const newMatch = footballMatch(1, date("2023-09-03", "18:30"))
+    const updatedMatch = footballMatch(2, date("2023-09-17", "15:00"))
+    const sameMatch = footballMatch(3, date("2023-09-24", "20:45"))
 
     const result = calendarMatches(
         [newMatch, updatedMatch, sameMatch],
@@ -129,3 +108,12 @@ const date = (date: `${number}-${number}-${number}`, time?: `${number}:${number}
 
 const anyOriginalEvent: CalendarEvent["originalEvent"] = { eventId: "1234" }
 const originalEvent = (id: string): CalendarEvent["originalEvent"] => ({ eventId: id })
+
+const footballMatch = (id: number, date: Date): FootballMatch => ({
+    id,
+    date,
+    teamId: 999,
+    homeTeam: "ANY_HOME_TEAM",
+    awayTeam: "ANY_AWAY_TEAM",
+    competition: "ANY_COMPETITION",
+})

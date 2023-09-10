@@ -4,7 +4,11 @@ import * as O from "@effect/data/Option"
 
 export type FootballMatch = {
     id: number
+    teamId: number
     date: Date
+    homeTeam: string
+    awayTeam: string
+    competition: string
 }
 
 export type CalendarEvent = {

@@ -6,7 +6,7 @@ import * as S from "@effect/schema/Schema"
 import { formatErrors } from "@effect/schema/TreeFormatter"
 import * as E from "@effect/data/Either"
 import { ApiFootballClientLive, currentSeason, fixtures } from "./api-football"
-import { CalendarEvent } from "./calendar-matches"
+import { CalendarEvent, FootballMatch } from "./calendar-matches"
 import { Deps as CalendarMatchesHandlerDeps } from "./calendar-matches-handler"
 import { AuthenticatedGoogleCalendarLive, listEvents } from "./google-calendar"
 
@@ -22,7 +22,18 @@ export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandl
         F.pipe(
             currentSeason(teamId),
             Effect.flatMap((currentSeason) => fixtures(teamId, currentSeason, "TBD-NS")),
-            Effect.map(ROA.map((x) => ({ id: x.fixture.id, date: x.fixture.date }))),
+            Effect.map(
+                ROA.map(
+                    (x): FootballMatch => ({
+                        id: x.fixture.id,
+                        teamId,
+                        date: x.fixture.date,
+                        homeTeam: x.teams.home.name,
+                        awayTeam: x.teams.away.name,
+                        competition: x.league.name,
+                    }),
+                ),
+            ),
             Effect.provideLayer(ApiFootballClientLive),
             Effect.orDie,
         ),

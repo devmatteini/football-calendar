@@ -39,7 +39,14 @@ test("create, update, ignore matches", async () => {
 
 const DepsTest = (deps: Deps) => Layer.succeed(Deps, deps)
 
-const footballMatch = (id: number, date: Date): FootballMatch => ({ id, date })
+const footballMatch = (id: number, date: Date): FootballMatch => ({
+    id,
+    date,
+    teamId: 999,
+    homeTeam: "ANY_HOME_TEAM",
+    awayTeam: "ANY_AWAY_TEAM",
+    competition: "ANY_COMPETITION",
+})
 const calendarEvent = (matchId: number, startDate: Date, eventId?: string): CalendarEvent => ({
     matchId,
     startDate,
