@@ -75,8 +75,7 @@ export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandl
                             ({ validated, eventMatchId }): CalendarEvent => ({
                                 matchId: eventMatchId.matchId,
                                 startDate: validated.start.dateTime,
-                                // TODO: check originalEvent and event type error
-                                originalEvent: originalEvent as any,
+                                originalEvent,
                             }),
                         ),
                     ),

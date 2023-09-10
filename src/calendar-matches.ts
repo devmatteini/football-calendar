@@ -10,11 +10,10 @@ export type FootballMatch = {
     awayTeam: string
     competition: string
 }
-
 export type CalendarEvent = {
     matchId: number
     startDate: Date
-    originalEvent: Record<string, unknown>
+    originalEvent: Record<string, any>
 }
 
 export type NewCalendarMatch = {
