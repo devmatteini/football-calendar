@@ -30,7 +30,7 @@ export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandl
         ),
     updateCalendarEvent: ({ match, originalCalendarEvent }) =>
         F.pipe(
-            updateEvent(originalCalendarEvent.id, {
+            updateEvent({
                 ...originalCalendarEvent,
                 start: {
                     dateTime: match.date.toISOString(),
