@@ -12,7 +12,9 @@
     "test:w": "vitest watch",
     "clean": "rm -rf .build",
     "build": "npm run clean && node esbuild.config.js",
-    "start": "npm run build && node .build/index.js"
+    "start": "npm run build && node .build/index.js",
+    "scripts:build": "esbuild --platform=node --bundle scripts/*.ts --outdir=scripts/.build/ --minify",
+    "scripts:delete-events": "node scripts/.build/delete-events.js"
   },
   "dependencies": {
     "@effect/io": "0.40.0",
