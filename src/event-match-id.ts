@@ -3,7 +3,7 @@ import * as F from "@effect/data/Function"
 import * as S from "@effect/schema/Schema"
 import { formatErrors } from "@effect/schema/TreeFormatter"
 
-const SEPARATOR = "@"
+const SEPARATOR = "-"
 const IDENTIFIER = "FC"
 
 export type EventMatchId = {
