@@ -19,3 +19,9 @@ Search your team id at this page: https://dashboard.api-football.com/soccer/ids/
 ```bash
 TEAM_ID=<id> npm run start
 ```
+
+## License
+
+`football-calendar` is made available under the terms of the MIT License.
+
+See the [LICENSE](LICENSE) file for license details.

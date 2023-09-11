@@ -1,9 +1,9 @@
 {
   "name": "football-calendar",
   "version": "1.0.0",
-  "description": "Add football matches to your calendar",
+  "description": "Automatically sync your google calendar with football matches of your favorite team!",
   "author": "Cosimo Matteini",
-  "license": "TODO",
+  "license": "MIT",
   "scripts": {
     "format": "prettier -w src/**/*.ts",
     "typecheck": "tsc --noEmit",
