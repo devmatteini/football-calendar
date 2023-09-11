@@ -52,6 +52,7 @@ export const calendarMatchesHandler = (teamId: number): Effect.Effect<Deps, neve
                         ),
                         {
                             discard: true,
+                            concurrency: 3,
                         },
                     ),
                 ),
