@@ -34,13 +34,7 @@ export const calendarMatchesHandler = (teamId: number): Effect.Effect<Deps, neve
                     { concurrency: 2 },
                 ),
                 Effect.map(({ matches, calendarEvents }) =>
-                    F.pipe(
-                        calendarMatches(matches, calendarEvents),
-                        ROA.filter(
-                            (x): x is Exclude<CalendarMatch, { _tag: "NOTHING_CHANGED" }> =>
-                                x._tag !== "NOTHING_CHANGED",
-                        ),
-                    ),
+                    F.pipe(calendarMatches(matches, calendarEvents), ROA.filter(isChanged)),
                 ),
                 Effect.flatMap(
                     Effect.forEach(
@@ -59,3 +53,6 @@ export const calendarMatchesHandler = (teamId: number): Effect.Effect<Deps, neve
             ),
         ),
     )
+
+const isChanged = (x: CalendarMatch): x is Exclude<CalendarMatch, { _tag: "NOTHING_CHANGED" }> =>
+    x._tag !== "NOTHING_CHANGED"
