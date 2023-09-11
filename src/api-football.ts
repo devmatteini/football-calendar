@@ -25,6 +25,7 @@ export const ApiFootballClientLive = Layer.effect(
     ),
 )
 
+// https://www.api-football.com/documentation-v3#tag/Teams/operation/get-teams-seasons
 export const currentSeason = (team: number) =>
     F.pipe(
         get("/teams/seasons", { team }, S.number),
@@ -36,8 +37,13 @@ export const currentSeason = (team: number) =>
         ),
     )
 
+// https://www.api-football.com/documentation-v3#tag/Fixtures/operation/get-fixtures
 export const fixtures = (team: number, season: number, status: string) =>
     get("/fixtures", { team, season, status }, Fixture)
+
+export const FixtureStatus = {
+    scheduled: "TBD-NS" as const,
+}
 
 type QueryParams = Record<string, string | number>
 const get = <F, T>(endpoint: string, queryParams: QueryParams, schema: S.Schema<F, T>) =>
