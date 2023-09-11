@@ -6,6 +6,7 @@ import * as Layer from "@effect/io/Layer"
 import * as Config from "@effect/io/Config"
 
 type GoogleCalendar = calendar_v3.Calendar
+export type GoogleCalendarEvent = calendar_v3.Schema$Event
 
 export type AuthenticatedGoogleCalendar = {
     client: GoogleCalendar
@@ -56,7 +57,7 @@ export const listEvents = (freeTextSearch?: string, today: Date = new Date()) =>
     )
 
 // https://developers.google.com/calendar/api/v3/reference/events/insert
-export const insertEvent = (event: calendar_v3.Schema$Event) =>
+export const insertEvent = (event: GoogleCalendarEvent) =>
     F.pipe(
         AuthenticatedGoogleCalendar,
         Effect.flatMap(({ client, calendarId }) =>
@@ -73,7 +74,7 @@ export const insertEvent = (event: calendar_v3.Schema$Event) =>
     )
 
 // https://developers.google.com/calendar/api/v3/reference/events/update
-export const updateEvent = (event: calendar_v3.Schema$Event) =>
+export const updateEvent = (event: GoogleCalendarEvent) =>
     F.pipe(
         AuthenticatedGoogleCalendar,
         Effect.flatMap(({ client, calendarId }) =>

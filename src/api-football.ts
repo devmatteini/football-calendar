@@ -84,6 +84,7 @@ const Fixture = S.struct({
         away: FixtureTeam,
     }),
 })
+export type ApiFootballFixture = S.Schema.To<typeof Fixture>
 
 const ResponseError = S.union(S.array(S.unknown), S.record(S.string, S.unknown))
 type ResponseError = S.Schema.To<typeof ResponseError>

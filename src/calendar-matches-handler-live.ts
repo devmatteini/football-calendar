@@ -5,10 +5,16 @@ import * as Layer from "@effect/io/Layer"
 import * as S from "@effect/schema/Schema"
 import { formatErrors } from "@effect/schema/TreeFormatter"
 import * as E from "@effect/data/Either"
-import { ApiFootballClientLive, currentSeason, fixtures } from "./api-football"
+import { ApiFootballClientLive, ApiFootballFixture, currentSeason, fixtures } from "./api-football"
 import { CalendarEvent, FootballMatch } from "./calendar-matches"
 import { Deps as CalendarMatchesHandlerDeps } from "./calendar-matches-handler"
-import { AuthenticatedGoogleCalendarLive, listEvents, insertEvent, updateEvent } from "./google-calendar"
+import {
+    AuthenticatedGoogleCalendarLive,
+    listEvents,
+    insertEvent,
+    updateEvent,
+    GoogleCalendarEvent,
+} from "./google-calendar"
 import * as EventMatchId from "./event-match-id"
 
 export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandlerDeps, {
@@ -47,44 +53,43 @@ export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandl
         F.pipe(
             currentSeason(teamId),
             Effect.flatMap((currentSeason) => fixtures(teamId, currentSeason, "TBD-NS")),
-            Effect.map(
-                ROA.map(
-                    (x): FootballMatch => ({
-                        id: x.fixture.id,
-                        teamId,
-                        date: x.fixture.date,
-                        homeTeam: x.teams.home.name,
-                        awayTeam: x.teams.away.name,
-                        competition: x.league.name,
-                    }),
-                ),
-            ),
+            Effect.map(ROA.map(toFootballMatch(teamId))),
             Effect.provideLayer(ApiFootballClientLive),
             Effect.orDie,
         ),
     loadCalendarEventsByTeam: (teamId) =>
         F.pipe(
             listEvents(EventMatchId.encodeTeam(teamId)),
-            Effect.flatMap(
-                Effect.forEach((originalEvent) =>
-                    F.pipe(
-                        Effect.Do,
-                        Effect.bind("validated", () => decode(CalendarListEvent, originalEvent)),
-                        Effect.bind("eventMatchId", ({ validated }) => EventMatchId.decode(validated.description)),
-                        Effect.map(
-                            ({ validated, eventMatchId }): CalendarEvent => ({
-                                matchId: eventMatchId.matchId,
-                                startDate: validated.start.dateTime,
-                                originalEvent,
-                            }),
-                        ),
-                    ),
-                ),
-            ),
+            Effect.flatMap(Effect.forEach(validateCalendarEvent)),
             Effect.provideLayer(AuthenticatedGoogleCalendarLive),
             Effect.orDie,
         ),
 })
+
+const toFootballMatch =
+    (teamId: number) =>
+    ({ fixture, league, teams }: ApiFootballFixture): FootballMatch => ({
+        id: fixture.id,
+        teamId,
+        date: fixture.date,
+        homeTeam: teams.home.name,
+        awayTeam: teams.away.name,
+        competition: league.name,
+    })
+
+const validateCalendarEvent = (originalEvent: GoogleCalendarEvent) =>
+    F.pipe(
+        Effect.Do,
+        Effect.bind("validated", () => decode(CalendarListEvent, originalEvent)),
+        Effect.bind("eventMatchId", ({ validated }) => EventMatchId.decode(validated.description)),
+        Effect.map(
+            ({ validated, eventMatchId }): CalendarEvent => ({
+                matchId: eventMatchId.matchId,
+                startDate: validated.start.dateTime,
+                originalEvent,
+            }),
+        ),
+    )
 
 const NonEmptyString = S.string.pipe(S.nonEmpty())
 type NonEmptyString = S.Schema.To<typeof NonEmptyString>
