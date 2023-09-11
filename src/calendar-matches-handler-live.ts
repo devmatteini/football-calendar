@@ -25,9 +25,11 @@ export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandl
                 description: EventMatchId.encode({ teamId: match.teamId, matchId: match.id }),
                 start: {
                     dateTime: match.date.toISOString(),
+                    timeZone: "UTC",
                 },
                 end: {
                     dateTime: addHours(match.date, 2).toISOString(),
+                    timeZone: "UTC",
                 },
             }),
             Effect.tap(() => Effect.logInfo(`Created event for match ${match.homeTeam}-${match.awayTeam}`)),
@@ -40,9 +42,11 @@ export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandl
                 ...originalCalendarEvent,
                 start: {
                     dateTime: match.date.toISOString(),
+                    timeZone: "UTC",
                 },
                 end: {
                     dateTime: addHours(match.date, 2).toISOString(),
+                    timeZone: "UTC",
                 },
             }),
             Effect.tap(() => Effect.logInfo(`Updated event for match ${match.homeTeam}-${match.awayTeam}`)),
