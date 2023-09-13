@@ -1,7 +1,7 @@
 import * as Effect from "@effect/io/Effect"
 import * as F from "@effect/data/Function"
 import { AuthenticatedGoogleCalendar, AuthenticatedGoogleCalendarLive, listEvents } from "../src/google-calendar"
-import { calendar_v3 } from "googleapis"
+import { calendar_v3 } from "@googleapis/calendar"
 import * as EventMatchId from "../src/event-match-id"
 
 const main = () => {

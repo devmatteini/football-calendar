@@ -1,4 +1,4 @@
-import { calendar_v3, google } from "googleapis"
+import { calendar_v3, auth, calendar } from "@googleapis/calendar"
 import * as Effect from "@effect/io/Effect"
 import * as F from "@effect/data/Function"
 import * as Context from "@effect/data/Context"
@@ -26,11 +26,10 @@ export const AuthenticatedGoogleCalendarLive = Layer.effect(
         Effect.bind("client", ({ keyFile }) =>
             F.pipe(
                 Effect.tryPromise({
-                    try: () =>
-                        google.auth.getClient({ keyFile, scopes: "https://www.googleapis.com/auth/calendar.events" }),
+                    try: () => auth.getClient({ keyFile, scopes: "https://www.googleapis.com/auth/calendar.events" }),
                     catch: (e) => new Error(`Unable to authenticate with google api: ${e}`),
                 }),
-                Effect.map((client) => google.calendar({ version: "v3", auth: client })),
+                Effect.map((client) => calendar({ version: "v3", auth: client })),
             ),
         ),
         Effect.map(({ calendarId, client }) => AuthenticatedGoogleCalendar.of({ calendarId, client })),

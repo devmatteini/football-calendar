@@ -22,7 +22,7 @@
     "@effect/schema": "0.35.0",
     "@effect/match": "0.35.2",
     "axios": "1.5.0",
-    "googleapis": "126.0.1"
+    "@googleapis/calendar": "9.3.1"
   },
   "devDependencies": {
     "@types/node": "18.17.12",
