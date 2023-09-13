@@ -9,7 +9,7 @@ const main = () => {
     if (Number.isNaN(teamId)) throw new Error("Missing teamId as argument or not a number")
 
     return F.pipe(
-        listEvents(EventMatchId.encodeTeam(teamId)),
+        listEvents({ teamId: teamId.toString() }),
         Effect.flatMap(Effect.forEach(deleteEvent, { discard: true, concurrency: 2 })),
         Effect.provideLayer(AuthenticatedGoogleCalendarLive),
         Effect.runPromise,

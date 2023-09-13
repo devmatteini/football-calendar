@@ -22,7 +22,6 @@ export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandl
         F.pipe(
             insertEvent({
                 summary: `${match.homeTeam}-${match.awayTeam} (${match.competition})`,
-                description: EventMatchId.encode({ teamId: match.teamId, matchId: match.id }),
                 start: {
                     dateTime: match.date.toISOString(),
                     timeZone: "UTC",
@@ -30,6 +29,12 @@ export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandl
                 end: {
                     dateTime: addHours(match.date, 2).toISOString(),
                     timeZone: "UTC",
+                },
+                extendedProperties: {
+                    private: {
+                        teamId: match.teamId.toString(),
+                        matchId: match.id.toString(),
+                    },
                 },
             }),
             Effect.tap(() => Effect.logInfo(`Created event for match ${match.homeTeam}-${match.awayTeam}`)),
@@ -63,7 +68,7 @@ export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandl
         ),
     loadCalendarEventsByTeam: (teamId) =>
         F.pipe(
-            listEvents(EventMatchId.encodeTeam(teamId)),
+            listEvents({ teamId: teamId.toString() }),
             Effect.flatMap(Effect.forEach(validateCalendarEvent)),
             Effect.provideLayer(AuthenticatedGoogleCalendarLive),
             Effect.orDie,
@@ -83,24 +88,24 @@ const toFootballMatch =
 
 const validateCalendarEvent = (originalEvent: GoogleCalendarEvent) =>
     F.pipe(
-        Effect.Do,
-        Effect.bind("validated", () => decode(CalendarListEvent, originalEvent)),
-        Effect.bind("eventMatchId", ({ validated }) => EventMatchId.decode(validated.description)),
+        decode(CalendarListEvent, originalEvent),
         Effect.map(
-            ({ validated, eventMatchId }): CalendarEvent => ({
-                matchId: eventMatchId.matchId,
+            (validated): CalendarEvent => ({
+                matchId: validated.extendedProperties.private.matchId,
                 startDate: validated.start.dateTime,
                 originalEvent,
             }),
         ),
     )
 
-const NonEmptyString = S.string.pipe(S.nonEmpty())
-type NonEmptyString = S.Schema.To<typeof NonEmptyString>
 const CalendarListEvent = S.struct({
-    description: NonEmptyString,
     start: S.struct({
         dateTime: S.Date,
+    }),
+    extendedProperties: S.struct({
+        private: S.struct({
+            matchId: S.NumberFromString,
+        }),
     }),
 })
 

@@ -4,6 +4,7 @@ import * as F from "@effect/data/Function"
 import * as Context from "@effect/data/Context"
 import * as Layer from "@effect/io/Layer"
 import * as Config from "@effect/io/Config"
+import * as ROA from "@effect/data/ReadonlyArray"
 
 type GoogleCalendar = calendar_v3.Calendar
 export type GoogleCalendarEvent = calendar_v3.Schema$Event
@@ -37,7 +38,7 @@ export const AuthenticatedGoogleCalendarLive = Layer.effect(
 )
 
 // https://developers.google.com/calendar/api/v3/reference/events/list
-export const listEvents = (freeTextSearch?: string, today: Date = new Date()) =>
+export const listEvents = (privateProperties: Record<string, string>, today: Date = new Date()) =>
     F.pipe(
         AuthenticatedGoogleCalendar,
         Effect.flatMap(({ client, calendarId }) =>
@@ -46,8 +47,11 @@ export const listEvents = (freeTextSearch?: string, today: Date = new Date()) =>
                     client.events.list({
                         calendarId,
                         timeMin: today.toISOString(),
-                        q: freeTextSearch,
                         timeZone: "UTC",
+                        privateExtendedProperty: F.pipe(
+                            Object.entries(privateProperties),
+                            ROA.map(([key, value]) => `${key}=${value}`),
+                        ),
                     }),
                 catch: (e) => new Error(`Unable to retrieve list of google calendar events: ${e}`),
             }),
