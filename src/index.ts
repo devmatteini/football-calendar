@@ -9,7 +9,9 @@ const main = async () => {
         // TODO: pass teamId as argument to cli
         Effect.config(Config.number("TEAM_ID")),
         Effect.flatMap(calendarMatchesHandler),
-        Effect.tap(() => Effect.logInfo("Football calendar updated!")),
+        Effect.tap((summary) =>
+            F.pipe(Effect.logInfo("Football matches import completed"), Effect.annotateLogs(summary)),
+        ),
         Effect.provideLayer(CalendarMatchesHandlerDepsLive),
         Effect.runPromise,
     )
