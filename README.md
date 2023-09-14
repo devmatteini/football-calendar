@@ -17,8 +17,17 @@ TODO: setup api-football and google project + export environment variables
 Search your team id at this page: https://dashboard.api-football.com/soccer/ids/teams
 
 ```bash
-TEAM_ID=<id> npm run start
+npm run start -- -t <teamId>
 ```
+
+### Log level
+
+Export environment variable `LOG_LEVEL` to change the minimum log level.
+The possible values are:
+
+-   `Debug`
+-   `Info` (default)
+-   `Error`
 
 ## License
 
