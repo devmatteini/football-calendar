@@ -34,7 +34,17 @@ export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandl
                     private: EventMatchId.encode({ teamId: match.teamId, matchId: match.id }),
                 },
             }),
-            Effect.tap(() => Effect.logInfo(`Created event for match ${match.homeTeam}-${match.awayTeam}`)),
+            Effect.tap(() =>
+                F.pipe(
+                    Effect.logDebug("Calendar event created"),
+                    Effect.annotateLogs({
+                        matchId: match.id,
+                        match: `${match.homeTeam}-${match.awayTeam}`,
+                        competition: match.competition,
+                        matchDate: match.date.toISOString(),
+                    }),
+                ),
+            ),
             Effect.provideLayer(AuthenticatedGoogleCalendarLive),
             Effect.orDie,
         ),
@@ -51,7 +61,17 @@ export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandl
                     timeZone: "UTC",
                 },
             }),
-            Effect.tap(() => Effect.logInfo(`Updated event for match ${match.homeTeam}-${match.awayTeam}`)),
+            Effect.tap(() =>
+                F.pipe(
+                    Effect.logDebug("Calendar event updated"),
+                    Effect.annotateLogs({
+                        matchId: match.id,
+                        match: `${match.homeTeam}-${match.awayTeam}`,
+                        competition: match.competition,
+                        matchDate: match.date.toISOString(),
+                    }),
+                ),
+            ),
             Effect.provideLayer(AuthenticatedGoogleCalendarLive),
             Effect.orDie,
         ),
