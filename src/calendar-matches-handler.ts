@@ -2,7 +2,6 @@ import * as Effect from "@effect/io/Effect"
 import * as Context from "@effect/data/Context"
 import * as F from "@effect/data/Function"
 import * as ROA from "@effect/data/ReadonlyArray"
-import * as Match from "@effect/match"
 import {
     CalendarEvent,
     CalendarMatch,
@@ -21,7 +20,9 @@ export type Deps = {
 
 export const Deps = Context.Tag<Deps>()
 
-export const calendarMatchesHandler = (teamId: number): Effect.Effect<Deps, never, void> =>
+type CalendarMatchesSummary = { new: number; updated: number; nothingChanged: number }
+
+export const calendarMatchesHandler = (teamId: number): Effect.Effect<Deps, never, CalendarMatchesSummary> =>
     F.pipe(
         Deps,
         Effect.flatMap(({ loadMatchesByTeam, loadCalendarEventsByTeam, createCalendarEvent, updateCalendarEvent }) =>
@@ -34,25 +35,38 @@ export const calendarMatchesHandler = (teamId: number): Effect.Effect<Deps, neve
                     { concurrency: 2 },
                 ),
                 Effect.map(({ matches, calendarEvents }) =>
-                    F.pipe(calendarMatches(matches, calendarEvents), ROA.filter(isChanged)),
+                    F.pipe(calendarMatches(matches, calendarEvents), groupByTag),
                 ),
-                Effect.flatMap(
-                    Effect.forEach(
-                        F.flow(
-                            Match.value,
-                            Match.tag("NEW", (x) => createCalendarEvent(x)),
-                            Match.tag("UPDATED", (x) => updateCalendarEvent(x)),
-                            Match.exhaustive,
+                Effect.bind("_", (matches) =>
+                    Effect.all(
+                        F.pipe(
+                            ROA.map(matches.new, (x) => createCalendarEvent(x)),
+                            ROA.appendAll(ROA.map(matches.updated, (x) => updateCalendarEvent(x))),
                         ),
-                        {
-                            discard: true,
-                            concurrency: 2,
-                        },
+                        { concurrency: 2, discard: true },
                     ),
                 ),
+                Effect.map((matches) => ({
+                    new: matches.new.length,
+                    updated: matches.updated.length,
+                    nothingChanged: matches.nothingChanged.length,
+                })),
             ),
         ),
     )
 
-const isChanged = (x: CalendarMatch): x is Exclude<CalendarMatch, { _tag: "NOTHING_CHANGED" }> =>
-    x._tag !== "NOTHING_CHANGED"
+type Groups<T extends { _tag: string }> = {
+    [K in T["_tag"]]: readonly Extract<T, { _tag: K }>[]
+}
+
+const groupByTag = (calendarMatches: readonly CalendarMatch[]) =>
+    F.pipe(
+        calendarMatches,
+        ROA.reduce(emptyGroups, (state, curr) => {
+            const previous = state[curr._tag]
+            return { ...state, [curr._tag]: [...previous, curr] }
+        }),
+        ({ NEW, UPDATED, NOTHING_CHANGED }) => ({ new: NEW, updated: UPDATED, nothingChanged: NOTHING_CHANGED }),
+    )
+
+const emptyGroups: Groups<CalendarMatch> = { NEW: [], UPDATED: [], NOTHING_CHANGED: [] }

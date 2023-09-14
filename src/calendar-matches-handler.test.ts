@@ -27,8 +27,9 @@ test("create, update, ignore matches", async () => {
         updateCalendarEvent: updateCalendarEventSpy,
     })
 
-    await F.pipe(calendarMatchesHandler(anyTeam), Effect.provideLayer(deps), Effect.runPromise)
+    const result = await F.pipe(calendarMatchesHandler(anyTeam), Effect.provideLayer(deps), Effect.runPromise)
 
+    expect(result).toStrictEqual({ new: 1, updated: 1, nothingChanged: 1 })
     expect(createCalendarEventSpy).toHaveBeenNthCalledWith(1, { _tag: "NEW", match: newMatch })
     expect(updateCalendarEventSpy).toHaveBeenNthCalledWith(1, {
         _tag: "UPDATED",

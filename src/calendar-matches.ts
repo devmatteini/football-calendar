@@ -25,10 +25,11 @@ export type UpdatedCalendarMatch = {
     match: FootballMatch
     originalCalendarEvent: CalendarEvent["originalEvent"]
 }
-export type CalendarMatch =
-    | NewCalendarMatch
-    | UpdatedCalendarMatch
-    | { _tag: "NOTHING_CHANGED"; matchId: FootballMatch["id"] }
+export type NothingChangedCalendarMatch = {
+    _tag: "NOTHING_CHANGED"
+    matchId: FootballMatch["id"]
+}
+export type CalendarMatch = NewCalendarMatch | UpdatedCalendarMatch | NothingChangedCalendarMatch
 
 export const calendarMatches = (
     matches: readonly FootballMatch[],
