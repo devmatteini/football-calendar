@@ -1,11 +1,13 @@
 import * as F from "@effect/data/Function"
 import * as Effect from "@effect/io/Effect"
 import * as Logger from "@effect/io/Logger"
+import * as Layer from "@effect/io/Layer"
 import { calendarMatchesHandler } from "./calendar-matches-handler"
 import { CalendarMatchesHandlerDepsLive } from "./calendar-matches-handler-live"
 import { Command } from "commander"
 import { parseInteger, logLevel } from "./cli"
 import { red } from "colorette"
+import { structuredLogger } from "./structured-logger"
 
 const cli = new Command("football-calendar")
     .description("Automatically sync your google calendar with football matches of your favorite team!")
@@ -26,7 +28,9 @@ cli.requiredOption(
         Effect.tap((summary) => Effect.logInfo("Football matches import completed").pipe(Effect.annotateLogs(summary))),
         Effect.annotateLogs({ teamId }),
         Effect.asUnit,
-        Effect.provideLayer(CalendarMatchesHandlerDepsLive),
+        Effect.provideLayer(
+            Layer.merge(CalendarMatchesHandlerDepsLive, Logger.replace(Logger.defaultLogger, structuredLogger)),
+        ),
         Logger.withMinimumLogLevel(logLevel()),
         Effect.runPromise,
     ),
