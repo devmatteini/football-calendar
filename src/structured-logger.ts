@@ -27,25 +27,46 @@ export const structuredLogger = Logger.make<unknown, void>(
     ({ message, annotations, cause, date, fiberId, logLevel, spans }) => {
         const nowMillis = date.getTime()
 
-        logByLevel[logLevel._tag](
-            JSON.stringify({
-                message,
-                timestamp: date.toISOString(),
-                level: logLevel.label,
-                fiberId: FiberId.threadName(fiberId),
-                ...formatCause(cause),
-                ...formatSpans(spans, nowMillis),
-                ...formatAnnotations(annotations),
-            }),
-        )
+        structuredLog({
+            message,
+            timestamp: date.toISOString(),
+            logLevel,
+            fiberId: FiberId.threadName(fiberId),
+            cause: formatCause(cause),
+            spans: formatSpans(spans, nowMillis),
+            annotations: formatAnnotations(annotations),
+        })
     },
 )
 
+type StructuredLog = {
+    message: unknown
+    logLevel: LogLevel.LogLevel
+    fiberId?: string
+    timestamp?: string
+    cause?: string
+    spans?: readonly string[]
+    annotations?: Record<string, Logger.AnnotationValue>
+}
+export const structuredLog = ({ message, logLevel, fiberId, timestamp, cause, spans, annotations }: StructuredLog) => {
+    logByLevel[logLevel._tag](
+        JSON.stringify({
+            message,
+            timestamp: timestamp || new Date().toISOString(),
+            level: logLevel.label,
+            fiberId,
+            cause,
+            spans,
+            ...(annotations || {}),
+        }),
+    )
+}
+
 const formatCause = (cause: Cause.Cause<unknown>) =>
-    cause != null && cause != Cause.empty ? { cause: Cause.pretty(cause) } : {}
+    cause != null && cause != Cause.empty ? Cause.pretty(cause) : undefined
 
 const formatSpans = (spans: List.List<LogSpan.LogSpan>, nowMillis: number) =>
-    List.isNil(spans) ? {} : { spans: F.pipe(spans, List.map(LogSpan.render(nowMillis)), List.toReadonlyArray) }
+    List.isNil(spans) ? undefined : F.pipe(spans, List.map(LogSpan.render(nowMillis)), List.toReadonlyArray)
 
 const formatAnnotations = (annotations: HashMap.HashMap<string, Logger.AnnotationValue>) => {
     const ret: Record<string, Logger.AnnotationValue> = {}
