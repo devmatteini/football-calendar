@@ -5,92 +5,100 @@ import * as Layer from "@effect/io/Layer"
 import * as S from "@effect/schema/Schema"
 import { formatErrors } from "@effect/schema/TreeFormatter"
 import * as E from "@effect/data/Either"
-import { ApiFootballClientLive, ApiFootballFixture, FixtureStatus, currentSeason, fixtures } from "./api-football"
+import { ApiFootballClient, ApiFootballFixture, FixtureStatus, currentSeason, fixtures } from "./api-football"
 import { CalendarEvent, FootballMatch } from "./calendar-matches"
 import { Deps as CalendarMatchesHandlerDeps } from "./calendar-matches-handler"
 import {
-    AuthenticatedGoogleCalendarLive,
     listEvents,
     insertEvent,
     updateEvent,
     GoogleCalendarEvent,
+    AuthenticatedGoogleCalendar,
 } from "./google-calendar"
 import * as EventMatchId from "./event-match-id"
 
-export const CalendarMatchesHandlerDepsLive = Layer.succeed(CalendarMatchesHandlerDeps, {
-    createCalendarEvent: ({ match }) =>
-        F.pipe(
-            insertEvent({
-                summary: `${match.homeTeam}-${match.awayTeam} (${match.competition})`,
-                start: {
-                    dateTime: match.date.toISOString(),
-                    timeZone: "UTC",
-                },
-                end: {
-                    dateTime: addHours(match.date, 2).toISOString(),
-                    timeZone: "UTC",
-                },
-                extendedProperties: {
-                    private: EventMatchId.encode({ teamId: match.teamId, matchId: match.id }),
-                },
+export const CalendarMatchesHandlerDepsLive = Layer.effect(
+    CalendarMatchesHandlerDeps,
+    F.pipe(
+        Effect.context<AuthenticatedGoogleCalendar | ApiFootballClient>(),
+        Effect.map(
+            (context): CalendarMatchesHandlerDeps => ({
+                createCalendarEvent: ({ match }) =>
+                    F.pipe(
+                        insertEvent({
+                            summary: `${match.homeTeam}-${match.awayTeam} (${match.competition})`,
+                            start: {
+                                dateTime: match.date.toISOString(),
+                                timeZone: "UTC",
+                            },
+                            end: {
+                                dateTime: addHours(match.date, 2).toISOString(),
+                                timeZone: "UTC",
+                            },
+                            extendedProperties: {
+                                private: EventMatchId.encode({ teamId: match.teamId, matchId: match.id }),
+                            },
+                        }),
+                        Effect.tap(() =>
+                            F.pipe(
+                                Effect.logDebug("Calendar event created"),
+                                Effect.annotateLogs({
+                                    matchId: match.id,
+                                    match: `${match.homeTeam}-${match.awayTeam}`,
+                                    competition: match.competition,
+                                    matchDate: match.date.toISOString(),
+                                }),
+                            ),
+                        ),
+                        Effect.orDie,
+                        Effect.provideContext(context),
+                    ),
+                updateCalendarEvent: ({ match, originalCalendarEvent }) =>
+                    F.pipe(
+                        updateEvent({
+                            ...originalCalendarEvent,
+                            start: {
+                                dateTime: match.date.toISOString(),
+                                timeZone: "UTC",
+                            },
+                            end: {
+                                dateTime: addHours(match.date, 2).toISOString(),
+                                timeZone: "UTC",
+                            },
+                        }),
+                        Effect.tap(() =>
+                            F.pipe(
+                                Effect.logDebug("Calendar event updated"),
+                                Effect.annotateLogs({
+                                    matchId: match.id,
+                                    match: `${match.homeTeam}-${match.awayTeam}`,
+                                    competition: match.competition,
+                                    matchDate: match.date.toISOString(),
+                                }),
+                            ),
+                        ),
+                        Effect.orDie,
+                        Effect.provideContext(context),
+                    ),
+                loadMatchesByTeam: (teamId) =>
+                    F.pipe(
+                        currentSeason(teamId),
+                        Effect.flatMap((currentSeason) => fixtures(teamId, currentSeason, FixtureStatus.scheduled)),
+                        Effect.map(ROA.map(toFootballMatch(teamId))),
+                        Effect.orDie,
+                        Effect.provideContext(context),
+                    ),
+                loadCalendarEventsByTeam: (teamId) =>
+                    F.pipe(
+                        listEvents(EventMatchId.encodeTeam(teamId)),
+                        Effect.flatMap(Effect.forEach(validateCalendarEvent)),
+                        Effect.orDie,
+                        Effect.provideContext(context),
+                    ),
             }),
-            Effect.tap(() =>
-                F.pipe(
-                    Effect.logDebug("Calendar event created"),
-                    Effect.annotateLogs({
-                        matchId: match.id,
-                        match: `${match.homeTeam}-${match.awayTeam}`,
-                        competition: match.competition,
-                        matchDate: match.date.toISOString(),
-                    }),
-                ),
-            ),
-            Effect.provideLayer(AuthenticatedGoogleCalendarLive),
-            Effect.orDie,
         ),
-    updateCalendarEvent: ({ match, originalCalendarEvent }) =>
-        F.pipe(
-            updateEvent({
-                ...originalCalendarEvent,
-                start: {
-                    dateTime: match.date.toISOString(),
-                    timeZone: "UTC",
-                },
-                end: {
-                    dateTime: addHours(match.date, 2).toISOString(),
-                    timeZone: "UTC",
-                },
-            }),
-            Effect.tap(() =>
-                F.pipe(
-                    Effect.logDebug("Calendar event updated"),
-                    Effect.annotateLogs({
-                        matchId: match.id,
-                        match: `${match.homeTeam}-${match.awayTeam}`,
-                        competition: match.competition,
-                        matchDate: match.date.toISOString(),
-                    }),
-                ),
-            ),
-            Effect.provideLayer(AuthenticatedGoogleCalendarLive),
-            Effect.orDie,
-        ),
-    loadMatchesByTeam: (teamId) =>
-        F.pipe(
-            currentSeason(teamId),
-            Effect.flatMap((currentSeason) => fixtures(teamId, currentSeason, FixtureStatus.scheduled)),
-            Effect.map(ROA.map(toFootballMatch(teamId))),
-            Effect.provideLayer(ApiFootballClientLive),
-            Effect.orDie,
-        ),
-    loadCalendarEventsByTeam: (teamId) =>
-        F.pipe(
-            listEvents(EventMatchId.encodeTeam(teamId)),
-            Effect.flatMap(Effect.forEach(validateCalendarEvent)),
-            Effect.provideLayer(AuthenticatedGoogleCalendarLive),
-            Effect.orDie,
-        ),
-})
+    ),
+)
 
 const toFootballMatch =
     (teamId: number) =>
