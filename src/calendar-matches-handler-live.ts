@@ -41,7 +41,7 @@ const createCalendarEvent = ({ match }: NewCalendarMatch) =>
                 timeZone: "UTC",
             },
             end: {
-                dateTime: addHours(match.date, 2).toISOString(),
+                dateTime: matchEndTime(match.date).toISOString(),
                 timeZone: "UTC",
             },
             extendedProperties: {
@@ -71,7 +71,7 @@ const updateCalendarEvent = ({ match, originalCalendarEvent }: UpdatedCalendarMa
                 timeZone: "UTC",
             },
             end: {
-                dateTime: addHours(match.date, 2).toISOString(),
+                dateTime: matchEndTime(match.date).toISOString(),
                 timeZone: "UTC",
             },
         }),
@@ -142,8 +142,11 @@ const decode = <F, T>(schema: S.Schema<F, T>, input: unknown) =>
         E.mapLeft((x) => new Error(formatErrors(x.errors))),
     )
 
-const addHours = (date: Date, hours: number) => {
+const matchEndTime = (date: Date) => {
     const newDate = new Date(date)
-    newDate.setHours(date.getHours() + hours)
+    newDate.setMinutes(date.getMinutes() + matchDurationMin + halfTimeMin)
     return newDate
 }
+
+const matchDurationMin = 90
+const halfTimeMin = 15
