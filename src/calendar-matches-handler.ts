@@ -4,12 +4,12 @@ import * as F from "@effect/data/Function"
 import * as ROA from "@effect/data/ReadonlyArray"
 import {
     CalendarEvent,
-    CalendarMatch,
+    FootballMatchEvent,
     FootballMatch,
     CreateFootballMatchEvent,
     UpdateFootballMatchEvent,
-    calendarMatches,
-} from "./calendar-matches"
+    footballMatchEvents,
+} from "./football-match-events"
 
 export type Deps = {
     loadMatchesByTeam: (teamId: number) => Effect.Effect<never, never, readonly FootballMatch[]>
@@ -35,7 +35,7 @@ export const calendarMatchesHandler = (teamId: number): Effect.Effect<Deps, neve
                     { concurrency: 2 },
                 ),
                 Effect.map(({ matches, calendarEvents }) =>
-                    F.pipe(calendarMatches(matches, calendarEvents), groupByTag),
+                    F.pipe(footballMatchEvents(matches, calendarEvents), groupByTag),
                 ),
                 Effect.bind("_", (matches) =>
                     Effect.all(
@@ -60,7 +60,7 @@ type Groups<T extends { _tag: string }> = {
     [K in T["_tag"]]: readonly Extract<T, { _tag: K }>[]
 }
 
-const groupByTag = (calendarMatches: readonly CalendarMatch[]) =>
+const groupByTag = (calendarMatches: readonly FootballMatchEvent[]) =>
     F.pipe(
         calendarMatches,
         ROA.reduce(emptyGroups, (state, curr) => {
@@ -74,4 +74,4 @@ const groupByTag = (calendarMatches: readonly CalendarMatch[]) =>
         }),
     )
 
-const emptyGroups: Groups<CalendarMatch> = { CREATE: [], UPDATE: [], NOTHING_CHANGED: [] }
+const emptyGroups: Groups<FootballMatchEvent> = { CREATE: [], UPDATE: [], NOTHING_CHANGED: [] }

@@ -6,7 +6,12 @@ import * as S from "@effect/schema/Schema"
 import { formatErrors } from "@effect/schema/TreeFormatter"
 import * as E from "@effect/data/Either"
 import { ApiFootballClient, ApiFootballFixture, FixtureStatus, currentSeason, fixtures } from "./api-football"
-import { CalendarEvent, FootballMatch, CreateFootballMatchEvent, UpdateFootballMatchEvent } from "./calendar-matches"
+import {
+    CalendarEvent,
+    FootballMatch,
+    CreateFootballMatchEvent,
+    UpdateFootballMatchEvent,
+} from "./football-match-events"
 import { Deps as CalendarMatchesHandlerDeps } from "./calendar-matches-handler"
 import {
     listEvents,

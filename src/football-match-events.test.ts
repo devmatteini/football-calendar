@@ -1,10 +1,10 @@
 import { test, expect } from "vitest"
-import { CalendarEvent, FootballMatch, calendarMatches } from "./calendar-matches"
+import { CalendarEvent, FootballMatch, footballMatchEvents } from "./football-match-events"
 
 test("new match, no calendar event", () => {
     const match = footballMatch(1, date("2023-09-03", "18:30"))
 
-    const result = calendarMatches([match], [])
+    const result = footballMatchEvents([match], [])
 
     expect(result).toStrictEqual([{ _tag: "CREATE", match }])
 })
@@ -17,7 +17,7 @@ test("match time updated", () => {
         startDate: date("2023-09-03", "15:00"),
         originalEvent: anyOriginalEvent,
     }
-    const result = calendarMatches([match], [calendarEvent])
+    const result = footballMatchEvents([match], [calendarEvent])
 
     expect(result).toStrictEqual([
         {
@@ -36,7 +36,7 @@ test("match date updated", () => {
         startDate: date("2023-09-04", "18:30"),
         originalEvent: anyOriginalEvent,
     }
-    const result = calendarMatches([match], [calendarEvent])
+    const result = footballMatchEvents([match], [calendarEvent])
 
     expect(result).toStrictEqual([
         {
@@ -55,7 +55,7 @@ test("match not changed", () => {
         startDate: date("2023-09-03", "18:30"),
         originalEvent: anyOriginalEvent,
     }
-    const result = calendarMatches([match1], [calendarEvent])
+    const result = footballMatchEvents([match1], [calendarEvent])
 
     expect(result).toStrictEqual([
         {
@@ -70,7 +70,7 @@ test("many matches, many calendar events", () => {
     const updatedMatch = footballMatch(2, date("2023-09-17", "15:00"))
     const sameMatch = footballMatch(3, date("2023-09-24", "20:45"))
 
-    const result = calendarMatches(
+    const result = footballMatchEvents(
         [newMatch, updatedMatch, sameMatch],
         [
             {

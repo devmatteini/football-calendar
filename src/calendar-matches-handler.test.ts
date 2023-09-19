@@ -3,7 +3,7 @@ import * as Effect from "@effect/io/Effect"
 import * as F from "@effect/data/Function"
 import * as Layer from "@effect/io/Layer"
 import { Deps, calendarMatchesHandler } from "./calendar-matches-handler"
-import { CalendarEvent, FootballMatch } from "./calendar-matches"
+import { CalendarEvent, FootballMatch } from "./football-match-events"
 
 const createCalendarEventSpy = vi.fn(() => Effect.unit)
 const updateCalendarEventSpy = vi.fn(() => Effect.unit)

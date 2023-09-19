@@ -29,12 +29,12 @@ export type NothingChangedFootballMatchEvent = {
     _tag: "NOTHING_CHANGED"
     matchId: FootballMatch["id"]
 }
-export type CalendarMatch = CreateFootballMatchEvent | UpdateFootballMatchEvent | NothingChangedFootballMatchEvent
+export type FootballMatchEvent = CreateFootballMatchEvent | UpdateFootballMatchEvent | NothingChangedFootballMatchEvent
 
-export const calendarMatches = (
+export const footballMatchEvents = (
     matches: readonly FootballMatch[],
     calendarEvents: readonly CalendarEvent[],
-): readonly CalendarMatch[] =>
+): readonly FootballMatchEvent[] =>
     F.pipe(
         matches,
         ROA.map((match) =>
