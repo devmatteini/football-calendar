@@ -20,7 +20,7 @@ export type Deps = {
 
 export const Deps = Context.Tag<Deps>()
 
-type Summary = { new: number; updated: number; nothingChanged: number }
+type Summary = { created: number; updated: number; nothingChanged: number }
 
 export const footballMatchEventsHandler = (teamId: number): Effect.Effect<Deps, never, Summary> =>
     F.pipe(
@@ -47,8 +47,7 @@ export const footballMatchEventsHandler = (teamId: number): Effect.Effect<Deps, 
                     ),
                 ),
                 Effect.map((matches) => ({
-                    // TODO: rename summary new -> created
-                    new: matches.create.length,
+                    created: matches.create.length,
                     updated: matches.update.length,
                     nothingChanged: matches.nothingChanged.length,
                 })),
