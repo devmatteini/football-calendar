@@ -12,7 +12,7 @@ import {
     CreateFootballMatchEvent,
     UpdateFootballMatchEvent,
 } from "./football-match-events"
-import { Deps as CalendarMatchesHandlerDeps } from "./calendar-matches-handler"
+import { Deps as FootballMatchEventsHandlerDeps } from "./football-match-events-handler"
 import {
     listEvents,
     insertEvent,
@@ -22,12 +22,12 @@ import {
 } from "./google-calendar"
 import * as EventMatchId from "./event-match-id"
 
-export const CalendarMatchesHandlerDepsLive = Layer.effect(
-    CalendarMatchesHandlerDeps,
+export const FootballMatchEventsHandlerDepsLive = Layer.effect(
+    FootballMatchEventsHandlerDeps,
     F.pipe(
         Effect.context<AuthenticatedGoogleCalendar | ApiFootballClient>(),
         Effect.map(
-            (context): CalendarMatchesHandlerDeps => ({
+            (context): FootballMatchEventsHandlerDeps => ({
                 createCalendarEvent: F.flow(createCalendarEvent, Effect.provideContext(context)),
                 updateCalendarEvent: F.flow(updateCalendarEvent, Effect.provideContext(context)),
                 loadMatchesByTeam: F.flow(loadMatchesByTeam, Effect.provideContext(context)),

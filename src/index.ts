@@ -5,8 +5,8 @@ import * as LogLevel from "@effect/io/LogLevel"
 import * as Layer from "@effect/io/Layer"
 import * as Exit from "@effect/io/Exit"
 import * as Cause from "@effect/io/Cause"
-import { calendarMatchesHandler } from "./calendar-matches-handler"
-import { CalendarMatchesHandlerDepsLive } from "./calendar-matches-handler-live"
+import { footballMatchEventsHandler } from "./football-match-events-handler"
+import { FootballMatchEventsHandlerDepsLive } from "./football-match-events-handler-live"
 import { Command } from "commander"
 import { parseInteger, logLevel } from "./cli"
 import { red } from "colorette"
@@ -29,14 +29,14 @@ cli.requiredOption(
     parseInteger,
 ).action(async ({ teamId }: Options) => {
     const result = await F.pipe(
-        calendarMatchesHandler(teamId),
+        footballMatchEventsHandler(teamId),
         Effect.tap((summary) => Effect.logInfo("Football matches import completed").pipe(Effect.annotateLogs(summary))),
         Effect.annotateLogs({ teamId }),
         Effect.asUnit,
         Effect.provideLayer(
             F.pipe(
                 Layer.merge(ApiFootballClientLive, AuthenticatedGoogleCalendarLive),
-                Layer.provideMerge(CalendarMatchesHandlerDepsLive),
+                Layer.provideMerge(FootballMatchEventsHandlerDepsLive),
                 Layer.provideMerge(Logger.replace(Logger.defaultLogger, structuredLogger)),
             ),
         ),

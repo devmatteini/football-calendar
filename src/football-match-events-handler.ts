@@ -20,9 +20,9 @@ export type Deps = {
 
 export const Deps = Context.Tag<Deps>()
 
-type CalendarMatchesSummary = { new: number; updated: number; nothingChanged: number }
+type Summary = { new: number; updated: number; nothingChanged: number }
 
-export const calendarMatchesHandler = (teamId: number): Effect.Effect<Deps, never, CalendarMatchesSummary> =>
+export const footballMatchEventsHandler = (teamId: number): Effect.Effect<Deps, never, Summary> =>
     F.pipe(
         Deps,
         Effect.flatMap(({ loadMatchesByTeam, loadCalendarEventsByTeam, createCalendarEvent, updateCalendarEvent }) =>
@@ -60,9 +60,9 @@ type Groups<T extends { _tag: string }> = {
     [K in T["_tag"]]: readonly Extract<T, { _tag: K }>[]
 }
 
-const groupByTag = (calendarMatches: readonly FootballMatchEvent[]) =>
+const groupByTag = (footballMatchEvents: readonly FootballMatchEvent[]) =>
     F.pipe(
-        calendarMatches,
+        footballMatchEvents,
         ROA.reduce(emptyGroups, (state, curr) => {
             const previous = state[curr._tag]
             return { ...state, [curr._tag]: [...previous, curr] }

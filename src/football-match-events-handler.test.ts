@@ -2,7 +2,7 @@ import { test, expect, vi, beforeEach } from "vitest"
 import * as Effect from "@effect/io/Effect"
 import * as F from "@effect/data/Function"
 import * as Layer from "@effect/io/Layer"
-import { Deps, calendarMatchesHandler } from "./calendar-matches-handler"
+import { Deps, footballMatchEventsHandler } from "./football-match-events-handler"
 import { CalendarEvent, FootballMatch } from "./football-match-events"
 
 const createCalendarEventSpy = vi.fn(() => Effect.unit)
@@ -27,7 +27,7 @@ test("create, update, ignore matches", async () => {
         updateCalendarEvent: updateCalendarEventSpy,
     })
 
-    const result = await F.pipe(calendarMatchesHandler(anyTeam), Effect.provideLayer(deps), Effect.runPromise)
+    const result = await F.pipe(footballMatchEventsHandler(anyTeam), Effect.provideLayer(deps), Effect.runPromise)
 
     expect(result).toStrictEqual({ new: 1, updated: 1, nothingChanged: 1 })
     expect(createCalendarEventSpy).toHaveBeenNthCalledWith(1, { _tag: "CREATE", match: newMatch })
