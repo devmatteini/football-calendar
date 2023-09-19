@@ -6,7 +6,7 @@ import * as S from "@effect/schema/Schema"
 import { formatErrors } from "@effect/schema/TreeFormatter"
 import * as E from "@effect/data/Either"
 import { ApiFootballClient, ApiFootballFixture, FixtureStatus, currentSeason, fixtures } from "./api-football"
-import { CalendarEvent, FootballMatch, NewCalendarMatch, UpdatedCalendarMatch } from "./calendar-matches"
+import { CalendarEvent, FootballMatch, CreateFootballMatchEvent, UpdatedCalendarMatch } from "./calendar-matches"
 import { Deps as CalendarMatchesHandlerDeps } from "./calendar-matches-handler"
 import {
     listEvents,
@@ -32,7 +32,7 @@ export const CalendarMatchesHandlerDepsLive = Layer.effect(
     ),
 )
 
-const createCalendarEvent = ({ match }: NewCalendarMatch) =>
+const createCalendarEvent = ({ match }: CreateFootballMatchEvent) =>
     F.pipe(
         insertEvent({
             summary: `${match.homeTeam}-${match.awayTeam} (${match.competition})`,

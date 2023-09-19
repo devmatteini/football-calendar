@@ -16,8 +16,8 @@ export type CalendarEvent = {
     originalEvent: Record<string, any>
 }
 
-export type NewCalendarMatch = {
-    _tag: "NEW"
+export type CreateFootballMatchEvent = {
+    _tag: "CREATE"
     match: FootballMatch
 }
 export type UpdatedCalendarMatch = {
@@ -29,7 +29,7 @@ export type NothingChangedCalendarMatch = {
     _tag: "NOTHING_CHANGED"
     matchId: FootballMatch["id"]
 }
-export type CalendarMatch = NewCalendarMatch | UpdatedCalendarMatch | NothingChangedCalendarMatch
+export type CalendarMatch = CreateFootballMatchEvent | UpdatedCalendarMatch | NothingChangedCalendarMatch
 
 export const calendarMatches = (
     matches: readonly FootballMatch[],
@@ -42,7 +42,7 @@ export const calendarMatches = (
                 calendarEvents,
                 ROA.findFirst((x) => x.matchId === match.id),
                 O.match({
-                    onNone: () => ({ _tag: "NEW", match }),
+                    onNone: () => ({ _tag: "CREATE", match }),
                     onSome: (event) =>
                         isSameDate(match.date, event.startDate)
                             ? { _tag: "NOTHING_CHANGED", matchId: match.id }

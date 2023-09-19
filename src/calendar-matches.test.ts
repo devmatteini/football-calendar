@@ -6,7 +6,7 @@ test("new match, no calendar event", () => {
 
     const result = calendarMatches([match], [])
 
-    expect(result).toStrictEqual([{ _tag: "NEW", match }])
+    expect(result).toStrictEqual([{ _tag: "CREATE", match }])
 })
 
 test("match time updated", () => {
@@ -88,7 +88,7 @@ test("many matches, many calendar events", () => {
 
     expect(result).toStrictEqual([
         {
-            _tag: "NEW",
+            _tag: "CREATE",
             match: newMatch,
         },
         {
