@@ -6,7 +6,7 @@ import * as S from "@effect/schema/Schema"
 import { formatErrors } from "@effect/schema/TreeFormatter"
 import * as E from "@effect/data/Either"
 import { ApiFootballClient, ApiFootballFixture, FixtureStatus, currentSeason, fixtures } from "./api-football"
-import { CalendarEvent, FootballMatch, CreateFootballMatchEvent, UpdatedCalendarMatch } from "./calendar-matches"
+import { CalendarEvent, FootballMatch, CreateFootballMatchEvent, UpdateFootballMatchEvent } from "./calendar-matches"
 import { Deps as CalendarMatchesHandlerDeps } from "./calendar-matches-handler"
 import {
     listEvents,
@@ -62,7 +62,7 @@ const createCalendarEvent = ({ match }: CreateFootballMatchEvent) =>
         Effect.orDie,
     )
 
-const updateCalendarEvent = ({ match, originalCalendarEvent }: UpdatedCalendarMatch) =>
+const updateCalendarEvent = ({ match, originalCalendarEvent }: UpdateFootballMatchEvent) =>
     F.pipe(
         updateEvent({
             ...originalCalendarEvent,

@@ -7,7 +7,7 @@ import {
     CalendarMatch,
     FootballMatch,
     CreateFootballMatchEvent,
-    UpdatedCalendarMatch,
+    UpdateFootballMatchEvent,
     calendarMatches,
 } from "./calendar-matches"
 
@@ -15,7 +15,7 @@ export type Deps = {
     loadMatchesByTeam: (teamId: number) => Effect.Effect<never, never, readonly FootballMatch[]>
     loadCalendarEventsByTeam: (teamId: number) => Effect.Effect<never, never, readonly CalendarEvent[]>
     createCalendarEvent: (event: CreateFootballMatchEvent) => Effect.Effect<never, never, void>
-    updateCalendarEvent: (event: UpdatedCalendarMatch) => Effect.Effect<never, never, void>
+    updateCalendarEvent: (event: UpdateFootballMatchEvent) => Effect.Effect<never, never, void>
 }
 
 export const Deps = Context.Tag<Deps>()
@@ -41,7 +41,7 @@ export const calendarMatchesHandler = (teamId: number): Effect.Effect<Deps, neve
                     Effect.all(
                         F.pipe(
                             ROA.map(matches.create, (x) => createCalendarEvent(x)),
-                            ROA.appendAll(ROA.map(matches.updated, (x) => updateCalendarEvent(x))),
+                            ROA.appendAll(ROA.map(matches.update, (x) => updateCalendarEvent(x))),
                         ),
                         { concurrency: 2, discard: true },
                     ),
@@ -49,7 +49,7 @@ export const calendarMatchesHandler = (teamId: number): Effect.Effect<Deps, neve
                 Effect.map((matches) => ({
                     // TODO: rename summary new -> created
                     new: matches.create.length,
-                    updated: matches.updated.length,
+                    updated: matches.update.length,
                     nothingChanged: matches.nothingChanged.length,
                 })),
             ),
@@ -67,11 +67,11 @@ const groupByTag = (calendarMatches: readonly CalendarMatch[]) =>
             const previous = state[curr._tag]
             return { ...state, [curr._tag]: [...previous, curr] }
         }),
-        ({ CREATE, UPDATED, NOTHING_CHANGED }) => ({
+        ({ CREATE, UPDATE, NOTHING_CHANGED }) => ({
             create: CREATE,
-            updated: UPDATED,
+            update: UPDATE,
             nothingChanged: NOTHING_CHANGED,
         }),
     )
 
-const emptyGroups: Groups<CalendarMatch> = { CREATE: [], UPDATED: [], NOTHING_CHANGED: [] }
+const emptyGroups: Groups<CalendarMatch> = { CREATE: [], UPDATE: [], NOTHING_CHANGED: [] }

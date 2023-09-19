@@ -20,8 +20,8 @@ export type CreateFootballMatchEvent = {
     _tag: "CREATE"
     match: FootballMatch
 }
-export type UpdatedCalendarMatch = {
-    _tag: "UPDATED"
+export type UpdateFootballMatchEvent = {
+    _tag: "UPDATE"
     match: FootballMatch
     originalCalendarEvent: CalendarEvent["originalEvent"]
 }
@@ -29,7 +29,7 @@ export type NothingChangedCalendarMatch = {
     _tag: "NOTHING_CHANGED"
     matchId: FootballMatch["id"]
 }
-export type CalendarMatch = CreateFootballMatchEvent | UpdatedCalendarMatch | NothingChangedCalendarMatch
+export type CalendarMatch = CreateFootballMatchEvent | UpdateFootballMatchEvent | NothingChangedCalendarMatch
 
 export const calendarMatches = (
     matches: readonly FootballMatch[],
@@ -46,7 +46,7 @@ export const calendarMatches = (
                     onSome: (event) =>
                         isSameDate(match.date, event.startDate)
                             ? { _tag: "NOTHING_CHANGED", matchId: match.id }
-                            : { _tag: "UPDATED", match, originalCalendarEvent: event.originalEvent },
+                            : { _tag: "UPDATE", match, originalCalendarEvent: event.originalEvent },
                 }),
             ),
         ),

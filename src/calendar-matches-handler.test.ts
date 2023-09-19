@@ -32,7 +32,7 @@ test("create, update, ignore matches", async () => {
     expect(result).toStrictEqual({ new: 1, updated: 1, nothingChanged: 1 })
     expect(createCalendarEventSpy).toHaveBeenNthCalledWith(1, { _tag: "CREATE", match: newMatch })
     expect(updateCalendarEventSpy).toHaveBeenNthCalledWith(1, {
-        _tag: "UPDATED",
+        _tag: "UPDATE",
         match: updatedMatch,
         originalCalendarEvent: originalEvent("1234"),
     })

@@ -21,7 +21,7 @@ test("match time updated", () => {
 
     expect(result).toStrictEqual([
         {
-            _tag: "UPDATED",
+            _tag: "UPDATE",
             match,
             originalCalendarEvent: calendarEvent.originalEvent,
         },
@@ -40,7 +40,7 @@ test("match date updated", () => {
 
     expect(result).toStrictEqual([
         {
-            _tag: "UPDATED",
+            _tag: "UPDATE",
             match,
             originalCalendarEvent: calendarEvent.originalEvent,
         },
@@ -92,7 +92,7 @@ test("many matches, many calendar events", () => {
             match: newMatch,
         },
         {
-            _tag: "UPDATED",
+            _tag: "UPDATE",
             match: updatedMatch,
             originalCalendarEvent: originalEvent("1234"),
         },
