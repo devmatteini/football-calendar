@@ -15,12 +15,17 @@ export type AuthenticatedGoogleCalendar = {
 }
 export const AuthenticatedGoogleCalendar = Context.Tag<AuthenticatedGoogleCalendar>()
 
+const realPath = (path: string) => {
+    if (!process.env.HOME) return path
+    return path.startsWith("~") ? path.replace("~", process.env.HOME) : path
+}
+
 export const AuthenticatedGoogleCalendarLive = Layer.effect(
     AuthenticatedGoogleCalendar,
     F.pipe(
         Effect.config(
             Config.all({
-                keyFile: Config.string("GOOGLE_CALENDAR_KEY_FILE"),
+                keyFile: Config.string("GOOGLE_CALENDAR_KEY_FILE").pipe(Config.map(realPath)),
                 calendarId: Config.string("GOOGLE_CALENDAR_ID"),
             }),
         ),
