@@ -28,10 +28,10 @@ export const FootballMatchEventsHandlerDepsLive = Layer.effect(
         Effect.context<AuthenticatedGoogleCalendar | ApiFootballClient>(),
         Effect.map(
             (context): FootballMatchEventsHandlerDeps => ({
-                createCalendarEvent: F.flow(createCalendarEvent, Effect.provideContext(context)),
-                updateCalendarEvent: F.flow(updateCalendarEvent, Effect.provideContext(context)),
-                loadMatchesByTeam: F.flow(loadMatchesByTeam, Effect.provideContext(context)),
-                loadCalendarEventsByTeam: F.flow(loadCalendarEventsByTeam, Effect.provideContext(context)),
+                createCalendarEvent: F.flow(createCalendarEvent, Effect.provide(context)),
+                updateCalendarEvent: F.flow(updateCalendarEvent, Effect.provide(context)),
+                loadMatchesByTeam: F.flow(loadMatchesByTeam, Effect.provide(context)),
+                loadCalendarEventsByTeam: F.flow(loadCalendarEventsByTeam, Effect.provide(context)),
             }),
         ),
     ),

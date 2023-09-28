@@ -33,7 +33,7 @@ cli.requiredOption(
         Effect.tap((summary) => Effect.logInfo("Football matches import completed").pipe(Effect.annotateLogs(summary))),
         Effect.annotateLogs({ teamId }),
         Effect.asUnit,
-        Effect.provideLayer(
+        Effect.provide(
             F.pipe(
                 Layer.merge(ApiFootballClientLive, AuthenticatedGoogleCalendarLive),
                 Layer.provideMerge(FootballMatchEventsHandlerDepsLive),

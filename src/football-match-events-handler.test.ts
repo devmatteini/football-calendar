@@ -27,7 +27,7 @@ test("create, update, ignore matches", async () => {
         updateCalendarEvent: updateCalendarEventSpy,
     })
 
-    const result = await F.pipe(footballMatchEventsHandler(anyTeam), Effect.provideLayer(deps), Effect.runPromise)
+    const result = await F.pipe(footballMatchEventsHandler(anyTeam), Effect.provide(deps), Effect.runPromise)
 
     expect(result).toStrictEqual({ created: 1, updated: 1, nothingChanged: 1 })
     expect(createCalendarEventSpy).toHaveBeenNthCalledWith(1, { _tag: "CREATE", match: newMatch })

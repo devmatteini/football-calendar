@@ -11,7 +11,7 @@ const main = () => {
     return F.pipe(
         listEvents(EventMatchId.encodeTeam(teamId)),
         Effect.flatMap(Effect.forEach(deleteEvent, { discard: true, concurrency: 2 })),
-        Effect.provideLayer(AuthenticatedGoogleCalendarLive),
+        Effect.provide(AuthenticatedGoogleCalendarLive),
         Effect.runPromise,
     )
 }
