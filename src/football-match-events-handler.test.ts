@@ -1,7 +1,7 @@
 import { test, expect, vi, beforeEach } from "vitest"
-import * as Effect from "@effect/io/Effect"
-import * as F from "@effect/data/Function"
-import * as Layer from "@effect/io/Layer"
+import * as Effect from "effect/Effect"
+import * as F from "effect/Function"
+import * as Layer from "effect/Layer"
 import { Deps, footballMatchEventsHandler } from "./football-match-events-handler"
 import { CalendarEvent, FootballMatch } from "./football-match-events"
 

@@ -1,15 +1,15 @@
-import * as Effect from "@effect/io/Effect"
-import * as F from "@effect/data/Function"
-import * as Context from "@effect/data/Context"
-import * as Layer from "@effect/io/Layer"
-import * as Config from "@effect/io/Config"
+import * as Effect from "effect/Effect"
+import * as F from "effect/Function"
+import * as Context from "effect/Context"
+import * as Layer from "effect/Layer"
+import * as Config from "effect/Config"
 import * as S from "@effect/schema/Schema"
 import { formatErrors } from "@effect/schema/TreeFormatter"
 import * as Pretty from "@effect/schema/Pretty"
-import * as E from "@effect/data/Either"
+import * as E from "effect/Either"
 import axios from "axios"
-import * as ROA from "@effect/data/ReadonlyArray"
-import * as ORD from "@effect/data/Order"
+import * as ROA from "effect/ReadonlyArray"
+import * as ORD from "effect/Order"
 
 export type ApiFootballClient = {
     token: string

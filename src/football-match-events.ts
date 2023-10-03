@@ -1,6 +1,6 @@
-import * as F from "@effect/data/Function"
-import * as ROA from "@effect/data/ReadonlyArray"
-import * as O from "@effect/data/Option"
+import * as F from "effect/Function"
+import * as ROA from "effect/ReadonlyArray"
+import * as O from "effect/Option"
 
 export type FootballMatch = {
     id: number

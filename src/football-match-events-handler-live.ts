@@ -1,10 +1,10 @@
-import * as F from "@effect/data/Function"
-import * as ROA from "@effect/data/ReadonlyArray"
-import * as Effect from "@effect/io/Effect"
-import * as Layer from "@effect/io/Layer"
+import * as F from "effect/Function"
+import * as ROA from "effect/ReadonlyArray"
+import * as Effect from "effect/Effect"
+import * as Layer from "effect/Layer"
 import * as S from "@effect/schema/Schema"
 import { formatErrors } from "@effect/schema/TreeFormatter"
-import * as E from "@effect/data/Either"
+import * as E from "effect/Either"
 import { ApiFootballClient, ApiFootballFixture, FixtureStatus, currentSeason, fixtures } from "./api-football"
 import {
     CalendarEvent,

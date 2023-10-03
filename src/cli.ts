@@ -1,8 +1,8 @@
 import { InvalidArgumentError } from "commander"
-import * as F from "@effect/data/Function"
-import * as LogLevel from "@effect/io/LogLevel"
+import * as F from "effect/Function"
+import * as LogLevel from "effect/LogLevel"
 import * as S from "@effect/schema/Schema"
-import * as E from "@effect/data/Either"
+import * as E from "effect/Either"
 
 export const parseInteger = (value: string, _previous: number) => {
     const parsedValue = parseInt(value, 10)

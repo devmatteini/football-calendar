@@ -1,10 +1,10 @@
 import { calendar_v3, auth, calendar } from "@googleapis/calendar"
-import * as Effect from "@effect/io/Effect"
-import * as F from "@effect/data/Function"
-import * as Context from "@effect/data/Context"
-import * as Layer from "@effect/io/Layer"
-import * as Config from "@effect/io/Config"
-import * as ROA from "@effect/data/ReadonlyArray"
+import * as Effect from "effect/Effect"
+import * as F from "effect/Function"
+import * as Context from "effect/Context"
+import * as Layer from "effect/Layer"
+import * as Config from "effect/Config"
+import * as ROA from "effect/ReadonlyArray"
 
 type GoogleCalendar = calendar_v3.Calendar
 export type GoogleCalendarEvent = calendar_v3.Schema$Event

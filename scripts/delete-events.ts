@@ -1,5 +1,5 @@
-import * as Effect from "@effect/io/Effect"
-import * as F from "@effect/data/Function"
+import * as Effect from "effect/Effect"
+import * as F from "effect/Function"
 import { AuthenticatedGoogleCalendar, AuthenticatedGoogleCalendarLive, listEvents } from "../src/google-calendar"
 import { calendar_v3 } from "@googleapis/calendar"
 import * as EventMatchId from "../src/event-match-id"

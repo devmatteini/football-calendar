@@ -1,11 +1,11 @@
-import * as FiberId from "@effect/io/FiberId"
-import * as Logger from "@effect/io/Logger"
-import * as LogLevel from "@effect/io/LogLevel"
-import * as Cause from "@effect/io/Cause"
-import * as List from "@effect/data/List"
-import * as F from "@effect/data/Function"
-import * as HashMap from "@effect/data/HashMap"
-import * as LogSpan from "@effect/io/LogSpan"
+import * as FiberId from "effect/FiberId"
+import * as Logger from "effect/Logger"
+import * as LogLevel from "effect/LogLevel"
+import * as Cause from "effect/Cause"
+import * as List from "effect/List"
+import * as F from "effect/Function"
+import * as HashMap from "effect/HashMap"
+import * as LogSpan from "effect/LogSpan"
 
 const logByLevel: Record<LogLevel.Literal, (_: unknown) => void> = {
     All: console.log,
@@ -21,7 +21,7 @@ const logByLevel: Record<LogLevel.Literal, (_: unknown) => void> = {
 /* 
 NOTE: this implementation is a mix of:
     - logMeta.ts example (https://github.com/Effect-TS/io/blob/4c1cdc347acabe85f50358f52a2ac79d6e5c3a4a/examples/logMeta.ts)
-    - @effect/io/Logger stringLogger (https://github.com/Effect-TS/io/blob/4c1cdc347acabe85f50358f52a2ac79d6e5c3a4a/src/internal/logger.ts#L161-L216)
+    - effect/Logger stringLogger (https://github.com/Effect-TS/io/blob/4c1cdc347acabe85f50358f52a2ac79d6e5c3a4a/src/internal/logger.ts#L161-L216)
 */
 export const structuredLogger = Logger.make<unknown, void>(
     ({ message, annotations, cause, date, fiberId, logLevel, spans }) => {
