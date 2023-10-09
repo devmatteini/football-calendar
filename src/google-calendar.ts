@@ -9,19 +9,19 @@ import * as ROA from "effect/ReadonlyArray"
 type GoogleCalendar = calendar_v3.Calendar
 export type GoogleCalendarEvent = calendar_v3.Schema$Event
 
-export type AuthenticatedGoogleCalendar = {
+export type GoogleCalendarClient = {
     client: GoogleCalendar
     calendarId: string
 }
-export const AuthenticatedGoogleCalendar = Context.Tag<AuthenticatedGoogleCalendar>()
+export const GoogleCalendarClient = Context.Tag<GoogleCalendarClient>()
 
 const realPath = (path: string) => {
     if (!process.env.HOME) return path
     return path.startsWith("~") ? path.replace("~", process.env.HOME) : path
 }
 
-export const AuthenticatedGoogleCalendarLive = Layer.effect(
-    AuthenticatedGoogleCalendar,
+export const GoogleCalendarClientLive = Layer.effect(
+    GoogleCalendarClient,
     F.pipe(
         Effect.config(
             Config.all({
@@ -38,14 +38,14 @@ export const AuthenticatedGoogleCalendarLive = Layer.effect(
                 Effect.map((client) => calendar({ version: "v3", auth: client })),
             ),
         ),
-        Effect.map(({ calendarId, client }) => AuthenticatedGoogleCalendar.of({ calendarId, client })),
+        Effect.map(({ calendarId, client }) => GoogleCalendarClient.of({ calendarId, client })),
     ),
 )
 
 // https://developers.google.com/calendar/api/v3/reference/events/list
 export const listEvents = (privateProperties: Record<string, string>, today: Date = new Date()) =>
     F.pipe(
-        AuthenticatedGoogleCalendar,
+        GoogleCalendarClient,
         Effect.flatMap(({ client, calendarId }) =>
             Effect.tryPromise({
                 try: () =>
@@ -67,7 +67,7 @@ export const listEvents = (privateProperties: Record<string, string>, today: Dat
 // https://developers.google.com/calendar/api/v3/reference/events/insert
 export const insertEvent = (event: GoogleCalendarEvent) =>
     F.pipe(
-        AuthenticatedGoogleCalendar,
+        GoogleCalendarClient,
         Effect.flatMap(({ client, calendarId }) =>
             Effect.tryPromise({
                 try: () =>
@@ -84,7 +84,7 @@ export const insertEvent = (event: GoogleCalendarEvent) =>
 // https://developers.google.com/calendar/api/v3/reference/events/update
 export const updateEvent = (event: GoogleCalendarEvent) =>
     F.pipe(
-        AuthenticatedGoogleCalendar,
+        GoogleCalendarClient,
         Effect.flatMap(({ client, calendarId }) =>
             Effect.tryPromise({
                 try: () =>

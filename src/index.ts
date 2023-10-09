@@ -12,7 +12,7 @@ import { parseInteger, logLevel } from "./cli"
 import { red } from "colorette"
 import { structuredLog, structuredLogger } from "./structured-logger"
 import { ApiFootballClientLive } from "./api-football"
-import { AuthenticatedGoogleCalendarLive } from "./google-calendar"
+import { GoogleCalendarClientLive } from "./google-calendar"
 
 const cli = new Command("football-calendar")
     .description("Automatically sync your google calendar with football matches of your favorite team!")
@@ -35,7 +35,7 @@ cli.requiredOption(
         Effect.asUnit,
         Effect.provide(
             F.pipe(
-                Layer.merge(ApiFootballClientLive, AuthenticatedGoogleCalendarLive),
+                Layer.merge(ApiFootballClientLive, GoogleCalendarClientLive),
                 Layer.provideMerge(FootballMatchEventsHandlerDepsLive),
                 Layer.provideMerge(Logger.replace(Logger.defaultLogger, structuredLogger)),
             ),

@@ -1,6 +1,6 @@
 import * as Effect from "effect/Effect"
 import * as F from "effect/Function"
-import { AuthenticatedGoogleCalendar, AuthenticatedGoogleCalendarLive, listEvents } from "../src/google-calendar"
+import { GoogleCalendarClient, GoogleCalendarClientLive, listEvents } from "../src/google-calendar"
 import { calendar_v3 } from "@googleapis/calendar"
 import * as EventMatchId from "../src/event-match-id"
 
@@ -11,14 +11,14 @@ const main = () => {
     return F.pipe(
         listEvents(EventMatchId.encodeTeam(teamId)),
         Effect.flatMap(Effect.forEach(deleteEvent, { discard: true, concurrency: 2 })),
-        Effect.provide(AuthenticatedGoogleCalendarLive),
+        Effect.provide(GoogleCalendarClientLive),
         Effect.runPromise,
     )
 }
 
 const deleteEvent = (event: calendar_v3.Schema$Event) =>
     F.pipe(
-        AuthenticatedGoogleCalendar,
+        GoogleCalendarClient,
         Effect.flatMap(({ calendarId, client }) =>
             Effect.promise(() =>
                 client.events.delete({
