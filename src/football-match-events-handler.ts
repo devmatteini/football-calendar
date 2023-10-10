@@ -4,11 +4,11 @@ import * as F from "effect/Function"
 import * as ROA from "effect/ReadonlyArray"
 import {
     CalendarEvent,
-    FootballMatchEvent,
-    FootballMatch,
     CreateFootballMatchEvent,
-    UpdateFootballMatchEvent,
+    FootballMatch,
+    FootballMatchEvent,
     footballMatchEvents,
+    UpdateFootballMatchEvent,
 } from "./football-match-events"
 
 export type Deps = {
@@ -34,9 +34,7 @@ export const footballMatchEventsHandler = (teamId: number): Effect.Effect<Deps, 
                     },
                     { concurrency: 2 },
                 ),
-                Effect.map(({ matches, calendarEvents }) =>
-                    F.pipe(footballMatchEvents(matches, calendarEvents), groupByTag),
-                ),
+                Effect.map(elaborateData),
                 Effect.bind("_", (matches) =>
                     Effect.all(
                         F.pipe(
@@ -46,14 +44,47 @@ export const footballMatchEventsHandler = (teamId: number): Effect.Effect<Deps, 
                         { concurrency: 2, discard: true },
                     ),
                 ),
-                Effect.map((matches) => ({
-                    created: matches.create.length,
-                    updated: matches.update.length,
-                    nothingChanged: matches.nothingChanged.length,
-                })),
+                Effect.map(toSummary),
             ),
         ),
     )
+
+/*
+
+
+
+
+
+
+BELOW YOU CAN FIND IMPLEMENTATION DETAILS THAT ARE NOT IMPORTANT FOR THE PURPOSE OF THIS TALK
+
+
+
+
+
+
+
+
+
+*/
+
+const toSummary = <
+    T extends { create: readonly unknown[]; update: readonly unknown[]; nothingChanged: readonly unknown[] },
+>(
+    matches: T,
+): Summary => ({
+    created: matches.create.length,
+    updated: matches.update.length,
+    nothingChanged: matches.nothingChanged.length,
+})
+
+const elaborateData = ({
+    matches,
+    calendarEvents,
+}: {
+    matches: readonly FootballMatch[]
+    calendarEvents: readonly CalendarEvent[]
+}) => F.pipe(footballMatchEvents(matches, calendarEvents), groupByTag)
 
 type Groups<T extends { _tag: string }> = {
     [K in T["_tag"]]: readonly Extract<T, { _tag: K }>[]
