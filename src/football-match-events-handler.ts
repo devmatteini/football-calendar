@@ -1,6 +1,5 @@
 import * as Effect from "effect/Effect"
 import * as Console from "effect/Console"
-import * as Context from "effect/Context"
 import * as F from "effect/Function"
 import * as ROA from "effect/ReadonlyArray"
 import { CalendarEvent, FootballMatch, FootballMatchEvent, footballMatchEvents } from "./football-match-events"
@@ -12,11 +11,8 @@ import { CalendarEvent, FootballMatch, FootballMatchEvent, footballMatchEvents }
 // - print a summary of the operations to do
 // - create/update calendar events
 
-export type Deps = {}
-export const Deps = Context.Tag<Deps>()
-
-export const footballMatchEventsHandler = (teamId: number): Effect.Effect<never, never, void> => {
-    return Effect.die("TBI")
+export const footballMatchEventsHandler = (teamId: number) => {
+    throw new Error("TBI")
 }
 
 /*
