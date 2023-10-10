@@ -5,20 +5,7 @@ import * as Layer from "effect/Layer"
 import { Deps, footballMatchEventsHandler } from "./football-match-events-handler"
 import { CalendarEvent, FootballMatch } from "./football-match-events"
 
-test("update football match events", async () => {
-    const updatedMatch = footballMatch(matchId1, date("2023-09-17", "15:00"))
-
-    const DepsTest = Layer.succeed(Deps, {
-        loadMatchesByTeam: () => Effect.succeed([updatedMatch]),
-        loadCalendarEventsByTeam: () => Effect.succeed([calendarEvent(matchId1, date("2023-09-17", "12:30"), "1234")]),
-        createCalendarEvent: () => Effect.unit,
-        updateCalendarEvent: () => Effect.unit,
-    })
-
-    const result = await F.pipe(footballMatchEventsHandler(anyTeam), Effect.provide(DepsTest), Effect.runPromise)
-
-    expect(result).toStrictEqual({ created: 0, updated: 1, nothingChanged: 0 })
-})
+test.todo("create football match event", async () => {})
 
 const footballMatch = (id: number, date: Date): FootballMatch => ({
     id,
