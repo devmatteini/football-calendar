@@ -30,7 +30,7 @@ cli.requiredOption(
 ).action(async ({ teamId }: Options) => {
     const result = await F.pipe(
         footballMatchEventsHandler(teamId),
-        Effect.tap((summary) => Effect.logInfo("Football matches import completed").pipe(Effect.annotateLogs(summary))),
+        // Effect.tap((summary) => Effect.logInfo("Football matches import completed").pipe(Effect.annotateLogs(summary))),
         Effect.annotateLogs({ teamId }),
         Effect.asUnit,
         Effect.provide(

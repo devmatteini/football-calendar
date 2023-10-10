@@ -2,52 +2,21 @@ import * as Effect from "effect/Effect"
 import * as Context from "effect/Context"
 import * as F from "effect/Function"
 import * as ROA from "effect/ReadonlyArray"
-import {
-    CalendarEvent,
-    CreateFootballMatchEvent,
-    FootballMatch,
-    FootballMatchEvent,
-    footballMatchEvents,
-    UpdateFootballMatchEvent,
-} from "./football-match-events"
+import { CalendarEvent, FootballMatch, FootballMatchEvent, footballMatchEvents } from "./football-match-events"
 
-export type Deps = {
-    loadMatchesByTeam: (teamId: number) => Effect.Effect<never, never, readonly FootballMatch[]>
-    loadCalendarEventsByTeam: (teamId: number) => Effect.Effect<never, never, readonly CalendarEvent[]>
-    createCalendarEvent: (event: CreateFootballMatchEvent) => Effect.Effect<never, never, void>
-    updateCalendarEvent: (event: UpdateFootballMatchEvent) => Effect.Effect<never, never, void>
-}
+// TODO list:
+// - load matches by team
+// - load calendar events by team
+// - elaborate data
+// - create/update elaborated calendar events
+// - return a summary of the operations
 
+export type Deps = {}
 export const Deps = Context.Tag<Deps>()
 
-type Summary = { created: number; updated: number; nothingChanged: number }
-
-export const footballMatchEventsHandler = (teamId: number): Effect.Effect<Deps, never, Summary> =>
-    F.pipe(
-        Deps,
-        Effect.flatMap(({ loadMatchesByTeam, loadCalendarEventsByTeam, createCalendarEvent, updateCalendarEvent }) =>
-            F.pipe(
-                Effect.all(
-                    {
-                        matches: loadMatchesByTeam(teamId),
-                        calendarEvents: loadCalendarEventsByTeam(teamId),
-                    },
-                    { concurrency: 2 },
-                ),
-                Effect.map(elaborateData),
-                Effect.bind("_", (matches) =>
-                    Effect.all(
-                        F.pipe(
-                            ROA.map(matches.create, (x) => createCalendarEvent(x)),
-                            ROA.appendAll(ROA.map(matches.update, (x) => updateCalendarEvent(x))),
-                        ),
-                        { concurrency: 2, discard: true },
-                    ),
-                ),
-                Effect.map(toSummary),
-            ),
-        ),
-    )
+export const footballMatchEventsHandler = (teamId: number): Effect.Effect<never, never, void> => {
+    return Effect.die("TBI")
+}
 
 /*
 
@@ -67,6 +36,8 @@ BELOW YOU CAN FIND IMPLEMENTATION DETAILS THAT ARE NOT IMPORTANT FOR THE PURPOSE
 
 
 */
+
+export type Summary = { created: number; updated: number; nothingChanged: number }
 
 const toSummary = <
     T extends { create: readonly unknown[]; update: readonly unknown[]; nothingChanged: readonly unknown[] },
