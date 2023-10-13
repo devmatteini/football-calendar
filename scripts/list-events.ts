@@ -10,6 +10,7 @@ const main = async () => {
     const result = await calendarClient.events.list({
         calendarId: process.env.GOOGLE_CALENDAR_ID,
         timeMin: new Date().toISOString(),
+        singleEvents: true,
         timeZone: "UTC",
     })
 
