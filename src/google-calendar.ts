@@ -53,6 +53,7 @@ export const listEvents = (privateProperties: Record<string, string>, today: Dat
                         calendarId,
                         timeMin: today.toISOString(),
                         timeZone: "UTC",
+                        singleEvents: true,
                         privateExtendedProperty: F.pipe(
                             Object.entries(privateProperties),
                             ROA.map(([key, value]) => `${key}=${value}`),
