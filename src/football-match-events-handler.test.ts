@@ -1,7 +1,8 @@
-import { expect, test } from "vitest"
+import { expect, test, vi } from "vitest"
 import * as Effect from "effect/Effect"
 import * as F from "effect/Function"
 import * as Layer from "effect/Layer"
+import * as Exit from "effect/Exit"
 import { Deps, footballMatchEventsHandler } from "./football-match-events-handler"
 import { CalendarEvent, FootballMatch } from "./football-match-events"
 

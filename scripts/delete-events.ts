@@ -10,7 +10,7 @@ const main = () => {
 
     return F.pipe(
         listEvents(EventMatchId.encodeTeam(teamId)),
-        Effect.flatMap(Effect.forEach(deleteEvent, { discard: true, concurrency: 2 })),
+        Effect.flatMap(Effect.forEach(deleteEvent, { discard: true, concurrency: 5 })),
         Effect.provide(GoogleCalendarClientLive),
         Effect.runPromise,
     )
