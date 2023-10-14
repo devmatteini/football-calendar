@@ -46,7 +46,7 @@ type StructuredLog = {
     timestamp?: string
     cause?: string
     spans?: readonly string[]
-    annotations?: Record<string, Logger.AnnotationValue>
+    annotations?: Record<string, unknown>
 }
 export const structuredLog = ({ message, logLevel, fiberId, timestamp, cause, spans, annotations }: StructuredLog) => {
     logByLevel[logLevel._tag](
@@ -68,9 +68,17 @@ const formatCause = (cause: Cause.Cause<unknown>) =>
 const formatSpans = (spans: List.List<LogSpan.LogSpan>, nowMillis: number) =>
     List.isNil(spans) ? undefined : F.pipe(spans, List.map(LogSpan.render(nowMillis)), List.toReadonlyArray)
 
-const formatAnnotations = (annotations: HashMap.HashMap<string, Logger.AnnotationValue>) => {
-    const ret: Record<string, Logger.AnnotationValue> = {}
-    for (const [key, value] of annotations) ret[filterKeyName(key)] = value
+const formatAnnotations = (annotations: HashMap.HashMap<string, unknown>) => {
+    const ret: Record<string, unknown> = {}
+    for (const [key, value] of annotations) ret[filterKeyName(key)] = serializeUnknown(value)
     return ret
 }
 const filterKeyName = (key: string) => key.replace(/[\s="]/g, "_")
+
+const serializeUnknown = (u: unknown): string => {
+    try {
+        return typeof u === "object" ? JSON.stringify(u) : String(u)
+    } catch (_) {
+        return String(u)
+    }
+}
