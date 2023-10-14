@@ -34,14 +34,10 @@ BELOW YOU CAN FIND IMPLEMENTATION DETAILS THAT ARE NOT IMPORTANT FOR THE PURPOSE
 
 */
 
-const toSummary = <
-    T extends { create: readonly unknown[]; update: readonly unknown[]; nothingChanged: readonly unknown[] },
->(
-    matches: T,
-) => ({
-    create: matches.create.length,
-    update: matches.update.length,
-    nothingChanged: matches.nothingChanged.length,
+const toSummary = (events: readonly FootballMatchEvent[]) => ({
+    create: events.filter((x) => x._tag === "CREATE").length,
+    update: events.filter((x) => x._tag === "UPDATE").length,
+    nothingChanged: events.filter((x) => x._tag === "NOTHING_CHANGED").length,
 })
 
 const elaborateData = ({
@@ -50,27 +46,11 @@ const elaborateData = ({
 }: {
     matches: readonly FootballMatch[]
     calendarEvents: readonly CalendarEvent[]
-}) => F.pipe(footballMatchEvents(matches, calendarEvents), groupByTag)
+}) => F.pipe(footballMatchEvents(matches, calendarEvents))
 
-type Groups<T extends { _tag: string }> = {
-    [K in T["_tag"]]: readonly Extract<T, { _tag: K }>[]
-}
-
-const groupByTag = (footballMatchEvents: readonly FootballMatchEvent[]) =>
-    F.pipe(
-        footballMatchEvents,
-        ROA.reduce(emptyGroups, (state, curr) => {
-            const previous = state[curr._tag]
-            return { ...state, [curr._tag]: [...previous, curr] }
-        }),
-        ({ CREATE, UPDATE, NOTHING_CHANGED }) => ({
-            create: CREATE,
-            update: UPDATE,
-            nothingChanged: NOTHING_CHANGED,
-        }),
-    )
-
-const emptyGroups: Groups<FootballMatchEvent> = { CREATE: [], UPDATE: [], NOTHING_CHANGED: [] }
+type CreateOrUpdateEvent = Exclude<FootballMatchEvent, { _tag: "NOTHING_CHANGED" }>
+const filterCreateOrUpdateEvents = (events: readonly FootballMatchEvent[]) =>
+    ROA.filter(events, (x): x is CreateOrUpdateEvent => x._tag !== "NOTHING_CHANGED")
 
 const logMatchesAndCalendarEvents = ({
     matches,

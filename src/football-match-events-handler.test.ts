@@ -26,3 +26,4 @@ const date = (date: `${number}-${number}-${number}`, time?: `${number}:${number}
 const originalEvent = (id: string): CalendarEvent["originalEvent"] => ({ id })
 const anyTeam = 1
 const matchId1 = 1
+const anyFootballMatch = footballMatch(matchId1, date("2023-10-14", "15:00"))
