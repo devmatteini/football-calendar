@@ -1,0 +1,56 @@
+// Final code
+
+export type Deps = {
+    loadMatchesByTeam: (teamId: number) => Effect.Effect<never, never, readonly FootballMatch[]>
+    loadCalendarEventsByTeam: (teamId: number) => Effect.Effect<never, never, readonly CalendarEvent[]>
+    createCalendarEvent: (event: CreateFootballMatchEvent) => Effect.Effect<never, never, void>
+    updateCalendarEvent: (event: UpdateFootballMatchEvent) => Effect.Effect<never, never, void>
+}
+export const Deps = Context.Tag<Deps>()
+
+export const footballMatchEventsHandler = (teamId: number): Effect.Effect<Deps, never, void> =>
+    F.pipe(
+        Deps,
+        Effect.flatMap(({ loadMatchesByTeam, loadCalendarEventsByTeam, createCalendarEvent, updateCalendarEvent }) =>
+            F.pipe(
+                Effect.all(
+                    {
+                        matches: loadMatchesByTeam(teamId),
+                        calendarEvents: loadCalendarEventsByTeam(teamId),
+                    },
+                    { concurrency: 2 },
+                ),
+                Effect.map(elaborateData),
+                Effect.tap((actions) => Effect.logInfo("Actions").pipe(Effect.annotateLogs(toSummary(actions)))),
+                Effect.map(filterCreateOrUpdateEvents),
+                Effect.flatMap((actions) => {
+                    const effects = ROA.map(actions, createOrUpdate(createCalendarEvent, updateCalendarEvent))
+                    return Effect.all(effects, { discard: true, concurrency: 5 })
+                }),
+            ),
+        ),
+    )
+    
+// test
+
+test("create football match event", async () => {
+    const createCalendarEvent = vi.fn(() => Effect.unit)
+
+    const DepsTest = Layer.succeed(Deps, {
+        loadMatchesByTeam: () => Effect.succeed([anyFootballMatch]),
+        loadCalendarEventsByTeam: () => Effect.succeed([]),
+        updateCalendarEvent: () => Effect.unit,
+        createCalendarEvent,
+    })
+
+    const result = await F.pipe(
+        // keep new line
+        footballMatchEventsHandler(anyTeam),
+        Effect.provide(DepsTest),
+        Effect.runPromiseExit,
+    )
+
+    expect(Exit.isSuccess(result)).toBeTruthy()
+    expect(createCalendarEvent).toHaveBeenCalledOnce()
+})
+
