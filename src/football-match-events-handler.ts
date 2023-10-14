@@ -2,7 +2,16 @@ import * as Effect from "effect/Effect"
 import * as Console from "effect/Console"
 import * as F from "effect/Function"
 import * as ROA from "effect/ReadonlyArray"
-import { CalendarEvent, FootballMatch, FootballMatchEvent, footballMatchEvents } from "./football-match-events"
+import * as Match from "effect/Match"
+import * as Context from "effect/Context"
+import {
+    CalendarEvent,
+    FootballMatch,
+    FootballMatchEvent,
+    footballMatchEvents,
+    CreateFootballMatchEvent,
+    UpdateFootballMatchEvent,
+} from "./football-match-events"
 
 // TODO list:
 // - load matches by team
@@ -33,6 +42,14 @@ BELOW YOU CAN FIND IMPLEMENTATION DETAILS THAT ARE NOT IMPORTANT FOR THE PURPOSE
 
 
 */
+
+const createOrUpdate = (create: Deps["createCalendarEvent"], update: Deps["updateCalendarEvent"]) =>
+    F.pipe(
+        Match.type<CreateOrUpdateEvent>(),
+        Match.tag("CREATE", (x) => create(x)),
+        Match.tag("UPDATE", (x) => update(x)),
+        Match.exhaustive,
+    )
 
 const toSummary = (events: readonly FootballMatchEvent[]) => ({
     create: events.filter((x) => x._tag === "CREATE").length,
