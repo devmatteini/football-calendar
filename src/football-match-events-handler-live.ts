@@ -90,19 +90,21 @@ const updateCalendarEvent = ({ match, originalCalendarEvent }: UpdateFootballMat
 
 const loadMatchesByTeam = (teamId: number) =>
     F.pipe(
-        Effect.logDebug("loadMatchesByTeam"),
+        Effect.logDebug("start loadMatchesByTeam"),
         Effect.flatMap(() => currentSeason(teamId)),
         Effect.flatMap((currentSeason) => fixtures(teamId, currentSeason, FixtureStatus.scheduled)),
         Effect.map(ROA.map(toFootballMatch(teamId))),
         Effect.orDie,
+        Effect.tap(() => Effect.logDebug("loadMatchesByTeam done")),
     )
 
 const loadCalendarEventsByTeam = (teamId: number) =>
     F.pipe(
-        Effect.logDebug("loadCalendarEventsByTeam"),
+        Effect.logDebug("start loadCalendarEventsByTeam"),
         Effect.flatMap(() => listEvents(EventMatchId.encodeTeam(teamId))),
         Effect.flatMap(Effect.forEach(validateCalendarEvent)),
         Effect.orDie,
+        Effect.tap(() => Effect.logDebug("loadCalendarEventsByTeam done")),
     )
 
 const toFootballMatch =
