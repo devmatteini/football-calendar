@@ -21,7 +21,7 @@ export const footballMatchEventsHandler = (teamId: number): Effect.Effect<Deps, 
                     { concurrency: 2 },
                 ),
                 Effect.map(elaborateData),
-                Effect.tap((actions) => Effect.logInfo("Actions").pipe(Effect.annotateLogs(toSummary(actions)))),
+                Effect.tap((commands) => Effect.logInfo("Commands").pipe(Effect.annotateLogs(toSummary(commands)))),
                 Effect.map(filterCreateOrUpdateEvents),
                 Effect.flatMap((actions) => {
                     const effects = ROA.map(actions, createOrUpdate(createCalendarEvent, updateCalendarEvent))
