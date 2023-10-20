@@ -5,8 +5,28 @@ import * as Layer from "effect/Layer"
 import * as Exit from "effect/Exit"
 import { Deps, footballMatchEventsHandler } from "./football-match-events-handler"
 import { CalendarEvent, FootballMatch } from "./football-match-events"
+import exp from "constants"
 
-test.todo("create football match event", async () => {})
+test("create football match event", async () => {
+    const createCalendarEvent = vi.fn(() => Effect.unit)
+
+    const DepsTest = Layer.succeed(Deps, {
+        loadMatchesByTeam: () => Effect.succeed([anyFootballMatch]),
+        loadCalendarEventsByTeam: () => Effect.succeed([]),
+        updateCalendarEvent: () => Effect.unit,
+        createCalendarEvent,
+    })
+
+    const result = await F.pipe(
+        // keep new line
+        footballMatchEventsHandler(anyTeam),
+        Effect.provide(DepsTest),
+        Effect.runPromiseExit,
+    )
+
+    expect(Exit.isSuccess(result)).toBeTruthy()
+    expect(createCalendarEvent).toHaveBeenCalledOnce()
+})
 
 const footballMatch = (id: number, date: Date): FootballMatch => ({
     id,

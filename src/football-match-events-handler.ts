@@ -6,23 +6,56 @@ import * as Match from "effect/Match"
 import * as Context from "effect/Context"
 import {
     CalendarEvent,
+    CreateFootballMatchEvent,
     FootballMatch,
     FootballMatchEvent,
     footballMatchEvents,
-    CreateFootballMatchEvent,
     UpdateFootballMatchEvent,
 } from "./football-match-events"
 
 // TODO list:
-// - load matches by team
-// - load calendar events by team
-// - elaborate data
-// - print a summary of the operations to do
-// - create/update calendar events
+// X load matches by team
+// X load calendar events by team
+// X elaborate data
+// X print a summary of the operations to do
+// X create/update calendar events
 
-export const footballMatchEventsHandler = (teamId: number) => {
-    throw new Error("TBI")
+export type Deps = {
+    loadMatchesByTeam: (teamId: number) => Effect.Effect<never, never, readonly FootballMatch[]>
+    loadCalendarEventsByTeam: (teamId: number) => Effect.Effect<never, never, readonly CalendarEvent[]>
+    createCalendarEvent: (command: CreateFootballMatchEvent) => Effect.Effect<never, never, void>
+    updateCalendarEvent: (command: UpdateFootballMatchEvent) => Effect.Effect<never, never, void>
 }
+export const Deps = Context.Tag<Deps>()
+
+export const footballMatchEventsHandler = (teamId: number): Effect.Effect<Deps, never, void> =>
+    F.pipe(
+        Deps,
+        Effect.flatMap(({ loadMatchesByTeam, loadCalendarEventsByTeam, updateCalendarEvent, createCalendarEvent }) =>
+            F.pipe(
+                Effect.all(
+                    {
+                        matches: loadMatchesByTeam(teamId),
+                        calendarEvents: loadCalendarEventsByTeam(teamId),
+                    },
+                    { concurrency: 2 },
+                ),
+                Effect.map(elaborateData),
+                Effect.tap((commands) =>
+                    F.pipe(
+                        // keep new line
+                        Effect.logInfo("Commands to execute"),
+                        Effect.annotateLogs(toSummary(commands)),
+                    ),
+                ),
+                Effect.map(filterCreateOrUpdateEvents),
+                Effect.flatMap((commands) => {
+                    const effects = ROA.map(commands, createOrUpdate(createCalendarEvent, updateCalendarEvent))
+                    return Effect.all(effects, { discard: true, concurrency: 5 })
+                }),
+            ),
+        ),
+    )
 
 /*
 
