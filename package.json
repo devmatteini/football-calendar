@@ -18,8 +18,8 @@
     "scripts:list-events": "node scripts/.build/list-events.js"
   },
   "dependencies": {
-    "effect": "2.0.0-next.48",
-    "@effect/schema": "0.43.1",
+    "effect": "2.0.0-next.50",
+    "@effect/schema": "0.45.5",
     "axios": "1.5.1",
     "@googleapis/calendar": "9.3.1",
     "commander": "11.0.0",
