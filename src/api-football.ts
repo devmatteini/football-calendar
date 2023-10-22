@@ -7,9 +7,9 @@ import * as S from "@effect/schema/Schema"
 import { formatErrors } from "@effect/schema/TreeFormatter"
 import * as Pretty from "@effect/schema/Pretty"
 import * as E from "effect/Either"
-import axios from "axios"
 import * as ROA from "effect/ReadonlyArray"
 import * as ORD from "effect/Order"
+import * as Http from "@effect/platform-node/HttpClient"
 
 export type ApiFootballClient = {
     token: string
@@ -28,7 +28,7 @@ export const ApiFootballClientLive = Layer.effect(
 // https://www.api-football.com/documentation-v3#tag/Teams/operation/get-teams-seasons
 export const currentSeason = (team: number) =>
     F.pipe(
-        get("/teams/seasons", { team }, S.number),
+        get("/teams/seasons", { team: team.toString() }, S.number),
         Effect.flatMap(
             ROA.match({
                 onEmpty: () => Effect.fail(new Error(`No seasons for team ${team}`)),
@@ -39,29 +39,25 @@ export const currentSeason = (team: number) =>
 
 // https://www.api-football.com/documentation-v3#tag/Fixtures/operation/get-fixtures
 export const fixtures = (team: number, season: number, status: string) =>
-    get("/fixtures", { team, season, status }, Fixture)
+    get("/fixtures", { team: team.toString(), season: season.toString(), status }, Fixture)
 
 export const FixtureStatus = {
     scheduled: "TBD-NS" as const,
 }
 
-type QueryParams = Record<string, string | number>
+type QueryParams = Record<string, string>
 const get = <F, T>(endpoint: string, queryParams: QueryParams, schema: S.Schema<F, T>) =>
     ApiFootballClient.pipe(
         Effect.flatMap((client) =>
             F.pipe(
-                Effect.promise(() =>
-                    axios({
-                        method: "GET",
-                        baseURL: client.baseUrl,
-                        url: endpoint,
-                        params: queryParams,
-                        headers: {
-                            "x-apisports-key": client.token,
-                        },
-                    }),
-                ),
-                Effect.flatMap((response) => decode(Response(schema), response.data)),
+                Http.request.get(new URL(endpoint, client.baseUrl).href, {
+                    headers: {
+                        "x-apisports-key": client.token,
+                    },
+                    urlParams: queryParams,
+                }),
+                Http.client.fetchOk(),
+                Effect.flatMap(Http.response.schemaBodyJson(Response(schema))),
                 Effect.flatMap((data) =>
                     isResponseOk(data)
                         ? Effect.succeed(data.response)
