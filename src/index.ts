@@ -35,9 +35,10 @@ cli.requiredOption(
         Effect.asUnit,
         Effect.provide(
             F.pipe(
-                Layer.merge(ApiFootballClientLive, GoogleCalendarClientLive),
-                Layer.provideMerge(FootballMatchEventsHandlerDepsLive),
-                Layer.provideMerge(Logger.replace(Logger.defaultLogger, structuredLogger)),
+                FootballMatchEventsHandlerDepsLive,
+                Layer.use(ApiFootballClientLive),
+                Layer.use(GoogleCalendarClientLive),
+                Layer.useMerge(Logger.replace(Logger.defaultLogger, structuredLogger)),
             ),
         ),
         Logger.withMinimumLogLevel(logLevel()),
