@@ -66,7 +66,7 @@ const formatCause = (cause: Cause.Cause<unknown>) =>
     cause != null && cause != Cause.empty ? Cause.pretty(cause) : undefined
 
 const formatSpans = (spans: List.List<LogSpan.LogSpan>, nowMillis: number) =>
-    List.isNil(spans) ? undefined : F.pipe(spans, List.map(LogSpan.render(nowMillis)), List.toReadonlyArray)
+    List.isNil(spans) ? undefined : F.pipe(spans, List.map(LogSpan.render(nowMillis)), List.toArray)
 
 const formatAnnotations = (annotations: HashMap.HashMap<string, unknown>) => {
     const ret: Record<string, unknown> = {}
