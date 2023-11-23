@@ -29,19 +29,8 @@ cli.requiredOption(
     parseInteger,
 ).action(async ({ teamId }: Options) => {
     const result = await F.pipe(
-        footballMatchEventsHandler(teamId),
-        Effect.tap((summary) => Effect.logInfo("Football matches import completed").pipe(Effect.annotateLogs(summary))),
-        Effect.annotateLogs({ teamId }),
-        Effect.asUnit,
-        Effect.provide(
-            F.pipe(
-                FootballMatchEventsHandlerDepsLive,
-                Layer.use(ApiFootballClientLive),
-                Layer.use(GoogleCalendarClientLive),
-                Layer.useMerge(Logger.replace(Logger.defaultLogger, structuredLogger)),
-            ),
-        ),
-        Logger.withMinimumLogLevel(logLevel()),
+        footballMatchEvents(teamId),
+        Effect.provide(FootballMatchEventsLive),
         Effect.runPromiseExit,
     )
 
@@ -57,6 +46,22 @@ cli.requiredOption(
 })
 
 const main = () => cli.parseAsync(process.argv)
+
+const FootballMatchEventsLive = F.pipe(
+    FootballMatchEventsHandlerDepsLive,
+    Layer.use(ApiFootballClientLive),
+    Layer.use(GoogleCalendarClientLive),
+    Layer.useMerge(Logger.replace(Logger.defaultLogger, structuredLogger)),
+)
+
+const footballMatchEvents = (teamId: number) =>
+    F.pipe(
+        footballMatchEventsHandler(teamId),
+        Effect.tap((summary) => Effect.logInfo("Football matches import completed").pipe(Effect.annotateLogs(summary))),
+        Effect.annotateLogs({ teamId }),
+        Effect.asUnit,
+        Logger.withMinimumLogLevel(logLevel()),
+    )
 
 main().catch(() => {
     process.exit(1)
