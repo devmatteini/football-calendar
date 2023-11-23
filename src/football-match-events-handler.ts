@@ -35,7 +35,7 @@ export const footballMatchEventsHandler = (teamId: number): Effect.Effect<Deps, 
                     { concurrency: 2 },
                 ),
                 Effect.map(({ matches, calendarEvents }) =>
-                    F.pipe(footballMatchEvents(matches, calendarEvents), groupByTag),
+                    F.pipe(footballMatchEvents(matches, calendarEvents), groupByEventType),
                 ),
                 Effect.bind("_", (matches) =>
                     Effect.all(
@@ -59,7 +59,7 @@ type Groups<T extends { _tag: string }> = {
     [K in T["_tag"]]: readonly Extract<T, { _tag: K }>[]
 }
 
-const groupByTag = (footballMatchEvents: readonly FootballMatchEvent[]) =>
+const groupByEventType = (footballMatchEvents: readonly FootballMatchEvent[]) =>
     F.pipe(
         footballMatchEvents,
         ROA.reduce(emptyGroups, (state, curr) => {
