@@ -13,6 +13,7 @@ import { red } from "colorette"
 import { structuredLog, structuredLogger } from "./structured-logger"
 import { ApiFootballClientLive } from "./api-football"
 import { GoogleCalendarClientLive } from "./google-calendar"
+import * as EffectExt from "./effect-ext"
 
 const cli = new Command("football-calendar")
     .description("Automatically sync your google calendar with football matches of your favorite team!")
@@ -57,7 +58,7 @@ const FootballMatchEventsLive = F.pipe(
 const footballMatchEvents = (teamId: number) =>
     F.pipe(
         footballMatchEventsHandler(teamId),
-        Effect.tap((summary) => Effect.logInfo("Football matches import completed").pipe(Effect.annotateLogs(summary))),
+        Effect.tap((summary) => EffectExt.logInfo("Football matches import completed", summary)),
         Effect.annotateLogs({ teamId }),
         Effect.asUnit,
         Logger.withMinimumLogLevel(logLevel()),

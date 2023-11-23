@@ -15,6 +15,7 @@ import {
 import { Deps as FootballMatchEventsHandlerDeps } from "./football-match-events-handler"
 import { listEvents, insertEvent, updateEvent, GoogleCalendarEvent, GoogleCalendarClient } from "./google-calendar"
 import * as EventMatchId from "./event-match-id"
+import * as EffectExt from "./effect-ext"
 
 export const FootballMatchEventsHandlerDepsLive = Layer.effect(
     FootballMatchEventsHandlerDeps,
@@ -48,15 +49,12 @@ const createCalendarEvent = ({ match }: CreateFootballMatchEvent) =>
             },
         }),
         Effect.tap(() =>
-            F.pipe(
-                Effect.logDebug("Calendar event created"),
-                Effect.annotateLogs({
-                    matchId: match.id,
-                    match: `${match.homeTeam}-${match.awayTeam}`,
-                    competition: match.competition,
-                    matchDate: match.date.toISOString(),
-                }),
-            ),
+            EffectExt.logDebug("Calendar event created", {
+                matchId: match.id,
+                match: `${match.homeTeam}-${match.awayTeam}`,
+                competition: match.competition,
+                matchDate: match.date.toISOString(),
+            }),
         ),
         Effect.orDie,
     )
@@ -75,15 +73,12 @@ const updateCalendarEvent = ({ match, originalCalendarEvent }: UpdateFootballMat
             },
         }),
         Effect.tap(() =>
-            F.pipe(
-                Effect.logDebug("Calendar event updated"),
-                Effect.annotateLogs({
-                    matchId: match.id,
-                    match: `${match.homeTeam}-${match.awayTeam}`,
-                    competition: match.competition,
-                    matchDate: match.date.toISOString(),
-                }),
-            ),
+            EffectExt.logDebug("Calendar event updated", {
+                matchId: match.id,
+                match: `${match.homeTeam}-${match.awayTeam}`,
+                competition: match.competition,
+                matchDate: match.date.toISOString(),
+            }),
         ),
         Effect.orDie,
     )
