@@ -2,6 +2,7 @@ import * as Effect from "effect/Effect"
 import * as Context from "effect/Context"
 import * as F from "effect/Function"
 import * as ROA from "effect/ReadonlyArray"
+import * as Match from "effect/Match"
 import {
     CalendarEvent,
     FootballMatchEvent,
@@ -34,43 +35,34 @@ export const footballMatchEventsHandler = (teamId: number): Effect.Effect<Deps, 
                     },
                     { concurrency: 2 },
                 ),
-                Effect.map(({ matches, calendarEvents }) =>
-                    F.pipe(footballMatchEvents(matches, calendarEvents), groupByEventType),
-                ),
-                Effect.bind("_", (matches) =>
-                    Effect.all(
-                        F.pipe(
-                            ROA.map(matches.create, (x) => createCalendarEvent(x)),
-                            ROA.appendAll(ROA.map(matches.update, (x) => updateCalendarEvent(x))),
-                        ),
-                        { concurrency: 2, discard: true },
+                Effect.map(({ matches, calendarEvents }) => footballMatchEvents(matches, calendarEvents)),
+                Effect.tap((matches) =>
+                    F.pipe(
+                        matches,
+                        onlyCreateOrUpdateEvents,
+                        ROA.map(createOrUpdateEvents(createCalendarEvent, updateCalendarEvent)),
+                        Effect.allWith({ concurrency: 2, discard: true }),
                     ),
                 ),
-                Effect.map((matches) => ({
-                    created: matches.create.length,
-                    updated: matches.update.length,
-                    nothingChanged: matches.nothingChanged.length,
-                })),
+                Effect.map(toSummary),
             ),
         ),
     )
 
-type Groups<T extends { _tag: string }> = {
-    [K in T["_tag"]]: readonly Extract<T, { _tag: K }>[]
-}
+type CreateOrUpdateEvent = Exclude<FootballMatchEvent, { _tag: "NOTHING_CHANGED" }>
+const onlyCreateOrUpdateEvents = (events: readonly FootballMatchEvent[]) =>
+    ROA.filter(events, (x): x is CreateOrUpdateEvent => x._tag !== "NOTHING_CHANGED")
 
-const groupByEventType = (footballMatchEvents: readonly FootballMatchEvent[]) =>
+const createOrUpdateEvents = (create: Deps["createCalendarEvent"], update: Deps["updateCalendarEvent"]) =>
     F.pipe(
-        footballMatchEvents,
-        ROA.reduce(emptyGroups, (state, curr) => {
-            const previous = state[curr._tag]
-            return { ...state, [curr._tag]: [...previous, curr] }
-        }),
-        ({ CREATE, UPDATE, NOTHING_CHANGED }) => ({
-            create: CREATE,
-            update: UPDATE,
-            nothingChanged: NOTHING_CHANGED,
-        }),
+        Match.type<CreateOrUpdateEvent>(),
+        Match.tag("CREATE", (x) => create(x)),
+        Match.tag("UPDATE", (x) => update(x)),
+        Match.exhaustive,
     )
 
-const emptyGroups: Groups<FootballMatchEvent> = { CREATE: [], UPDATE: [], NOTHING_CHANGED: [] }
+const toSummary = (events: readonly FootballMatchEvent[]): Summary => ({
+    created: ROA.filter(events, (x) => x._tag === "CREATE").length,
+    updated: ROA.filter(events, (x) => x._tag === "UPDATE").length,
+    nothingChanged: ROA.filter(events, (x) => x._tag === "NOTHING_CHANGED").length,
+})
