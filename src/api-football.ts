@@ -4,9 +4,7 @@ import * as Context from "effect/Context"
 import * as Layer from "effect/Layer"
 import * as Config from "effect/Config"
 import * as S from "@effect/schema/Schema"
-import { formatErrors } from "@effect/schema/TreeFormatter"
 import * as Pretty from "@effect/schema/Pretty"
-import * as E from "effect/Either"
 import * as ROA from "effect/ReadonlyArray"
 import * as ORD from "effect/Order"
 import * as Http from "@effect/platform-node/HttpClient"
@@ -28,11 +26,11 @@ export const ApiFootballClientLive = Layer.effect(
 // https://www.api-football.com/documentation-v3#tag/Teams/operation/get-teams-seasons
 export const currentSeason = (team: number) =>
     F.pipe(
-        get("/teams/seasons", { team: team.toString() }, S.number),
+        get("/teams/seasons", { team: team.toString() }, TeamSeason),
         Effect.flatMap(
             ROA.match({
                 onEmpty: () => Effect.fail(new Error(`No seasons for team ${team}`)),
-                onNonEmpty: (seasons) => F.pipe(seasons, ROA.max(ORD.number), Effect.succeed),
+                onNonEmpty: (seasons) => Effect.succeed(ROA.max(seasons, ORD.number)),
             }),
         ),
     )
@@ -69,6 +67,8 @@ const get = <F, T>(endpoint: string, queryParams: QueryParams, schema: S.Schema<
         ),
     )
 
+const TeamSeason = S.number
+
 const FixtureTeam = S.struct({
     id: S.number,
     name: S.string,
@@ -100,9 +100,3 @@ const Response = <F, T>(responseItem: S.Schema<F, T>) =>
 
 const isResponseOk = <T extends { errors: ResponseError }>(response: T) =>
     Array.isArray(response.errors) && response.errors.length === 0
-
-const decode = <F, T>(schema: S.Schema<F, T>, input: unknown) =>
-    F.pipe(
-        S.parseEither(schema)(input, { onExcessProperty: "ignore", errors: "all" }),
-        E.mapLeft((x) => new Error(formatErrors(x.errors))),
-    )
