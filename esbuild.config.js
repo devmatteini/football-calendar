@@ -8,4 +8,7 @@ esbuild
         outfile: ".build/index.js",
         minify: true,
     })
-    .catch(() => process.exit(1))
+    .catch((e) => {
+        console.error("[BUILD ERROR]: ", e)
+        process.exit(1)
+    })
