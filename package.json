@@ -18,9 +18,9 @@
     "scripts:list-events": "tsx scripts/list-events.ts"
   },
   "dependencies": {
-    "@effect/schema": "0.48.0",
-    "@effect/platform-node": "0.31.2",
-    "effect": "2.0.0-next.55",
+    "@effect/schema": "0.49.4",
+    "@effect/platform-node": "0.32.2",
+    "effect": "2.0.0-next.56",
     "@googleapis/calendar": "9.3.2",
     "commander": "11.1.0",
     "colorette": "2.0.20"
