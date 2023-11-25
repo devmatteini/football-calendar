@@ -4,6 +4,7 @@
   "description": "Automatically sync your google calendar with football matches of your favorite team!",
   "author": "Cosimo Matteini",
   "license": "MIT",
+  "packageManager": "pnpm@8.11.0",
   "scripts": {
     "format": "prettier -w src/**/*.ts",
     "typecheck": "tsc --noEmit",
@@ -11,8 +12,8 @@
     "test": "vitest run",
     "test:w": "vitest watch",
     "clean": "rm -rf .build",
-    "build": "npm run clean && node esbuild.config.js",
-    "start": "npm run build && node .build/index.js",
+    "build": "pnpm clean && node esbuild.config.js",
+    "start": "pnpm build && node .build/index.js",
     "scripts:delete-events": "tsx scripts/delete-events.ts",
     "scripts:list-events": "tsx scripts/list-events.ts"
   },

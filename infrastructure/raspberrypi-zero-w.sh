@@ -26,7 +26,7 @@ check_mandatory_env_variables() {
 }
 
 build_app() {
-    npm run build
+    pnpm build
 }
 
 deploy_app() {    

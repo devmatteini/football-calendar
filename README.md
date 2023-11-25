@@ -18,7 +18,7 @@ Table of content:
 ```bash
 git clone --depth=1 https://github.com/devmatteini/football-calendar.git
 cd football-calendar
-npm install
+pnpm install
 ```
 
 ## Setup
@@ -66,7 +66,7 @@ export GOOGLE_CALENDAR_ID="..."
 Search your team id at this page: https://dashboard.api-football.com/soccer/ids/teams
 
 ```bash
-npm run start -- -t <teamId>
+pnpm start -t <teamId>
 # or
 node .build/index.js -t 502
 ```
