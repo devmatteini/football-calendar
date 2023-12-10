@@ -50,9 +50,9 @@ const main = () => cli.parseAsync(process.argv)
 
 const FootballMatchEventsLive = F.pipe(
     FootballMatchEventsHandlerDepsLive,
-    Layer.use(ApiFootballClientLive),
-    Layer.use(GoogleCalendarClientLive),
-    Layer.useMerge(Logger.replace(Logger.defaultLogger, structuredLogger)),
+    Layer.provide(ApiFootballClientLive),
+    Layer.provide(GoogleCalendarClientLive),
+    Layer.provideMerge(Logger.replace(Logger.defaultLogger, structuredLogger)),
 )
 
 const footballMatchEvents = (teamId: number) =>
