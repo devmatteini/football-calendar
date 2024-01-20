@@ -18,7 +18,7 @@ export const ApiFootballClient = Context.Tag<ApiFootballClient>()
 export const ApiFootballClientLive = Layer.effect(
     ApiFootballClient,
     F.pipe(
-        Effect.config(Config.string("API_FOOTBALL_TOKEN")),
+        Config.string("API_FOOTBALL_TOKEN"),
         Effect.map((token) => ApiFootballClient.of({ token, baseUrl: "https://v3.football.api-sports.io" })),
     ),
 )
@@ -90,7 +90,7 @@ export type ApiFootballFixture = S.Schema.To<typeof Fixture>
 
 const ResponseError = S.union(S.array(S.unknown), S.record(S.string, S.unknown))
 type ResponseError = S.Schema.To<typeof ResponseError>
-const ResponseErrorPrint = Pretty.to(ResponseError)
+const ResponseErrorPrint = Pretty.make(ResponseError)
 
 const Response = <F, T>(responseItem: S.Schema<F, T>) =>
     S.struct({

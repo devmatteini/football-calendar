@@ -23,12 +23,10 @@ const realPath = (path: string) => {
 export const GoogleCalendarClientLive = Layer.effect(
     GoogleCalendarClient,
     F.pipe(
-        Effect.config(
-            Config.all({
-                keyFile: Config.string("GOOGLE_CALENDAR_KEY_FILE").pipe(Config.map(realPath)),
-                calendarId: Config.string("GOOGLE_CALENDAR_ID"),
-            }),
-        ),
+        Config.all({
+            keyFile: Config.string("GOOGLE_CALENDAR_KEY_FILE").pipe(Config.map(realPath)),
+            calendarId: Config.string("GOOGLE_CALENDAR_ID"),
+        }),
         Effect.bind("client", ({ keyFile }) =>
             F.pipe(
                 Effect.tryPromise({

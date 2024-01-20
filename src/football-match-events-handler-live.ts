@@ -3,7 +3,7 @@ import * as ROA from "effect/ReadonlyArray"
 import * as Effect from "effect/Effect"
 import * as Layer from "effect/Layer"
 import * as S from "@effect/schema/Schema"
-import { formatErrors } from "@effect/schema/TreeFormatter"
+import { formatError } from "@effect/schema/TreeFormatter"
 import * as E from "effect/Either"
 import { ApiFootballClient, ApiFootballFixture, FixtureStatus, currentSeason, fixtures } from "./api-football"
 import {
@@ -133,7 +133,7 @@ const CalendarListEvent = S.struct({
 const decode = <F, T>(schema: S.Schema<F, T>, input: unknown) =>
     F.pipe(
         S.parseEither(schema)(input, { onExcessProperty: "ignore", errors: "all" }),
-        E.mapLeft((x) => new Error(formatErrors(x.errors))),
+        E.mapLeft((x) => new Error(formatError(x))),
     )
 
 const matchEndTime = (date: Date) => {
