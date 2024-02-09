@@ -13,7 +13,7 @@ export type GoogleCalendarClient = {
     client: GoogleCalendar
     calendarId: string
 }
-export const GoogleCalendarClient = Context.Tag<GoogleCalendarClient>()
+export const GoogleCalendarClient = Context.GenericTag<GoogleCalendarClient>("GoogleCalendarClient")
 
 const realPath = (path: string) => {
     if (!process.env.HOME) return path

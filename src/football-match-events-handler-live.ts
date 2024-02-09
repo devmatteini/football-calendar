@@ -130,9 +130,9 @@ const CalendarListEvent = S.struct({
     }),
 })
 
-const decode = <F, T>(schema: S.Schema<F, T>, input: unknown) =>
+const decode = <A, I>(schema: S.Schema<A, I>, input: unknown) =>
     F.pipe(
-        S.parseEither(schema)(input, { onExcessProperty: "ignore", errors: "all" }),
+        S.decodeUnknownEither(schema)(input, { onExcessProperty: "ignore", errors: "all" }),
         E.mapLeft((x) => new Error(formatError(x))),
     )
 

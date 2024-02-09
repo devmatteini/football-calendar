@@ -13,17 +13,17 @@ import {
 } from "./football-match-events"
 
 export type Deps = {
-    loadMatchesByTeam: (teamId: number) => Effect.Effect<never, never, readonly FootballMatch[]>
-    loadCalendarEventsByTeam: (teamId: number) => Effect.Effect<never, never, readonly CalendarEvent[]>
-    createCalendarEvent: (event: CreateFootballMatchEvent) => Effect.Effect<never, never, void>
-    updateCalendarEvent: (event: UpdateFootballMatchEvent) => Effect.Effect<never, never, void>
+    loadMatchesByTeam: (teamId: number) => Effect.Effect<readonly FootballMatch[]>
+    loadCalendarEventsByTeam: (teamId: number) => Effect.Effect<readonly CalendarEvent[]>
+    createCalendarEvent: (event: CreateFootballMatchEvent) => Effect.Effect<void>
+    updateCalendarEvent: (event: UpdateFootballMatchEvent) => Effect.Effect<void>
 }
 
-export const Deps = Context.Tag<Deps>()
+export const Deps = Context.GenericTag<Deps>("Deps")
 
 type Summary = { created: number; updated: number; nothingChanged: number }
 
-export const footballMatchEventsHandler = (teamId: number): Effect.Effect<Deps, never, Summary> =>
+export const footballMatchEventsHandler = (teamId: number): Effect.Effect<Summary, never, Deps> =>
     F.pipe(
         Deps,
         Effect.flatMap(({ loadMatchesByTeam, loadCalendarEventsByTeam, createCalendarEvent, updateCalendarEvent }) =>

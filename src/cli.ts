@@ -13,7 +13,7 @@ export const parseInteger = (value: string, _previous: number) => {
 const LogLevelSchema = S.union(S.literal("Debug"), S.literal("Info"), S.literal("Error"))
 export const logLevel = () =>
     F.pipe(
-        S.parseEither(LogLevelSchema)(process.env.LOG_LEVEL),
+        S.decodeUnknownEither(LogLevelSchema)(process.env.LOG_LEVEL),
         E.match({
             onLeft: () => LogLevel.Info,
             onRight: LogLevel.fromLiteral,

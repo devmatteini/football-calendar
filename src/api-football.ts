@@ -7,13 +7,13 @@ import * as S from "@effect/schema/Schema"
 import * as Pretty from "@effect/schema/Pretty"
 import * as ROA from "effect/ReadonlyArray"
 import * as ORD from "effect/Order"
-import * as Http from "@effect/platform-node/HttpClient"
+import * as Http from "@effect/platform/HttpClient"
 
 export type ApiFootballClient = {
     token: string
     baseUrl: string
 }
-export const ApiFootballClient = Context.Tag<ApiFootballClient>()
+export const ApiFootballClient = Context.GenericTag<ApiFootballClient>("ApiFootballClient")
 
 export const ApiFootballClientLive = Layer.effect(
     ApiFootballClient,
@@ -44,7 +44,7 @@ export const FixtureStatus = {
 }
 
 type QueryParams = Record<string, string>
-const get = <F, T>(endpoint: string, queryParams: QueryParams, schema: S.Schema<F, T>) =>
+const get = <A, I>(endpoint: string, queryParams: QueryParams, schema: S.Schema<A, I>) =>
     ApiFootballClient.pipe(
         Effect.flatMap((client) =>
             F.pipe(
@@ -92,7 +92,7 @@ const ResponseError = S.union(S.array(S.unknown), S.record(S.string, S.unknown))
 type ResponseError = S.Schema.To<typeof ResponseError>
 const ResponseErrorPrint = Pretty.make(ResponseError)
 
-const Response = <F, T>(responseItem: S.Schema<F, T>) =>
+const Response = <A, I>(responseItem: S.Schema<A, I>) =>
     S.struct({
         errors: ResponseError,
         response: S.array(responseItem),
