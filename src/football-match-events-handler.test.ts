@@ -2,7 +2,7 @@ import { test, expect, vi, beforeEach } from "vitest"
 import * as Effect from "effect/Effect"
 import * as F from "effect/Function"
 import * as Layer from "effect/Layer"
-import { Deps, footballMatchEventsHandler } from "./football-match-events-handler"
+import { FootballMatchEventsHandlerDeps, footballMatchEventsHandler } from "./football-match-events-handler"
 import { CalendarEvent, FootballMatch } from "./football-match-events"
 
 const createCalendarEventSpy = vi.fn(() => Effect.unit)
@@ -38,7 +38,7 @@ test("create, update, ignore matches", async () => {
     })
 })
 
-const DepsTest = (deps: Deps) => Layer.succeed(Deps, deps)
+const DepsTest = (deps: FootballMatchEventsHandlerDeps) => Layer.succeed(FootballMatchEventsHandlerDeps, deps)
 
 const footballMatch = (id: number, date: Date): FootballMatch => ({
     id,

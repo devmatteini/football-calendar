@@ -12,20 +12,24 @@ import {
     footballMatchEvents,
 } from "./football-match-events"
 
-export type Deps = {
+export type FootballMatchEventsHandlerDeps = {
     loadMatchesByTeam: (teamId: number) => Effect.Effect<readonly FootballMatch[]>
     loadCalendarEventsByTeam: (teamId: number) => Effect.Effect<readonly CalendarEvent[]>
     createCalendarEvent: (event: CreateFootballMatchEvent) => Effect.Effect<void>
     updateCalendarEvent: (event: UpdateFootballMatchEvent) => Effect.Effect<void>
 }
 
-export const Deps = Context.GenericTag<Deps>("Deps")
+export const FootballMatchEventsHandlerDeps = Context.GenericTag<FootballMatchEventsHandlerDeps>(
+    "FootballMatchEventsHandlerDeps",
+)
 
 type Summary = { created: number; updated: number; nothingChanged: number }
 
-export const footballMatchEventsHandler = (teamId: number): Effect.Effect<Summary, never, Deps> =>
+export const footballMatchEventsHandler = (
+    teamId: number,
+): Effect.Effect<Summary, never, FootballMatchEventsHandlerDeps> =>
     F.pipe(
-        Deps,
+        FootballMatchEventsHandlerDeps,
         Effect.flatMap(({ loadMatchesByTeam, loadCalendarEventsByTeam, createCalendarEvent, updateCalendarEvent }) =>
             F.pipe(
                 Effect.all(
@@ -53,7 +57,10 @@ type CreateOrUpdateEvent = Exclude<FootballMatchEvent, { _tag: "NOTHING_CHANGED"
 const onlyCreateOrUpdateEvents = (events: readonly FootballMatchEvent[]) =>
     ROA.filter(events, (x): x is CreateOrUpdateEvent => x._tag !== "NOTHING_CHANGED")
 
-const createOrUpdateEvents = (create: Deps["createCalendarEvent"], update: Deps["updateCalendarEvent"]) =>
+const createOrUpdateEvents = (
+    create: FootballMatchEventsHandlerDeps["createCalendarEvent"],
+    update: FootballMatchEventsHandlerDeps["updateCalendarEvent"],
+) =>
     F.pipe(
         Match.type<CreateOrUpdateEvent>(),
         Match.tag("CREATE", (x) => create(x)),

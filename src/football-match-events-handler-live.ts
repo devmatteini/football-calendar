@@ -12,7 +12,7 @@ import {
     CreateFootballMatchEvent,
     UpdateFootballMatchEvent,
 } from "./football-match-events"
-import { Deps as FootballMatchEventsHandlerDeps } from "./football-match-events-handler"
+import { FootballMatchEventsHandlerDeps } from "./football-match-events-handler"
 import { listEvents, insertEvent, updateEvent, GoogleCalendarEvent, GoogleCalendarClient } from "./google-calendar"
 import * as EventMatchId from "./event-match-id"
 import * as EffectExt from "./effect-ext"
