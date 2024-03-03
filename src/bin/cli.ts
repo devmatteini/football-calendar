@@ -1,14 +1,26 @@
 import * as Effect from "effect/Effect"
-import * as Console from "effect/Console"
+import * as F from "effect/Function"
+import * as Layer from "effect/Layer"
+import * as Logger from "effect/Logger"
 import { Command, Options, Span } from "@effect/cli"
 import { NodeContext, NodeRuntime } from "@effect/platform-node"
+import { footballMatchEventsHandler } from "../football-match-events-handler"
+import * as EffectExt from "../common/effect-ext"
+import { FootballMatchEventsHandlerDepsLive } from "../infrastructure/football-match-events-handler-live"
+import { ApiFootballClientLive } from "../api-football"
+import { GoogleCalendarClientLive } from "../google-calendar"
+import { structuredLogger } from "../infrastructure/structured-logger"
+import { logLevel } from "../common/cli"
 
 const rootCommand = Command.make("football-calendar")
 
 const team = Options.integer("team").pipe(Options.withAlias("t"))
-const sync = Command.make("sync", { team }, ({ team }) => {
-    return Console.log(`Running 'football-calendar sync -t ${team}' `)
-})
+const sync = Command.make("sync", { team }, ({ team }) =>
+    Effect.gen(function* (_) {
+        const summary = yield* _(footballMatchEventsHandler(team))
+        yield* _(EffectExt.logInfo("Football matches import completed", summary))
+    }).pipe(Effect.annotateLogs({ teamId: team })),
+)
 
 const command = rootCommand.pipe(Command.withSubcommands([sync]))
 
@@ -18,4 +30,23 @@ const cli = Command.run(command, {
     version: "v1.0.0",
 })
 
-Effect.suspend(() => cli(process.argv)).pipe(Effect.provide(NodeContext.layer), NodeRuntime.runMain)
+const FootballMatchEventsLive = F.pipe(
+    FootballMatchEventsHandlerDepsLive,
+    Layer.provide(ApiFootballClientLive),
+    Layer.provide(GoogleCalendarClientLive),
+)
+
+const MainLive = F.pipe(
+    // keep new line
+    NodeContext.layer,
+    Layer.merge(FootballMatchEventsLive),
+    // TODO: errors are logged with default logger :(
+    Layer.provideMerge(Logger.replace(Logger.defaultLogger, structuredLogger)),
+)
+
+F.pipe(
+    Effect.suspend(() => cli(process.argv)),
+    Effect.provide(MainLive),
+    Logger.withMinimumLogLevel(logLevel()),
+    NodeRuntime.runMain,
+)
