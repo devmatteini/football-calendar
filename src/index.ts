@@ -10,7 +10,7 @@ import { FootballMatchEventsHandlerDepsLive } from "./football-match-events-hand
 import { Command } from "commander"
 import { parseInteger, logLevel } from "./common/cli"
 import { red } from "colorette"
-import { structuredLog, structuredLogger } from "./structured-logger"
+import { structuredLog, structuredLogger } from "./infrastructure/structured-logger"
 import { ApiFootballClientLive } from "./api-football"
 import { GoogleCalendarClientLive } from "./google-calendar"
 import * as EffectExt from "./common/effect-ext"
