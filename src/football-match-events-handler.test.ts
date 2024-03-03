@@ -5,8 +5,6 @@ import * as Layer from "effect/Layer"
 import { FootballMatchEventsHandlerDeps, footballMatchEventsHandler } from "./football-match-events-handler"
 import { CalendarEvent, FootballMatch } from "./football-match-events"
 
-const createCalendarEventSpy = vi.fn(() => Effect.unit)
-const updateCalendarEventSpy = vi.fn(() => Effect.unit)
 const saveCalendarEventSpy = vi.fn(() => Effect.unit)
 
 beforeEach(() => {
@@ -24,8 +22,6 @@ test("create, update, ignore matches", async () => {
     const deps = DepsTest({
         loadMatchesByTeam: () => Effect.succeed([newMatch, updatedMatch, sameMatch]),
         loadCalendarEventsByTeam: () => Effect.succeed(calendarEvents),
-        createCalendarEvent: createCalendarEventSpy,
-        updateCalendarEvent: updateCalendarEventSpy,
         saveCalendarEvent: saveCalendarEventSpy,
     })
 

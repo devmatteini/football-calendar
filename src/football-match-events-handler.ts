@@ -13,8 +13,6 @@ import {
 export type FootballMatchEventsHandlerDeps = {
     loadMatchesByTeam: (teamId: number) => Effect.Effect<readonly FootballMatch[]>
     loadCalendarEventsByTeam: (teamId: number) => Effect.Effect<readonly CalendarEvent[]>
-    createCalendarEvent: (event: CreateFootballMatchEvent) => Effect.Effect<void>
-    updateCalendarEvent: (event: UpdateFootballMatchEvent) => Effect.Effect<void>
     saveCalendarEvent: (event: CreateFootballMatchEvent | UpdateFootballMatchEvent) => Effect.Effect<void>
 }
 

@@ -24,8 +24,6 @@ export const FootballMatchEventsHandlerDepsLive = Layer.effect(
         Effect.context<GoogleCalendarClient | ApiFootballClient>(),
         Effect.map(
             (context): FootballMatchEventsHandlerDeps => ({
-                createCalendarEvent: F.flow(createCalendarEvent, Effect.provide(context)),
-                updateCalendarEvent: F.flow(updateCalendarEvent, Effect.provide(context)),
                 loadMatchesByTeam: F.flow(loadMatchesByTeam, Effect.provide(context), Effect.scoped),
                 loadCalendarEventsByTeam: F.flow(loadCalendarEventsByTeam, Effect.provide(context)),
                 saveCalendarEvent: F.flow(saveCalendarEvent, Effect.provide(context)),
