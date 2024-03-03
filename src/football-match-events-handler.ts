@@ -25,33 +25,26 @@ export const FootballMatchEventsHandlerDeps = Context.GenericTag<FootballMatchEv
 
 type Summary = { created: number; updated: number; nothingChanged: number }
 
-export const footballMatchEventsHandler = (
-    teamId: number,
-): Effect.Effect<Summary, never, FootballMatchEventsHandlerDeps> =>
-    F.pipe(
-        FootballMatchEventsHandlerDeps,
-        Effect.flatMap(({ loadMatchesByTeam, loadCalendarEventsByTeam, createCalendarEvent, updateCalendarEvent }) =>
-            F.pipe(
-                Effect.all(
-                    {
-                        matches: loadMatchesByTeam(teamId),
-                        calendarEvents: loadCalendarEventsByTeam(teamId),
-                    },
-                    { concurrency: 2 },
-                ),
-                Effect.map(({ matches, calendarEvents }) => footballMatchEvents(matches, calendarEvents)),
-                Effect.tap((matches) =>
-                    F.pipe(
-                        matches,
-                        onlyCreateOrUpdateEvents,
-                        ROA.map(createOrUpdateEvents(createCalendarEvent, updateCalendarEvent)),
-                        Effect.allWith({ concurrency: 2, discard: true }),
-                    ),
-                ),
-                Effect.map(toSummary),
-            ),
-        ),
-    )
+export const footballMatchEventsHandler = (teamId: number) =>
+    Effect.gen(function* (_) {
+        const { loadMatchesByTeam, loadCalendarEventsByTeam, createCalendarEvent, updateCalendarEvent } =
+            yield* _(FootballMatchEventsHandlerDeps)
+
+        const [matches, calendarEvents] = yield* _(
+            Effect.all([loadMatchesByTeam(teamId), loadCalendarEventsByTeam(teamId)], { concurrency: 2 }),
+        )
+
+        const matchEvents = footballMatchEvents(matches, calendarEvents)
+
+        yield* _(
+            matchEvents,
+            onlyCreateOrUpdateEvents,
+            ROA.map(createOrUpdateEvents(createCalendarEvent, updateCalendarEvent)),
+            Effect.allWith({ concurrency: 2, discard: true }),
+        )
+
+        return toSummary(matchEvents)
+    })
 
 type CreateOrUpdateEvent = Exclude<FootballMatchEvent, { _tag: "NOTHING_CHANGED" }>
 const onlyCreateOrUpdateEvents = (events: readonly FootballMatchEvent[]) =>
