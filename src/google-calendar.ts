@@ -39,7 +39,7 @@ export const GoogleCalendarClientLive = Layer.effect(
         )
 
         return GoogleCalendarClient.of({ calendarId, client })
-    }),
+    }).pipe(Effect.orDie),
 )
 
 // https://developers.google.com/calendar/api/v3/reference/events/list
@@ -62,6 +62,7 @@ export const listEvents = (privateProperties: Record<string, string>, today: Dat
                     }),
                 catch: (e) => new Error(`Unable to retrieve list of google calendar events: ${e}`),
             }),
+            Effect.orDie,
         )
 
         return response.data.items || []
@@ -81,6 +82,7 @@ export const insertEvent = (event: GoogleCalendarEvent) =>
                     }),
                 catch: (e) => new Error(`Unable to insert google calendar event: ${e}`),
             }),
+            Effect.orDie,
         )
     })
 
@@ -99,5 +101,6 @@ export const updateEvent = (event: GoogleCalendarEvent) =>
                     }),
                 catch: (e) => new Error(`Unable to update google calendar event: ${e}`),
             }),
+            Effect.orDie,
         )
     })
