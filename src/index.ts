@@ -13,7 +13,7 @@ import { red } from "colorette"
 import { structuredLog, structuredLogger } from "./structured-logger"
 import { ApiFootballClientLive } from "./api-football"
 import { GoogleCalendarClientLive } from "./google-calendar"
-import * as EffectExt from "./effect-ext"
+import * as EffectExt from "./common/effect-ext"
 
 const cli = new Command("football-calendar")
     .description("Automatically sync your google calendar with football matches of your favorite team!")
