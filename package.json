@@ -14,6 +14,7 @@
     "clean": "rm -rf .build",
     "build": "pnpm clean && node esbuild.config.js",
     "start": "pnpm build && node .build/index.js",
+    "cli": "tsx ./src/bin/cli.ts",
     "scripts:delete-events": "tsx scripts/delete-events.ts",
     "scripts:list-events": "tsx scripts/list-events.ts"
   },
