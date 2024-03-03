@@ -83,15 +83,10 @@ test("many matches, many calendar events", () => {
     ])
 })
 
-const create = (match: FootballMatch): CreateFootballMatchEvent => ({ _tag: "CREATE", match })
-const update = (
-    match: FootballMatch,
-    originalCalendarEvent: UpdateFootballMatchEvent["originalCalendarEvent"],
-): UpdateFootballMatchEvent => ({ _tag: "UPDATE", match, originalCalendarEvent })
-const nothingChanged = (matchId: FootballMatch["id"]): NothingChangedFootballMatchEvent => ({
-    _tag: "NOTHING_CHANGED",
-    matchId,
-})
+const create = (match: FootballMatch) => CreateFootballMatchEvent({ match })
+const update = (match: FootballMatch, originalCalendarEvent: UpdateFootballMatchEvent["originalCalendarEvent"]) =>
+    UpdateFootballMatchEvent({ match, originalCalendarEvent })
+const nothingChanged = (matchId: FootballMatch["id"]) => NothingChangedFootballMatchEvent({ matchId })
 
 const date = (date: `${number}-${number}-${number}`, time?: `${number}:${number}`) =>
     new Date(`${date}T${time || "00:00"}Z`)
