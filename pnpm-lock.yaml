@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@effect/cli':
+    specifier: 0.34.3
+    version: 0.34.3(@effect/platform@0.46.3)(@effect/printer-ansi@0.32.10)(@effect/printer@0.31.10)(@effect/schema@0.63.2)(effect@2.4.1)
   '@effect/platform':
     specifier: 0.46.3
     version: 0.46.3(@effect/schema@0.63.2)(effect@2.4.1)
@@ -49,6 +52,25 @@ devDependencies:
 
 packages:
 
+  /@effect/cli@0.34.3(@effect/platform@0.46.3)(@effect/printer-ansi@0.32.10)(@effect/printer@0.31.10)(@effect/schema@0.63.2)(effect@2.4.1):
+    resolution: {integrity: sha512-Nvd0tm8HKH2HN4wkztwJJpxatYp06e++8vydi4N3Lg6ES6r2WljWNfybyQZjnQE4rTf4xXSEK2KuPLrsjm47wA==}
+    peerDependencies:
+      '@effect/platform': ^0.46.3
+      '@effect/printer': ^0.31.10
+      '@effect/printer-ansi': ^0.32.10
+      '@effect/schema': ^0.63.2
+      effect: ^2.4.1
+    dependencies:
+      '@effect/platform': 0.46.3(@effect/schema@0.63.2)(effect@2.4.1)
+      '@effect/printer': 0.31.10(@effect/typeclass@0.23.1)(effect@2.4.1)
+      '@effect/printer-ansi': 0.32.10(@effect/typeclass@0.23.1)(effect@2.4.1)
+      '@effect/schema': 0.63.2(effect@2.4.1)(fast-check@3.14.0)
+      effect: 2.4.1
+      ini: 4.1.1
+      toml: 3.0.0
+      yaml: 2.4.0
+    dev: false
+
   /@effect/platform-node-shared@0.2.3(@effect/platform@0.46.3)(effect@2.4.1):
     resolution: {integrity: sha512-H+cwy1O1wqhS5B/F8KiU6vbhSZsTetbe7d5IcJZ3I2iHYqYQIhbJXSsCjBLTyF+s6IdMJLqq//j2VCQKheoUJw==}
     peerDependencies:
@@ -85,6 +107,27 @@ packages:
       path-browserify: 1.0.1
     dev: false
 
+  /@effect/printer-ansi@0.32.10(@effect/typeclass@0.23.1)(effect@2.4.1):
+    resolution: {integrity: sha512-BOLoDUOP840C5WaTfCxAvvoSp8XXwrrH6GnF9WjJ9ViKOL8EZKc0G1PQMLqZwLl7uero0It1Q4Og+PIVDdV+IQ==}
+    peerDependencies:
+      '@effect/typeclass': ^0.23.1
+      effect: ^2.4.1
+    dependencies:
+      '@effect/printer': 0.31.10(@effect/typeclass@0.23.1)(effect@2.4.1)
+      '@effect/typeclass': 0.23.1(effect@2.4.1)
+      effect: 2.4.1
+    dev: false
+
+  /@effect/printer@0.31.10(@effect/typeclass@0.23.1)(effect@2.4.1):
+    resolution: {integrity: sha512-wmrCUhKB6YB/o+JrBsJBD73M/EVuL2yqypXbT4UdqoPtm7zNoQs3WQ5iOmP93yB15KAB82FKdWh67F3roR8gUg==}
+    peerDependencies:
+      '@effect/typeclass': ^0.23.1
+      effect: ^2.4.1
+    dependencies:
+      '@effect/typeclass': 0.23.1(effect@2.4.1)
+      effect: 2.4.1
+    dev: false
+
   /@effect/schema@0.63.2(effect@2.4.1)(fast-check@3.14.0):
     resolution: {integrity: sha512-piS+6dlGmcX8sAPGXdY4T6QmBbY2YXVnYjUguXpClk6FL7lQ9u2aIDib5kjCpciawJjil2VwltmPnMj0NJKKQQ==}
     peerDependencies:
@@ -93,6 +136,14 @@ packages:
     dependencies:
       effect: 2.4.1
       fast-check: 3.14.0
+    dev: false
+
+  /@effect/typeclass@0.23.1(effect@2.4.1):
+    resolution: {integrity: sha512-9IpWSR8sqBAaaXgoLZmCmvpS1CVQmrvXE0xB3ABFR+f4RjrMrnKE+5Np5YuXrc9n3cwGQiGSAD4s259yn8MNsQ==}
+    peerDependencies:
+      effect: ^2.4.1
+    dependencies:
+      effect: 2.4.1
     dev: false
 
   /@esbuild/aix-ppc64@0.19.11:
@@ -829,6 +880,11 @@ packages:
     engines: {node: '>=16.17.0'}
     dev: true
 
+  /ini@4.1.1:
+    resolution: {integrity: sha512-QQnnxNyfvmHFIsj7gkPcYymR8Jdw/o7mp5ZFihxn6h8Ci6fh3Dx4E1gPjpQEpIuPo9XVNY/ZUwh4BPMjGyL01g==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+    dev: false
+
   /is-stream@2.0.1:
     resolution: {integrity: sha512-hFoiJiTl63nn+kstHGBtewWSKnQLpyb155KHheA1l39uvtO9nWIop1p3udqPcUd/xbF1VLMO4n7OI6p7RbngDg==}
     engines: {node: '>=8'}
@@ -1141,6 +1197,10 @@ packages:
     engines: {node: '>=14.0.0'}
     dev: true
 
+  /toml@3.0.0:
+    resolution: {integrity: sha512-y/mWCZinnvxjTKYhJ+pYxwD0mRLVvOtdS2Awbgxln6iEnt4rk0yBxeSBHkGJcPucRiG0e55mwWp+g/05rsrd6w==}
+    dev: false
+
   /tr46@0.0.3:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
     dev: false
@@ -1325,6 +1385,12 @@ packages:
       siginfo: 2.0.0
       stackback: 0.0.2
     dev: true
+
+  /yaml@2.4.0:
+    resolution: {integrity: sha512-j9iR8g+/t0lArF4V6NE/QCfT+CO7iLqrXAHZbJdo+LfjqP1vR8Fg5bSiaq6Q2lOD1AUEVrEVIgABvBFYojJVYQ==}
+    engines: {node: '>= 14'}
+    hasBin: true
+    dev: false
 
   /yocto-queue@1.0.0:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
