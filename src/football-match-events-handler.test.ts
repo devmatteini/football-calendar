@@ -7,6 +7,7 @@ import { CalendarEvent, FootballMatch } from "./football-match-events"
 
 const createCalendarEventSpy = vi.fn(() => Effect.unit)
 const updateCalendarEventSpy = vi.fn(() => Effect.unit)
+const saveCalendarEventSpy = vi.fn(() => Effect.unit)
 
 beforeEach(() => {
     vi.clearAllMocks()
@@ -25,14 +26,16 @@ test("create, update, ignore matches", async () => {
         loadCalendarEventsByTeam: () => Effect.succeed(calendarEvents),
         createCalendarEvent: createCalendarEventSpy,
         updateCalendarEvent: updateCalendarEventSpy,
-        saveCalendarEvent: () => Effect.unit,
+        saveCalendarEvent: saveCalendarEventSpy,
     })
 
     const result = await F.pipe(footballMatchEventsHandler(anyTeam), Effect.provide(deps), Effect.runPromise)
 
     expect(result).toStrictEqual({ created: 1, updated: 1, nothingChanged: 1 })
-    expect(createCalendarEventSpy).toHaveBeenNthCalledWith(1, { _tag: "CREATE", match: newMatch })
-    expect(updateCalendarEventSpy).toHaveBeenNthCalledWith(1, {
+
+    expect(saveCalendarEventSpy).toHaveBeenCalledTimes(2)
+    expect(saveCalendarEventSpy).toHaveBeenNthCalledWith(1, { _tag: "CREATE", match: newMatch })
+    expect(saveCalendarEventSpy).toHaveBeenNthCalledWith(2, {
         _tag: "UPDATE",
         match: updatedMatch,
         originalCalendarEvent: originalEvent("1234"),

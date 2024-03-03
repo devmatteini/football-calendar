@@ -1,8 +1,6 @@
 import * as Effect from "effect/Effect"
 import * as Context from "effect/Context"
-import * as F from "effect/Function"
 import * as ROA from "effect/ReadonlyArray"
-import * as Match from "effect/Match"
 import {
     CalendarEvent,
     FootballMatchEvent,
@@ -28,7 +26,7 @@ type Summary = { created: number; updated: number; nothingChanged: number }
 
 export const footballMatchEventsHandler = (teamId: number) =>
     Effect.gen(function* (_) {
-        const { loadMatchesByTeam, loadCalendarEventsByTeam, createCalendarEvent, updateCalendarEvent } =
+        const { loadMatchesByTeam, loadCalendarEventsByTeam, saveCalendarEvent } =
             yield* _(FootballMatchEventsHandlerDeps)
 
         const [matches, calendarEvents] = yield* _(
@@ -40,8 +38,7 @@ export const footballMatchEventsHandler = (teamId: number) =>
         yield* _(
             matchEvents,
             onlyCreateOrUpdateEvents,
-            ROA.map(createOrUpdateEvents(createCalendarEvent, updateCalendarEvent)),
-            Effect.allWith({ concurrency: 2, discard: true }),
+            Effect.forEach((x) => saveCalendarEvent(x), { concurrency: 2, discard: true }),
         )
 
         return toSummary(matchEvents)
@@ -50,17 +47,6 @@ export const footballMatchEventsHandler = (teamId: number) =>
 type CreateOrUpdateEvent = Exclude<FootballMatchEvent, { _tag: "NOTHING_CHANGED" }>
 const onlyCreateOrUpdateEvents = (events: readonly FootballMatchEvent[]) =>
     ROA.filter(events, (x): x is CreateOrUpdateEvent => x._tag !== "NOTHING_CHANGED")
-
-const createOrUpdateEvents = (
-    create: FootballMatchEventsHandlerDeps["createCalendarEvent"],
-    update: FootballMatchEventsHandlerDeps["updateCalendarEvent"],
-) =>
-    F.pipe(
-        Match.type<CreateOrUpdateEvent>(),
-        Match.tag("CREATE", (x) => create(x)),
-        Match.tag("UPDATE", (x) => update(x)),
-        Match.exhaustive,
-    )
 
 const toSummary = (events: readonly FootballMatchEvent[]): Summary => ({
     created: ROA.filter(events, (x) => x._tag === "CREATE").length,
