@@ -25,7 +25,7 @@ export const FootballMatchEventsHandlerDepsLive = Layer.effect(
             (context): FootballMatchEventsHandlerDeps => ({
                 createCalendarEvent: F.flow(createCalendarEvent, Effect.provide(context)),
                 updateCalendarEvent: F.flow(updateCalendarEvent, Effect.provide(context)),
-                loadMatchesByTeam: F.flow(loadMatchesByTeam, Effect.provide(context)),
+                loadMatchesByTeam: F.flow(loadMatchesByTeam, Effect.provide(context), Effect.scoped),
                 loadCalendarEventsByTeam: F.flow(loadCalendarEventsByTeam, Effect.provide(context)),
             }),
         ),
