@@ -1,12 +1,19 @@
 import { test, expect } from "vitest"
-import { CalendarEvent, FootballMatch, footballMatchEvents } from "./football-match-events"
+import {
+    CalendarEvent,
+    CreateFootballMatchEvent,
+    FootballMatch,
+    NothingChangedFootballMatchEvent,
+    UpdateFootballMatchEvent,
+    footballMatchEvents,
+} from "./football-match-events"
 
 test("new match, no calendar event", () => {
     const match = footballMatch(1, date("2023-09-03", "18:30"))
 
     const result = footballMatchEvents([match], [])
 
-    expect(result).toStrictEqual([{ _tag: "CREATE", match }])
+    expect(result).toStrictEqual([create(match)])
 })
 
 test("match time updated", () => {
@@ -19,13 +26,7 @@ test("match time updated", () => {
     }
     const result = footballMatchEvents([match], [calendarEvent])
 
-    expect(result).toStrictEqual([
-        {
-            _tag: "UPDATE",
-            match,
-            originalCalendarEvent: calendarEvent.originalEvent,
-        },
-    ])
+    expect(result).toStrictEqual([update(match, calendarEvent.originalEvent)])
 })
 
 test("match date updated", () => {
@@ -38,13 +39,7 @@ test("match date updated", () => {
     }
     const result = footballMatchEvents([match], [calendarEvent])
 
-    expect(result).toStrictEqual([
-        {
-            _tag: "UPDATE",
-            match,
-            originalCalendarEvent: calendarEvent.originalEvent,
-        },
-    ])
+    expect(result).toStrictEqual([update(match, calendarEvent.originalEvent)])
 })
 
 test("match not changed", () => {
@@ -57,12 +52,7 @@ test("match not changed", () => {
     }
     const result = footballMatchEvents([match1], [calendarEvent])
 
-    expect(result).toStrictEqual([
-        {
-            _tag: "NOTHING_CHANGED",
-            matchId: match1.id,
-        },
-    ])
+    expect(result).toStrictEqual([nothingChanged(match1.id)])
 })
 
 test("many matches, many calendar events", () => {
@@ -87,20 +77,20 @@ test("many matches, many calendar events", () => {
     )
 
     expect(result).toStrictEqual([
-        {
-            _tag: "CREATE",
-            match: newMatch,
-        },
-        {
-            _tag: "UPDATE",
-            match: updatedMatch,
-            originalCalendarEvent: originalEvent("1234"),
-        },
-        {
-            _tag: "NOTHING_CHANGED",
-            matchId: sameMatch.id,
-        },
+        create(newMatch),
+        update(updatedMatch, originalEvent("1234")),
+        nothingChanged(sameMatch.id),
     ])
+})
+
+const create = (match: FootballMatch): CreateFootballMatchEvent => ({ _tag: "CREATE", match })
+const update = (
+    match: FootballMatch,
+    originalCalendarEvent: UpdateFootballMatchEvent["originalCalendarEvent"],
+): UpdateFootballMatchEvent => ({ _tag: "UPDATE", match, originalCalendarEvent })
+const nothingChanged = (matchId: FootballMatch["id"]): NothingChangedFootballMatchEvent => ({
+    _tag: "NOTHING_CHANGED",
+    matchId,
 })
 
 const date = (date: `${number}-${number}-${number}`, time?: `${number}:${number}`) =>
