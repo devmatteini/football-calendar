@@ -1,13 +1,15 @@
 const esbuild = require("esbuild")
+const fs = require("fs/promises")
 
 esbuild
     .build({
-        entryPoints: ["src/index.ts"],
+        entryPoints: ["src/bin/cli.ts"],
         bundle: true,
         platform: "node",
-        outfile: ".build/index.js",
+        outfile: ".build/cli.js",
         minify: true,
     })
+    .then(() => fs.chmod(".build/cli.js", 0o755))
     .catch((e) => {
         console.error("[BUILD ERROR]: ", e)
         process.exit(1)

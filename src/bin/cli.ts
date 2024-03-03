@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import * as Effect from "effect/Effect"
 import * as F from "effect/Function"
 import * as Layer from "effect/Layer"
