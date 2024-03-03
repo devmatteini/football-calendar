@@ -30,16 +30,19 @@ build_app() {
 }
 
 deploy_app() {    
-    ssh "$REMOTE_HOST" 'mkdir -p ~/.local/apps/football-calendar/'
-    scp .build/index.js "$REMOTE_HOST:~/.local/apps/football-calendar/football-calendar.js"
+    ssh "$REMOTE_HOST" 'mkdir -p ~/.local/bin'
+    ssh "$REMOTE_HOST" 'mkdir -p ~/.local/apps/football-calendar'
+    scp .build/cli.js "$REMOTE_HOST:$BIN"
 }
 
+APP="~/.local/apps/football-calendar"
+BIN="~/.local/bin/football-calendar"
+
 deploy_infra() {
-    app="~/.local/apps/football-calendar"
     user=$(echo "$REMOTE_HOST" | cut -d "@" -f 1)
     
     # Copy GOOGLE_CALENDAR_KEY_FILE to remote
-    remote_google_calendar_key_file="$app/.calendar_keys.json"
+    remote_google_calendar_key_file="$APP/.calendar_keys.json"
     scp "$GOOGLE_CALENDAR_KEY_FILE" "$REMOTE_HOST:${remote_google_calendar_key_file}"
 
     # Create cronjob fot teamId
@@ -51,7 +54,7 @@ GOOGLE_CALENDAR_KEY_FILE=$remote_google_calendar_key_file
 GOOGLE_CALENDAR_ID=$GOOGLE_CALENDAR_ID
 LOG=Debug
 # Run every monday at 10:00 (https://crontab.guru/#0_10_*_*_1)
-0 10 * * 1 $user node $app/football-calendar.js -t $TEAM_ID >> $app/logs-$TEAM_ID.txt 2>&1
+0 10 * * 1 $user $BIN sync -t $TEAM_ID >> $APP/logs-$TEAM_ID.txt 2>&1
 EOL
 SCRIPT
 }
