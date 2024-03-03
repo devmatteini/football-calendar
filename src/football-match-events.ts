@@ -1,6 +1,7 @@
 import * as F from "effect/Function"
 import * as ROA from "effect/ReadonlyArray"
 import * as O from "effect/Option"
+import * as Match from "effect/Match"
 
 export type FootballMatch = {
     id: number
@@ -38,18 +39,27 @@ export const footballMatchEvents = (
     F.pipe(
         matches,
         ROA.map((match) =>
-            F.pipe(
-                calendarEvents,
-                ROA.findFirst((x) => x.matchId === match.id),
-                O.match({
-                    onNone: () => ({ _tag: "CREATE", match }),
-                    onSome: (event) =>
-                        isSameDate(match.date, event.startDate)
-                            ? { _tag: "NOTHING_CHANGED", matchId: match.id }
-                            : { _tag: "UPDATE", match, originalCalendarEvent: event.originalEvent },
-                }),
+            footballMatchEvent(
+                match,
+                ROA.findFirst(calendarEvents, (x) => x.matchId === match.id),
             ),
         ),
+    )
+
+const footballMatchEvent = (match: FootballMatch, event: O.Option<CalendarEvent>): FootballMatchEvent =>
+    F.pipe(
+        Match.value(event),
+        Match.when({ _tag: "None" }, () => ({ _tag: "CREATE" as const, match })),
+        Match.when({ _tag: "Some", value: (x) => isSameDate(match.date, x.startDate) }, () => ({
+            _tag: "NOTHING_CHANGED" as const,
+            matchId: match.id,
+        })),
+        Match.when({ _tag: "Some" }, ({ value }) => ({
+            _tag: "UPDATE" as const,
+            match,
+            originalCalendarEvent: value.originalEvent,
+        })),
+        Match.exhaustive,
     )
 
 const isSameDate = (a: Date, b: Date) => a.getTime() === b.getTime()
