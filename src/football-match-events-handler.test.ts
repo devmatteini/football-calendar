@@ -25,6 +25,7 @@ test("create, update, ignore matches", async () => {
         loadCalendarEventsByTeam: () => Effect.succeed(calendarEvents),
         createCalendarEvent: createCalendarEventSpy,
         updateCalendarEvent: updateCalendarEventSpy,
+        saveCalendarEvent: () => Effect.unit,
     })
 
     const result = await F.pipe(footballMatchEventsHandler(anyTeam), Effect.provide(deps), Effect.runPromise)

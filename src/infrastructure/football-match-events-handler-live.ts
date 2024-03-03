@@ -27,6 +27,7 @@ export const FootballMatchEventsHandlerDepsLive = Layer.effect(
                 updateCalendarEvent: F.flow(updateCalendarEvent, Effect.provide(context)),
                 loadMatchesByTeam: F.flow(loadMatchesByTeam, Effect.provide(context), Effect.scoped),
                 loadCalendarEventsByTeam: F.flow(loadCalendarEventsByTeam, Effect.provide(context)),
+                saveCalendarEvent: () => Effect.unit,
             }),
         ),
     ),
