@@ -21,7 +21,7 @@ const sync = Command.make("sync", { team }, ({ team }) =>
     Effect.gen(function* (_) {
         const summary = yield* _(footballMatchEventsHandler(team))
         yield* _(EffectExt.logInfo("Football matches import completed", summary))
-    }).pipe(Effect.annotateLogs({ teamId: team })),
+    }).pipe(Effect.provide(FootballMatchEventsLive), Effect.annotateLogs({ teamId: team })),
 )
 
 const command = rootCommand.pipe(Command.withSubcommands([sync]))
@@ -41,7 +41,6 @@ const FootballMatchEventsLive = F.pipe(
 const MainLive = F.pipe(
     // keep new line
     NodeContext.layer,
-    Layer.merge(FootballMatchEventsLive),
     // TODO: errors are logged with default logger :(
     Layer.provideMerge(Logger.replace(Logger.defaultLogger, structuredLogger)),
 )
