@@ -5,17 +5,17 @@ import * as Layer from "effect/Layer"
 import * as S from "@effect/schema/Schema"
 import { formatError } from "@effect/schema/TreeFormatter"
 import * as E from "effect/Either"
-import { ApiFootballClient, ApiFootballFixture, FixtureStatus, currentSeason, fixtures } from "./api-football"
+import { ApiFootballClient, ApiFootballFixture, FixtureStatus, currentSeason, fixtures } from "../api-football"
 import {
     CalendarEvent,
     FootballMatch,
     CreateFootballMatchEvent,
     UpdateFootballMatchEvent,
-} from "./football-match-events"
-import { FootballMatchEventsHandlerDeps } from "./football-match-events-handler"
-import { listEvents, insertEvent, updateEvent, GoogleCalendarEvent, GoogleCalendarClient } from "./google-calendar"
-import * as EventMatchId from "./event-match-id"
-import * as EffectExt from "./common/effect-ext"
+} from "../football-match-events"
+import { FootballMatchEventsHandlerDeps } from "../football-match-events-handler"
+import { listEvents, insertEvent, updateEvent, GoogleCalendarEvent, GoogleCalendarClient } from "../google-calendar"
+import * as EventMatchId from "../event-match-id"
+import * as EffectExt from "../common/effect-ext"
 
 export const FootballMatchEventsHandlerDepsLive = Layer.effect(
     FootballMatchEventsHandlerDeps,
