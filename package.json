@@ -24,9 +24,7 @@
     "@effect/platform-node": "0.44.11",
     "@effect/cli": "0.34.3",
     "effect": "2.4.1",
-    "@googleapis/calendar": "9.6.0",
-    "commander": "11.1.0",
-    "colorette": "2.0.20"
+    "@googleapis/calendar": "9.6.0"
   },
   "devDependencies": {
     "@types/node": "18.18.9",
