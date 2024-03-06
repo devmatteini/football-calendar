@@ -32,7 +32,7 @@ build_app() {
 deploy_app() {    
     ssh "$REMOTE_HOST" 'mkdir -p ~/.local/bin'
     ssh "$REMOTE_HOST" 'mkdir -p ~/.local/apps/football-calendar'
-    scp .build/cli.js "$REMOTE_HOST:$BIN"
+    scp .build/football-calendar "$REMOTE_HOST:$BIN"
 }
 
 APP="~/.local/apps/football-calendar"
