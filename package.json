@@ -27,7 +27,7 @@
     "@googleapis/calendar": "9.6.0"
   },
   "devDependencies": {
-    "@types/node": "18.18.9",
+    "@types/node": "20.11.25",
     "typescript": "5.3.3",
     "prettier": "3.2.4",
     "vitest": "1.2.1",
