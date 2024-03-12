@@ -10,7 +10,7 @@ import * as EffectExt from "../common/effect-ext"
 import { FootballMatchEventsHandlerDepsLive } from "../infrastructure/football-match-events-handler-live"
 import { ApiFootballClientLive } from "../api-football"
 import { GoogleCalendarClientLive } from "../google-calendar"
-import { LoggerLive } from "../infrastructure/logger"
+import { LoggerLive, logUnexpectedError } from "../infrastructure/logger"
 
 const rootCommand = Command.make("football-calendar")
 
@@ -39,11 +39,12 @@ const FootballMatchEventsLive = F.pipe(
 const MainLive = F.pipe(
     // keep new line
     NodeContext.layer,
-    Layer.provide(LoggerLive),
+    Layer.provideMerge(LoggerLive),
 )
 
 F.pipe(
     Effect.suspend(() => cli(process.argv)),
     Effect.provide(MainLive),
+    Effect.tapErrorCause(logUnexpectedError),
     NodeRuntime.runMain,
 )

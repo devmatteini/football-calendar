@@ -34,5 +34,10 @@
     "esbuild": "0.19.11",
     "tsx": "4.7.0"
   },
-  "keywords": []
+  "keywords": [],
+  "pnpm": {
+    "patchedDependencies": {
+      "@effect/platform-node-shared@0.2.3": "patches/@effect__platform-node-shared@0.2.3.patch"
+    }
+  }
 }

@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@effect/platform-node-shared@0.2.3':
+    hash: br5cqajar3adubewizq4zbdici
+    path: patches/@effect__platform-node-shared@0.2.3.patch
+
 dependencies:
   '@effect/cli':
     specifier: 0.34.3
@@ -65,7 +70,7 @@ packages:
       yaml: 2.4.0
     dev: false
 
-  /@effect/platform-node-shared@0.2.3(@effect/platform@0.46.3)(effect@2.4.1):
+  /@effect/platform-node-shared@0.2.3(patch_hash=br5cqajar3adubewizq4zbdici)(@effect/platform@0.46.3)(effect@2.4.1):
     resolution: {integrity: sha512-H+cwy1O1wqhS5B/F8KiU6vbhSZsTetbe7d5IcJZ3I2iHYqYQIhbJXSsCjBLTyF+s6IdMJLqq//j2VCQKheoUJw==}
     peerDependencies:
       '@effect/platform': ^0.46.3
@@ -75,6 +80,7 @@ packages:
       effect: 2.4.1
       multipasta: 0.1.21
     dev: false
+    patched: true
 
   /@effect/platform-node@0.44.11(@effect/platform@0.46.3)(effect@2.4.1):
     resolution: {integrity: sha512-cj2vDaMcpxlvPeEtuzsN7fznmmCAKU6H7HGRKkzXpny8uY0zvAGJU2kFuTSRo26oJaRvJaaYHhHERAlv8vo9wA==}
@@ -83,7 +89,7 @@ packages:
       effect: ^2.4.1
     dependencies:
       '@effect/platform': 0.46.3(@effect/schema@0.63.2)(effect@2.4.1)
-      '@effect/platform-node-shared': 0.2.3(@effect/platform@0.46.3)(effect@2.4.1)
+      '@effect/platform-node-shared': 0.2.3(patch_hash=br5cqajar3adubewizq4zbdici)(@effect/platform@0.46.3)(effect@2.4.1)
       effect: 2.4.1
       mime: 3.0.0
     dev: false

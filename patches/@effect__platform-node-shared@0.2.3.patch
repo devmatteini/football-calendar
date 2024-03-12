@@ -1,0 +1,36 @@
+diff --git a/dist/cjs/internal/runtime.js b/dist/cjs/internal/runtime.js
+index 4b8a59e618ff8ecdfe2af38a476cbad56fa52571..b205088941553972be68886c1dadf5e835c31edc 100644
+--- a/dist/cjs/internal/runtime.js
++++ b/dist/cjs/internal/runtime.js
+@@ -35,12 +35,7 @@ function _interopRequireWildcard(e, r) {
+ /** @internal */
+ const runMain = (effect, teardown = _Runtime.defaultTeardown) => {
+   const keepAlive = setInterval(() => {}, 2 ** 31 - 1);
+-  const fiber = Effect.runFork(Effect.tapErrorCause(effect, cause => {
+-    if (Cause.isInterruptedOnly(cause)) {
+-      return Effect.unit;
+-    }
+-    return Effect.logError(cause);
+-  }));
++  const fiber = Effect.runFork(effect);
+   fiber.addObserver(exit => {
+     clearInterval(keepAlive);
+     teardown(exit, code => {
+diff --git a/dist/esm/internal/runtime.js b/dist/esm/internal/runtime.js
+index feafd38bc66b3770af51ec3a2b29a575f0a5e80b..28f7508e0866a3f8e4a5ca6167c21996be0bcdc7 100644
+--- a/dist/esm/internal/runtime.js
++++ b/dist/esm/internal/runtime.js
+@@ -4,12 +4,7 @@ import * as Effect from "effect/Effect";
+ /** @internal */
+ export const runMain = (effect, teardown = defaultTeardown) => {
+   const keepAlive = setInterval(() => {}, 2 ** 31 - 1);
+-  const fiber = Effect.runFork(Effect.tapErrorCause(effect, cause => {
+-    if (Cause.isInterruptedOnly(cause)) {
+-      return Effect.unit;
+-    }
+-    return Effect.logError(cause);
+-  }));
++  const fiber = Effect.runFork(effect);
+   fiber.addObserver(exit => {
+     clearInterval(keepAlive);
+     teardown(exit, code => {
