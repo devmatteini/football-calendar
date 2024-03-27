@@ -19,11 +19,11 @@
     "scripts:list-events": "tsx scripts/list-events.ts"
   },
   "dependencies": {
-    "@effect/schema": "0.63.2",
-    "@effect/platform": "0.46.3",
-    "@effect/platform-node": "0.44.11",
-    "@effect/cli": "0.34.3",
-    "effect": "2.4.1",
+    "@effect/schema": "0.64.15",
+    "@effect/platform": "0.48.21",
+    "@effect/platform-node": "0.45.23",
+    "@effect/cli": "0.35.23",
+    "effect": "2.4.15",
     "@googleapis/calendar": "9.6.0"
   },
   "devDependencies": {
@@ -34,10 +34,5 @@
     "esbuild": "0.19.11",
     "tsx": "4.7.0"
   },
-  "keywords": [],
-  "pnpm": {
-    "patchedDependencies": {
-      "@effect/platform-node-shared@0.2.3": "patches/@effect__platform-node-shared@0.2.3.patch"
-    }
-  }
+  "keywords": []
 }

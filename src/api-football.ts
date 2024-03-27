@@ -86,10 +86,10 @@ const Fixture = S.struct({
         away: FixtureTeam,
     }),
 })
-export type ApiFootballFixture = S.Schema.To<typeof Fixture>
+export type ApiFootballFixture = S.Schema.Type<typeof Fixture>
 
 const ResponseError = S.union(S.array(S.unknown), S.record(S.string, S.unknown))
-type ResponseError = S.Schema.To<typeof ResponseError>
+type ResponseError = S.Schema.Type<typeof ResponseError>
 const ResponseErrorPrint = Pretty.make(ResponseError)
 
 const Response = <A, I>(responseItem: S.Schema<A, I>) =>
