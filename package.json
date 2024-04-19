@@ -4,7 +4,7 @@
   "description": "Automatically sync your google calendar with football matches of your favorite team!",
   "author": "Cosimo Matteini",
   "license": "MIT",
-  "packageManager": "pnpm@8.11.0",
+  "packageManager": "pnpm@8.15.3",
   "scripts": {
     "format": "prettier -w src/**/*.ts",
     "typecheck": "tsc --noEmit",
