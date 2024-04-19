@@ -5,7 +5,7 @@ import * as Layer from "effect/Layer"
 import { FootballMatchEventsHandlerDeps, footballMatchEventsHandler } from "./football-match-events-handler"
 import { CalendarEvent, FootballMatch } from "./football-match-events"
 
-const saveCalendarEventSpy = vi.fn(() => Effect.unit)
+const saveCalendarEventSpy = vi.fn(() => Effect.void)
 
 beforeEach(() => {
     vi.clearAllMocks()

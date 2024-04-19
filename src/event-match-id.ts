@@ -1,6 +1,6 @@
 import * as S from "@effect/schema/Schema"
 
-export const Schema = S.struct({
+export const Schema = S.Struct({
     matchId: S.NumberFromString,
     teamId: S.NumberFromString,
 })

@@ -1,6 +1,6 @@
 import * as Effect from "effect/Effect"
 import * as Context from "effect/Context"
-import * as ROA from "effect/ReadonlyArray"
+import * as ROA from "effect/Array"
 import {
     CalendarEvent,
     FootballMatchEvent,

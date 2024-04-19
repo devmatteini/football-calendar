@@ -1,5 +1,5 @@
 import * as F from "effect/Function"
-import * as ROA from "effect/ReadonlyArray"
+import * as ROA from "effect/Array"
 import * as O from "effect/Option"
 import * as Match from "effect/Match"
 import * as Data from "effect/Data"

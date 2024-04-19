@@ -5,7 +5,7 @@ import * as Layer from "effect/Layer"
 import * as Config from "effect/Config"
 import * as S from "@effect/schema/Schema"
 import * as Pretty from "@effect/schema/Pretty"
-import * as ROA from "effect/ReadonlyArray"
+import * as ROA from "effect/Array"
 import * as ORD from "effect/Order"
 import * as Http from "@effect/platform/HttpClient"
 
@@ -54,7 +54,7 @@ const get = <A, I>(endpoint: string, queryParams: QueryParams, schema: S.Schema<
                     },
                     urlParams: queryParams,
                 }),
-                Http.client.fetchOk(),
+                Http.client.fetchOk,
                 Effect.flatMap(Http.response.schemaBodyJson(Response(schema))),
                 Effect.flatMap((data) =>
                     isResponseOk(data)
@@ -67,35 +67,35 @@ const get = <A, I>(endpoint: string, queryParams: QueryParams, schema: S.Schema<
         ),
     )
 
-const TeamSeason = S.number
+const TeamSeason = S.Number
 
-const FixtureTeam = S.struct({
-    id: S.number,
-    name: S.string,
+const FixtureTeam = S.Struct({
+    id: S.Number,
+    name: S.String,
 })
-const Fixture = S.struct({
-    fixture: S.struct({
-        id: S.number,
+const Fixture = S.Struct({
+    fixture: S.Struct({
+        id: S.Number,
         date: S.Date,
     }),
-    league: S.struct({
-        name: S.string,
+    league: S.Struct({
+        name: S.String,
     }),
-    teams: S.struct({
+    teams: S.Struct({
         home: FixtureTeam,
         away: FixtureTeam,
     }),
 })
 export type ApiFootballFixture = S.Schema.Type<typeof Fixture>
 
-const ResponseError = S.union(S.array(S.unknown), S.record(S.string, S.unknown))
+const ResponseError = S.Union(S.Array(S.Unknown), S.Record(S.String, S.Unknown))
 type ResponseError = S.Schema.Type<typeof ResponseError>
 const ResponseErrorPrint = Pretty.make(ResponseError)
 
 const Response = <A, I>(responseItem: S.Schema<A, I>) =>
-    S.struct({
+    S.Struct({
         errors: ResponseError,
-        response: S.array(responseItem),
+        response: S.Array(responseItem),
     })
 
 const isResponseOk = <T extends { errors: ResponseError }>(response: T) =>

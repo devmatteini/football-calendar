@@ -4,7 +4,7 @@ import * as F from "effect/Function"
 import * as Context from "effect/Context"
 import * as Layer from "effect/Layer"
 import * as Config from "effect/Config"
-import * as ROA from "effect/ReadonlyArray"
+import * as ROA from "effect/Array"
 
 type GoogleCalendar = calendar_v3.Calendar
 export type GoogleCalendarEvent = calendar_v3.Schema$Event

@@ -1,9 +1,9 @@
 import * as F from "effect/Function"
-import * as ROA from "effect/ReadonlyArray"
+import * as ROA from "effect/Array"
 import * as Effect from "effect/Effect"
 import * as Layer from "effect/Layer"
 import * as S from "@effect/schema/Schema"
-import { formatError } from "@effect/schema/TreeFormatter"
+import { formatErrorSync } from "@effect/schema/TreeFormatter"
 import * as E from "effect/Either"
 import { ApiFootballClient, ApiFootballFixture, FixtureStatus, currentSeason, fixtures } from "../api-football"
 import {
@@ -129,11 +129,11 @@ const validateCalendarEvent = (originalEvent: GoogleCalendarEvent) =>
         ),
     )
 
-const CalendarListEvent = S.struct({
-    start: S.struct({
+const CalendarListEvent = S.Struct({
+    start: S.Struct({
         dateTime: S.Date,
     }),
-    extendedProperties: S.struct({
+    extendedProperties: S.Struct({
         private: EventMatchId.Schema,
     }),
 })
@@ -141,7 +141,7 @@ const CalendarListEvent = S.struct({
 const decode = <A, I>(schema: S.Schema<A, I>, input: unknown) =>
     F.pipe(
         S.decodeUnknownEither(schema)(input, { onExcessProperty: "ignore", errors: "all" }),
-        E.mapLeft((x) => new Error(formatError(x))),
+        E.mapLeft((x) => new Error(formatErrorSync(x))),
     )
 
 const matchEndTime = (date: Date) => {
