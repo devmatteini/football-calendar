@@ -46,6 +46,7 @@ pnpm install
     **NOTE: make sure to set GMT/UTC as time zone (from my tests with other time zones it may cause issues)**
 
 3. Open the newly created calendar -> Share with specific people or groups -> Add people or groups -> Insert the service account email (you can find this in the service account list or detail page) and `Make changes to events` as permissions
+4. If you want reminders, open the newly created calendar settings -> Event notifications -> Add notification (for some reasons Google Calendar API is not able to set reminders on non-primary calendars).
 
 ## Usage
 
@@ -66,9 +67,14 @@ export GOOGLE_CALENDAR_ID="..."
 Search your team id at this page: https://dashboard.api-football.com/soccer/ids/teams
 
 ```bash
-pnpm start -t <teamId>
-# or
-node .build/index.js -t 502
+pnpm start sync -t <teamId>
+```
+
+### Build
+
+```bash
+pnpm build
+./.build/football-calendar sync -t <teamId>
 ```
 
 ### Logging
