@@ -4,8 +4,8 @@ export const Schema = S.Struct({
     matchId: S.NumberFromString,
     teamId: S.NumberFromString,
 })
-export type EventMatchId = S.Schema.Type<typeof Schema>
-export type EventMatchIdEncoded = S.Schema.Encoded<typeof Schema>
+export type EventMatchId = typeof Schema.Type
+export type EventMatchIdEncoded = typeof Schema.Encoded
 
 export const encodeTeam = (teamId: number): Pick<EventMatchIdEncoded, "teamId"> => ({ teamId: teamId.toString() })
 export const encode = ({ matchId, teamId }: EventMatchId): EventMatchIdEncoded => ({
