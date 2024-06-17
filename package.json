@@ -19,11 +19,11 @@
     "scripts:list-events": "tsx scripts/list-events.ts"
   },
   "dependencies": {
-    "@effect/schema": "0.66.4",
-    "@effect/platform": "0.50.1",
-    "@effect/platform-node": "0.47.1",
-    "@effect/cli": "0.36.6",
-    "effect": "3.0.3",
+    "@effect/schema": "0.68.0",
+    "@effect/platform": "0.57.3",
+    "@effect/platform-node": "0.51.12",
+    "@effect/cli": "0.36.47",
+    "effect": "3.3.4",
     "@googleapis/calendar": "9.6.0"
   },
   "devDependencies": {
