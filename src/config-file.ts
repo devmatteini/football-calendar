@@ -15,11 +15,14 @@ export const Team = S.TaggedStruct("Team", {
 })
 export type Team = typeof Team.Type
 
-export const FootballCalendar = S.NonEmptyArray(Team)
+export const FootballCalendar = S.Union(Team)
 export type FootballCalendar = typeof FootballCalendar.Type
 
+export const FootballCalendars = S.NonEmptyArray(Team)
+export type FootballCalendars = typeof FootballCalendars.Type
+
 export type FootballCalendarConfig = {
-    calendar: FootballCalendar
+    calendars: FootballCalendars
 }
 export const FootballCalendarConfig = Context.GenericTag<FootballCalendarConfig>("FootballCalendarConfig")
 
@@ -39,12 +42,12 @@ export const FootballCalendarConfigLive = Layer.effect(
                 catch: (e) => `Unable to parse configuration file: ${e}`,
             }),
         )
-        const calendar = yield* _(
-            S.decodeUnknown(FootballCalendar)(json, { errors: "all" }),
+        const calendars = yield* _(
+            S.decodeUnknown(FootballCalendars)(json, { errors: "all" }),
             Effect.mapError((e) => `Configuration file issues: ${TreeFormatter.formatErrorSync(e)}`),
         )
 
-        return FootballCalendarConfig.of({ calendar })
+        return FootballCalendarConfig.of({ calendars: calendars })
     }).pipe(Effect.orDie),
 )
 
