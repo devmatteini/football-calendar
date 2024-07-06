@@ -1,7 +1,5 @@
 # Infrastructure
 
-## Raspberry Pi Zero W
-
 From the root directory of this repository run:
 
 ```bash
@@ -10,7 +8,7 @@ export GOOGLE_CALENDAR_KEY_FILE="..."
 export GOOGLE_CALENDAR_ID="..."
 export REMOTE_HOST="<user>@<ip>"
 
-./infrastructure/raspberrypi-zero-w.sh <team_id>
+./infrastructure/raspberrypi-4.sh
 ```
 
 This script will:
