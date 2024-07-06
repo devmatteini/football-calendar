@@ -10,6 +10,7 @@ Table of content:
 -   [Setup](#setup)
     -   [Api-Football](#api-football)
     -   [Google Calendar](#google-calendar)
+-   [Build executable](#build)
 -   [Usage](#usage)
 -   [License](#license)
 
@@ -48,11 +49,21 @@ pnpm install
 3. Open the newly created calendar -> Share with specific people or groups -> Add people or groups -> Insert the service account email (you can find this in the service account list or detail page) and `Make changes to events` as permissions
 4. If you want reminders, open the newly created calendar settings -> Event notifications -> Add notification (for some reasons Google Calendar API is not able to set reminders on non-primary calendars).
 
+## Build
+
+Build and then move the executable to a directory in your `$PATH`
+
+```bash
+pnpm build
+mv .build/football-calendar ~/.local/bin
+football-calendar --help
+```
+
 ## Usage
 
 If you haven't already done so, follow the [setup](#setup) process.
 
-Export this environment variables:
+### Export environment variables
 
 ```bash
 export API_FOOTBALL_TOKEN="..."
@@ -64,17 +75,31 @@ export GOOGLE_CALENDAR_KEY_FILE="/path/to/calendar/keys.json"
 export GOOGLE_CALENDAR_ID="..."
 ```
 
-Search your team id at this page: https://dashboard.api-football.com/soccer/ids/teams
+### Create configuration file
 
-```bash
-pnpm start sync -t <teamId>
+These are the default paths where the configuration file is searched:
+
+-   `$XDG_CONFIG_HOME/football-calendar/config.json`
+-   `$HOME/.config/football-calendar/config.json`
+
+You can change the default path with `export FOOTBALL_CALENDAR_CONFIG=/path/to/file.json` environment variable.
+
+Search your teams at this page: https://dashboard.api-football.com/soccer/ids/teams
+
+```json
+[
+    {
+        "_tag": "Team",
+        "teamId": 529,
+        "name": "Barcelona" // This is just to easily identify the team
+    }
+]
 ```
 
-### Build
+### Run the application
 
 ```bash
-pnpm build
-./.build/football-calendar sync -t <teamId>
+football-calendar sync
 ```
 
 ### Logging
