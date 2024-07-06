@@ -7,7 +7,9 @@ import * as S from "@effect/schema/Schema"
 import * as Pretty from "@effect/schema/Pretty"
 import * as ROA from "effect/Array"
 import * as ORD from "effect/Order"
-import * as Http from "@effect/platform/HttpClient"
+import * as HttpClient from "@effect/platform/HttpClient"
+import * as HttpClientRequest from "@effect/platform/HttpClientRequest"
+import * as HttpClientResponse from "@effect/platform/HttpClientResponse"
 
 export type ApiFootballClient = {
     token: string
@@ -48,14 +50,14 @@ const get = <A, I>(endpoint: string, queryParams: QueryParams, schema: S.Schema<
     ApiFootballClient.pipe(
         Effect.flatMap((client) =>
             F.pipe(
-                Http.request.get(new URL(endpoint, client.baseUrl).href, {
+                HttpClientRequest.get(new URL(endpoint, client.baseUrl).href, {
                     headers: {
                         "x-apisports-key": client.token,
                     },
                     urlParams: queryParams,
                 }),
-                Http.client.fetchOk,
-                Effect.flatMap(Http.response.schemaBodyJson(Response(schema))),
+                HttpClient.fetchOk,
+                Effect.flatMap(HttpClientResponse.schemaBodyJson(Response(schema))),
                 Effect.flatMap((data) =>
                     isResponseOk(data)
                         ? Effect.succeed(data.response)
@@ -63,6 +65,7 @@ const get = <A, I>(endpoint: string, queryParams: QueryParams, schema: S.Schema<
                               new Error(`Response for ${endpoint} failed with ${ResponseErrorPrint(data.errors)}`),
                           ),
                 ),
+                Effect.scoped,
             ),
         ),
     )
