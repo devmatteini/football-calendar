@@ -4,6 +4,7 @@ import * as F from "effect/Function"
 import * as Layer from "effect/Layer"
 import { FootballMatchEventsHandlerDeps, footballMatchEventsHandler } from "./football-match-events-handler"
 import { CalendarEvent, FootballMatch } from "./football-match-events"
+import { Team } from "./config-file"
 
 const saveCalendarEventSpy = vi.fn(() => Effect.void)
 
@@ -57,4 +58,7 @@ const calendarEvent = (matchId: number, startDate: Date, eventId?: string): Cale
 const date = (date: `${number}-${number}-${number}`, time?: `${number}:${number}`) =>
     new Date(`${date}T${time || "00:00"}Z`)
 const originalEvent = (id: string): CalendarEvent["originalEvent"] => ({ id })
-const anyTeam = 1
+const anyTeam = Team.make({
+    name: "ANY_TEAM",
+    teamId: 1,
+})

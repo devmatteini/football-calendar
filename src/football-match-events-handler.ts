@@ -9,6 +9,7 @@ import {
     UpdateFootballMatchEvent,
     footballMatchEvents,
 } from "./football-match-events"
+import { FootballCalendar } from "./config-file"
 
 export type FootballMatchEventsHandlerDeps = {
     loadMatchesByTeam: (teamId: number) => Effect.Effect<readonly FootballMatch[]>
@@ -22,13 +23,15 @@ export const FootballMatchEventsHandlerDeps = Context.GenericTag<FootballMatchEv
 
 type Summary = { created: number; updated: number; nothingChanged: number }
 
-export const footballMatchEventsHandler = (teamId: number) =>
+export const footballMatchEventsHandler = (calendar: FootballCalendar) =>
     Effect.gen(function* (_) {
         const { loadMatchesByTeam, loadCalendarEventsByTeam, saveCalendarEvent } =
             yield* _(FootballMatchEventsHandlerDeps)
 
         const [matches, calendarEvents] = yield* _(
-            Effect.all([loadMatchesByTeam(teamId), loadCalendarEventsByTeam(teamId)], { concurrency: 2 }),
+            Effect.all([loadMatchesByTeam(calendar.teamId), loadCalendarEventsByTeam(calendar.teamId)], {
+                concurrency: 2,
+            }),
         )
 
         const matchEvents = footballMatchEvents(matches, calendarEvents)

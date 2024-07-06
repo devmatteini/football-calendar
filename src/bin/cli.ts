@@ -3,7 +3,7 @@
 import * as Effect from "effect/Effect"
 import * as F from "effect/Function"
 import * as Layer from "effect/Layer"
-import { Command, Options, Span } from "@effect/cli"
+import { Command, Span } from "@effect/cli"
 import { NodeContext, NodeRuntime } from "@effect/platform-node"
 import { footballMatchEventsHandler } from "../football-match-events-handler"
 import * as EffectExt from "../common/effect-ext"
@@ -11,15 +11,24 @@ import { FootballMatchEventsHandlerDepsLive } from "../infrastructure/football-m
 import { ApiFootballClientLive } from "../api-football"
 import { GoogleCalendarClientLive } from "../google-calendar"
 import { LoggerLive, logUnexpectedError } from "../infrastructure/logger"
+import { FootballCalendarConfig, FootballCalendarConfigLive } from "../config-file"
 
 const rootCommand = Command.make("football-calendar")
 
-const team = Options.integer("team").pipe(Options.withAlias("t"))
-const sync = Command.make("sync", { team }, ({ team }) =>
+const sync = Command.make("sync", {}, () =>
     Effect.gen(function* (_) {
-        const summary = yield* _(footballMatchEventsHandler(team))
-        yield* _(EffectExt.logDebug("Football matches import completed", summary))
-    }).pipe(Effect.provide(FootballMatchEventsLive), Effect.annotateLogs({ teamId: team })),
+        const { calendars } = yield* _(FootballCalendarConfig)
+
+        yield* _(
+            Effect.forEach(calendars, (calendar) =>
+                F.pipe(
+                    footballMatchEventsHandler(calendar),
+                    Effect.flatMap((summary) => EffectExt.logDebug("Football matches import completed", summary)),
+                    Effect.annotateLogs({ teamId: calendar.teamId }),
+                ),
+            ),
+        )
+    }).pipe(Effect.provide(FootballMatchEventsLive)),
 )
 
 const command = rootCommand.pipe(Command.withSubcommands([sync]))
@@ -34,6 +43,7 @@ const FootballMatchEventsLive = F.pipe(
     FootballMatchEventsHandlerDepsLive,
     Layer.provide(ApiFootballClientLive),
     Layer.provide(GoogleCalendarClientLive),
+    Layer.provideMerge(FootballCalendarConfigLive),
 )
 
 const MainLive = F.pipe(
