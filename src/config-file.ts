@@ -10,7 +10,7 @@ import * as os from "node:os"
 import * as path from "node:path"
 
 export const Team = S.TaggedStruct("Team", {
-    id: S.Int,
+    teamId: S.Int,
     name: S.String,
 })
 export type Team = typeof Team.Type
