@@ -3,10 +3,10 @@
 import * as Effect from "effect/Effect"
 import * as F from "effect/Function"
 import * as Layer from "effect/Layer"
+import * as Console from "effect/Console"
 import { Command, Span } from "@effect/cli"
 import { NodeContext, NodeRuntime } from "@effect/platform-node"
 import { footballMatchEventsHandler } from "../football-match-events-handler"
-import * as EffectExt from "../common/effect-ext"
 import { FootballMatchEventsHandlerDepsLive } from "../infrastructure/football-match-events-handler-live"
 import { ApiFootballClientLive } from "../api-football"
 import { GoogleCalendarClientLive } from "../google-calendar"
@@ -23,8 +23,9 @@ const sync = Command.make("sync", {}, () =>
             Effect.forEach(calendars, (calendar) =>
                 F.pipe(
                     footballMatchEventsHandler(calendar),
-                    Effect.flatMap((summary) => EffectExt.logDebug("Football matches import completed", summary)),
-                    Effect.annotateLogs({ teamId: calendar.teamId }),
+                    Effect.flatMap((summary) =>
+                        Console.log(`Football matches for ${calendar.name} import completed`, summary),
+                    ),
                 ),
             ),
         )
