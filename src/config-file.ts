@@ -31,7 +31,7 @@ export const FootballCalendarConfigLive = Layer.effect(
     Effect.gen(function* (_) {
         const fs = yield* _(FileSystem.FileSystem)
 
-        const configFile = path.join(configDir(), "football-calendar", "config.json")
+        const configFile = configFilePath()
         const configExists = yield* _(fs.exists(configFile))
         if (!configExists) return yield* _(Effect.fail(`Configuration file doesn't exists (${configFile})`))
 
@@ -51,8 +51,13 @@ export const FootballCalendarConfigLive = Layer.effect(
     }).pipe(Effect.orDie),
 )
 
-const configDir = () =>
+const configFilePath = () =>
     F.pipe(
-        O.fromNullable(process.env.XDG_CONFIG_HOME),
-        O.getOrElse(() => path.join(os.homedir(), ".config")),
+        O.fromNullable(process.env.FOOTBALL_CALENDAR_CONFIG),
+        O.orElse(() =>
+            O.fromNullable(process.env.XDG_CONFIG_HOME).pipe(O.map((configDir) => path.join(configDir, ...configJson))),
+        ),
+        O.getOrElse(() => path.join(os.homedir(), ".config", ...configJson)),
     )
+
+const configJson = ["football-calendar", "config.json"] as const
