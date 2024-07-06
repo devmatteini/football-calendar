@@ -11,13 +11,13 @@ import { FootballMatchEventsHandlerDepsLive } from "../infrastructure/football-m
 import { ApiFootballClientLive } from "../api-football"
 import { GoogleCalendarClientLive } from "../google-calendar"
 import { LoggerLive, logUnexpectedError } from "../infrastructure/logger"
-import { FootballCalendarConfig, FootballCalendarConfigLive } from "../config-file"
+import { loadFootballCalendarConfig } from "../config-file"
 
 const rootCommand = Command.make("football-calendar")
 
 const sync = Command.make("sync", {}, () =>
     Effect.gen(function* (_) {
-        const { calendars } = yield* _(FootballCalendarConfig)
+        const calendars = yield* _(loadFootballCalendarConfig)
 
         yield* _(
             Effect.forEach(calendars, (calendar) =>
@@ -43,7 +43,6 @@ const FootballMatchEventsLive = F.pipe(
     FootballMatchEventsHandlerDepsLive,
     Layer.provide(ApiFootballClientLive),
     Layer.provide(GoogleCalendarClientLive),
-    Layer.provideMerge(FootballCalendarConfigLive),
 )
 
 const MainLive = F.pipe(
