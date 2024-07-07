@@ -11,6 +11,7 @@ import {
     FootballMatch,
     CreateFootballMatchEvent,
     UpdateFootballMatchEvent,
+    FootballMatchCalendar,
 } from "../football-match-events"
 import { FootballMatchEventsHandlerDeps } from "../football-match-events-handler"
 import { listEvents, insertEvent, updateEvent, GoogleCalendarEvent, GoogleCalendarClient } from "../google-calendar"
@@ -107,24 +108,25 @@ const loadCalendarEvents = (calendar: FootballCalendar) =>
         Effect.orDie,
     )
 
-const toFootballMatchCalendar = (calendar: FootballCalendar): FootballMatch["calendar"] =>
+const toFootballMatchCalendar = (calendar: FootballCalendar) =>
     F.pipe(
         Match.value(calendar),
-        Match.tag("Team", ({ teamId }) => ({ _tag: "Team" as const, id: teamId })),
-        Match.tag("League", ({ leagueId }) => ({ _tag: "League" as const, id: leagueId })),
+        Match.tag("Team", ({ teamId }) => FootballMatchCalendar.make({ origin: "Team", id: teamId })),
+        Match.tag("League", ({ leagueId }) => FootballMatchCalendar.make({ origin: "League", id: leagueId })),
         Match.exhaustive,
     )
 
 const toFootballMatch =
     (calendar: FootballCalendar) =>
-    ({ fixture, league, teams }: ApiFootballFixture): FootballMatch => ({
-        matchId: fixture.id,
-        calendar: toFootballMatchCalendar(calendar),
-        date: fixture.date,
-        homeTeam: teams.home.name,
-        awayTeam: teams.away.name,
-        competition: league.name,
-    })
+    ({ fixture, league, teams }: ApiFootballFixture) =>
+        FootballMatch.make({
+            matchId: fixture.id,
+            calendar: toFootballMatchCalendar(calendar),
+            date: fixture.date,
+            homeTeam: teams.home.name,
+            awayTeam: teams.away.name,
+            competition: league.name,
+        })
 
 const toEventMatchId = F.pipe(
     Match.type<FootballCalendar>(),

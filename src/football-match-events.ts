@@ -5,7 +5,7 @@ import * as Match from "effect/Match"
 import * as S from "@effect/schema/Schema"
 
 export const FootballMatchCalendar = S.Struct({
-    _tag: S.Literal("Team", "League"),
+    origin: S.Literal("Team", "League"),
     id: S.Number,
 })
 export type FootballMatchCalendar = typeof FootballMatchCalendar.Type

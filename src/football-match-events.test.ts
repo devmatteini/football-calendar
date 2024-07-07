@@ -97,7 +97,7 @@ const originalEvent = (id: string): CalendarEvent["originalEvent"] => ({ id })
 const footballMatch = (id: number, date: Date): FootballMatch => ({
     matchId: id,
     date,
-    calendar: { _tag: "Team", id: 999 },
+    calendar: { origin: "Team", id: 999 },
     homeTeam: "ANY_HOME_TEAM",
     awayTeam: "ANY_AWAY_TEAM",
     competition: "ANY_COMPETITION",
