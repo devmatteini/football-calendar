@@ -60,7 +60,7 @@ const createCalendarEvent = ({ match }: CreateFootballMatchEvent) =>
                 timeZone: "UTC",
             },
             extendedProperties: {
-                private: EventMatchId.encode({ teamId: match.teamId, matchId: match.id }),
+                private: EventMatchId.encode({ id: match.teamId, matchId: match.id }),
             },
         }),
         Effect.tap(() =>
@@ -108,7 +108,7 @@ const loadMatchesByTeam = (teamId: number) =>
 
 const loadCalendarEventsByTeam = (teamId: number) =>
     F.pipe(
-        listEvents(EventMatchId.encodeTeam(teamId)),
+        listEvents(EventMatchId.encodeId(teamId)),
         Effect.flatMap(Effect.forEach(validateCalendarEvent)),
         Effect.orDie,
     )
