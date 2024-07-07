@@ -9,7 +9,6 @@ import {
     ApiFootballClient,
     ApiFootballFixture,
     FixtureStatus,
-    currentSeason,
     currentSeasonByTeam,
     fixturesByTeam,
 } from "../api-football"

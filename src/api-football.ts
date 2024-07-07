@@ -46,9 +46,21 @@ export const currentSeasonByTeam = (team: number) =>
         ),
     )
 
+export const fixtures = (calendar: FootballCalendar, season: number, status: string) =>
+    F.pipe(
+        Match.value(calendar),
+        Match.tag("Team", ({ teamId }) => fixturesByTeam(teamId, season, status)),
+        Match.tag("League", ({ leagueId }) => fixturesByLeague(leagueId, season, status)),
+        Match.exhaustive,
+    )
+
 // https://www.api-football.com/documentation-v3#tag/Fixtures/operation/get-fixtures
 export const fixturesByTeam = (team: number, season: number, status: string) =>
     get("/fixtures", { team: team.toString(), season: season.toString(), status }, Fixture)
+
+// https://www.api-football.com/documentation-v3#tag/Fixtures/operation/get-fixtures
+export const fixturesByLeague = (league: number, season: number, status: string) =>
+    get("/fixtures", { league: league.toString(), season: season.toString(), status }, Fixture)
 
 export const FixtureStatus = {
     scheduled: "TBD-NS" as const,
