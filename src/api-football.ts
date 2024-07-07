@@ -10,6 +10,8 @@ import * as ORD from "effect/Order"
 import * as HttpClient from "@effect/platform/HttpClient"
 import * as HttpClientRequest from "@effect/platform/HttpClientRequest"
 import * as HttpClientResponse from "@effect/platform/HttpClientResponse"
+import { FootballCalendar } from "./config-file"
+import * as Match from "effect/Match"
 
 export type ApiFootballClient = {
     token: string
@@ -25,8 +27,15 @@ export const ApiFootballClientLive = Layer.effect(
     ),
 )
 
+export const currentSeason = F.pipe(
+    Match.type<FootballCalendar>(),
+    Match.tag("Team", ({ teamId }) => currentSeasonByTeam(teamId)),
+    Match.tag("League", ({ season }) => Effect.succeed(season)),
+    Match.exhaustive,
+)
+
 // https://www.api-football.com/documentation-v3#tag/Teams/operation/get-teams-seasons
-export const currentSeason = (team: number) =>
+export const currentSeasonByTeam = (team: number) =>
     F.pipe(
         get("/teams/seasons", { team: team.toString() }, TeamSeason),
         Effect.flatMap(

@@ -5,7 +5,14 @@ import * as Layer from "effect/Layer"
 import * as S from "@effect/schema/Schema"
 import { formatErrorSync } from "@effect/schema/TreeFormatter"
 import * as E from "effect/Either"
-import { ApiFootballClient, ApiFootballFixture, FixtureStatus, currentSeason, fixtures } from "../api-football"
+import {
+    ApiFootballClient,
+    ApiFootballFixture,
+    FixtureStatus,
+    currentSeason,
+    currentSeasonByTeam,
+    fixtures,
+} from "../api-football"
 import {
     CalendarEvent,
     FootballMatch,
@@ -93,7 +100,7 @@ const updateCalendarEvent = ({ match, originalCalendarEvent }: UpdateFootballMat
 
 const loadMatchesByTeam = (teamId: number) =>
     F.pipe(
-        currentSeason(teamId),
+        currentSeasonByTeam(teamId),
         Effect.flatMap((currentSeason) => fixtures(teamId, currentSeason, FixtureStatus.scheduled)),
         Effect.map(ROA.map(toFootballMatch(teamId))),
         Effect.orDie,
