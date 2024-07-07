@@ -5,7 +5,7 @@ import * as Match from "effect/Match"
 import * as Data from "effect/Data"
 
 export type FootballMatch = {
-    id: number
+    matchId: number
     teamId: number
     date: Date
     homeTeam: string
@@ -33,7 +33,7 @@ export const UpdateFootballMatchEvent = Data.tagged<UpdateFootballMatchEvent>("U
 
 export type NothingChangedFootballMatchEvent = {
     _tag: "NOTHING_CHANGED"
-    matchId: FootballMatch["id"]
+    matchId: FootballMatch["matchId"]
 }
 export const NothingChangedFootballMatchEvent = Data.tagged<NothingChangedFootballMatchEvent>("NOTHING_CHANGED")
 
@@ -48,7 +48,7 @@ export const footballMatchEvents = (
         ROA.map((match) =>
             footballMatchEvent(
                 match,
-                ROA.findFirst(calendarEvents, (x) => x.matchId === match.id),
+                ROA.findFirst(calendarEvents, (x) => x.matchId === match.matchId),
             ),
         ),
     )
@@ -58,7 +58,7 @@ const footballMatchEvent = (match: FootballMatch, event: O.Option<CalendarEvent>
         Match.value(event),
         Match.when({ _tag: "None" }, () => CreateFootballMatchEvent({ match })),
         Match.when({ _tag: "Some", value: (x) => isSameDate(match.date, x.startDate) }, () =>
-            NothingChangedFootballMatchEvent({ matchId: match.id }),
+            NothingChangedFootballMatchEvent({ matchId: match.matchId }),
         ),
         Match.when({ _tag: "Some" }, ({ value }) =>
             UpdateFootballMatchEvent({ match, originalCalendarEvent: value.originalEvent }),

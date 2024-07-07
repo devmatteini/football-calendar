@@ -17,8 +17,8 @@ test("create, update, ignore matches", async () => {
     const updatedMatch = footballMatch(2, date("2023-09-17", "15:00"))
     const sameMatch = footballMatch(3, date("2023-09-24", "20:45"))
     const calendarEvents = [
-        calendarEvent(updatedMatch.id, date("2023-09-17", "12:30"), "1234"),
-        calendarEvent(sameMatch.id, sameMatch.date, "5678"),
+        calendarEvent(updatedMatch.matchId, date("2023-09-17", "12:30"), "1234"),
+        calendarEvent(sameMatch.matchId, sameMatch.date, "5678"),
     ]
     const deps = DepsTest({
         loadMatchesByTeam: () => Effect.succeed([newMatch, updatedMatch, sameMatch]),
@@ -42,7 +42,7 @@ test("create, update, ignore matches", async () => {
 const DepsTest = (deps: FootballMatchEventsHandlerDeps) => Layer.succeed(FootballMatchEventsHandlerDeps, deps)
 
 const footballMatch = (id: number, date: Date): FootballMatch => ({
-    id,
+    matchId: id,
     date,
     teamId: 999,
     homeTeam: "ANY_HOME_TEAM",

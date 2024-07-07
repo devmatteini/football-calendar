@@ -59,12 +59,12 @@ const createCalendarEvent = ({ match }: CreateFootballMatchEvent) =>
                 timeZone: "UTC",
             },
             extendedProperties: {
-                private: EventMatchId.encode({ id: match.teamId, matchId: match.id }),
+                private: EventMatchId.encode({ id: match.teamId, matchId: match.matchId }),
             },
         }),
         Effect.tap(() =>
             EffectExt.logDebug("Calendar event created", {
-                matchId: match.id,
+                matchId: match.matchId,
                 match: `${match.homeTeam}-${match.awayTeam}`,
                 competition: match.competition,
                 matchDate: match.date.toISOString(),
@@ -88,7 +88,7 @@ const updateCalendarEvent = ({ match, originalCalendarEvent }: UpdateFootballMat
         }),
         Effect.tap(() =>
             EffectExt.logDebug("Calendar event updated", {
-                matchId: match.id,
+                matchId: match.matchId,
                 match: `${match.homeTeam}-${match.awayTeam}`,
                 competition: match.competition,
                 matchDate: match.date.toISOString(),
@@ -115,7 +115,7 @@ const loadCalendarEventsByTeam = (teamId: number) =>
 const toFootballMatch =
     (teamId: number) =>
     ({ fixture, league, teams }: ApiFootballFixture): FootballMatch => ({
-        id: fixture.id,
+        matchId: fixture.id,
         teamId,
         date: fixture.date,
         homeTeam: teams.home.name,
