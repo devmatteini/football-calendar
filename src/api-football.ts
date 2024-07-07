@@ -35,7 +35,7 @@ export const currentSeason = F.pipe(
 )
 
 // https://www.api-football.com/documentation-v3#tag/Teams/operation/get-teams-seasons
-export const currentSeasonByTeam = (team: number) =>
+const currentSeasonByTeam = (team: number) =>
     F.pipe(
         get("/teams/seasons", { team: team.toString() }, TeamSeason),
         Effect.flatMap(
@@ -55,11 +55,11 @@ export const fixtures = (calendar: FootballCalendar, season: number, status: str
     )
 
 // https://www.api-football.com/documentation-v3#tag/Fixtures/operation/get-fixtures
-export const fixturesByTeam = (team: number, season: number, status: string) =>
+const fixturesByTeam = (team: number, season: number, status: string) =>
     get("/fixtures", { team: team.toString(), season: season.toString(), status }, Fixture)
 
 // https://www.api-football.com/documentation-v3#tag/Fixtures/operation/get-fixtures
-export const fixturesByLeague = (league: number, season: number, status: string) =>
+const fixturesByLeague = (league: number, season: number, status: string) =>
     get("/fixtures", { league: league.toString(), season: season.toString(), status }, Fixture)
 
 export const FixtureStatus = {
