@@ -25,6 +25,8 @@ type Summary = { created: number; updated: number; nothingChanged: number }
 
 export const footballMatchEventsHandler = (calendar: FootballCalendar) =>
     Effect.gen(function* (_) {
+        if (calendar._tag === "League") return yield* _(Effect.dieMessage("League calendars are not supported yet"))
+
         const { loadMatchesByTeam, loadCalendarEventsByTeam, saveCalendarEvent } =
             yield* _(FootballMatchEventsHandlerDeps)
 

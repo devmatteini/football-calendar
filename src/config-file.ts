@@ -13,7 +13,14 @@ export const Team = S.TaggedStruct("Team", {
 })
 export type Team = typeof Team.Type
 
-export const FootballCalendar = S.Union(Team)
+export const League = S.TaggedStruct("League", {
+    leagueId: S.Int,
+    name: S.String,
+    season: S.Int.pipe(S.positive()),
+})
+export type League = typeof League.Type
+
+export const FootballCalendar = S.Union(Team, League)
 export type FootballCalendar = typeof FootballCalendar.Type
 
 export const FootballCalendars = S.NonEmptyArray(Team)
