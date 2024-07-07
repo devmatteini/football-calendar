@@ -22,9 +22,9 @@ test("create, update, ignore matches", async () => {
     ]
     const deps = DepsTest({
         loadMatchesByTeam: () => Effect.succeed([newMatch, updatedMatch, sameMatch]),
-        loadMatches: () => Effect.succeed([]),
+        loadMatches: () => Effect.succeed([newMatch, updatedMatch, sameMatch]),
         loadCalendarEventsByTeam: () => Effect.succeed(calendarEvents),
-        loadCalendarEvents: () => Effect.succeed([]),
+        loadCalendarEvents: () => Effect.succeed(calendarEvents),
         saveCalendarEvent: saveCalendarEventSpy,
     })
 

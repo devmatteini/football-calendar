@@ -27,13 +27,10 @@ type Summary = { created: number; updated: number; nothingChanged: number }
 
 export const footballMatchEventsHandler = (calendar: FootballCalendar) =>
     Effect.gen(function* (_) {
-        if (calendar._tag === "League") return yield* _(Effect.dieMessage("League calendars are not supported yet"))
-
-        const { loadMatchesByTeam, loadCalendarEventsByTeam, saveCalendarEvent } =
-            yield* _(FootballMatchEventsHandlerDeps)
+        const { loadMatches, loadCalendarEvents, saveCalendarEvent } = yield* _(FootballMatchEventsHandlerDeps)
 
         const [matches, calendarEvents] = yield* _(
-            Effect.all([loadMatchesByTeam(calendar.teamId), loadCalendarEventsByTeam(calendar.teamId)], {
+            Effect.all([loadMatches(calendar), loadCalendarEvents(calendar)], {
                 concurrency: 2,
             }),
         )
