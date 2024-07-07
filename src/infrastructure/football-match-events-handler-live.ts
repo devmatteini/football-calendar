@@ -23,6 +23,7 @@ import { listEvents, insertEvent, updateEvent, GoogleCalendarEvent, GoogleCalend
 import * as EventMatchId from "../event-match-id"
 import * as EffectExt from "../common/effect-ext"
 import * as Match from "effect/Match"
+import { FootballCalendar } from "../config-file"
 
 export const FootballMatchEventsHandlerDepsLive = Layer.effect(
     FootballMatchEventsHandlerDeps,
@@ -31,7 +32,9 @@ export const FootballMatchEventsHandlerDepsLive = Layer.effect(
         Effect.map(
             (context): FootballMatchEventsHandlerDeps => ({
                 loadMatchesByTeam: F.flow(loadMatchesByTeam, Effect.provide(context)),
+                loadMatches: F.flow(loadMatches, Effect.provide(context)),
                 loadCalendarEventsByTeam: F.flow(loadCalendarEventsByTeam, Effect.provide(context)),
+                loadCalendarEvents: F.flow(loadCalendarEvents, Effect.provide(context)),
                 saveCalendarEvent: F.flow(saveCalendarEvent, Effect.provide(context)),
             }),
         ),
@@ -105,12 +108,16 @@ const loadMatchesByTeam = (teamId: number) =>
         Effect.orDie,
     )
 
+const loadMatches = (calendar: FootballCalendar) => Effect.succeed([])
+
 const loadCalendarEventsByTeam = (teamId: number) =>
     F.pipe(
         listEvents(EventMatchId.encodeId(teamId)),
         Effect.flatMap(Effect.forEach(validateCalendarEvent)),
         Effect.orDie,
     )
+
+const loadCalendarEvents = (calendar: FootballCalendar) => Effect.succeed([])
 
 const toFootballMatch =
     (teamId: number) =>
