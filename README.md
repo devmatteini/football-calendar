@@ -84,7 +84,10 @@ These are the default paths where the configuration file is searched:
 
 You can change the default path with `export FOOTBALL_CALENDAR_CONFIG=/path/to/file.json` environment variable.
 
-Search your teams at this page: https://dashboard.api-football.com/soccer/ids/teams
+Search your teams/leagues at these pages:
+
+-   https://dashboard.api-football.com/soccer/ids/teams
+-   https://dashboard.api-football.com/soccer/ids
 
 ```json
 [
@@ -92,6 +95,12 @@ Search your teams at this page: https://dashboard.api-football.com/soccer/ids/te
         "_tag": "Team",
         "teamId": 529,
         "name": "Barcelona" // This is just to easily identify the team
+    },
+    {
+        "_tag": "League",
+        "leagueId": 4, // Select League id v3
+        "season": 2024,
+        "name": "Euro Championship"
     }
 ]
 ```
