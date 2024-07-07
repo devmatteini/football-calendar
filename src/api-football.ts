@@ -47,7 +47,7 @@ export const currentSeasonByTeam = (team: number) =>
     )
 
 // https://www.api-football.com/documentation-v3#tag/Fixtures/operation/get-fixtures
-export const fixtures = (team: number, season: number, status: string) =>
+export const fixturesByTeam = (team: number, season: number, status: string) =>
     get("/fixtures", { team: team.toString(), season: season.toString(), status }, Fixture)
 
 export const FixtureStatus = {

@@ -11,7 +11,7 @@ import {
     FixtureStatus,
     currentSeason,
     currentSeasonByTeam,
-    fixtures,
+    fixturesByTeam,
 } from "../api-football"
 import {
     CalendarEvent,
@@ -101,7 +101,7 @@ const updateCalendarEvent = ({ match, originalCalendarEvent }: UpdateFootballMat
 const loadMatchesByTeam = (teamId: number) =>
     F.pipe(
         currentSeasonByTeam(teamId),
-        Effect.flatMap((currentSeason) => fixtures(teamId, currentSeason, FixtureStatus.scheduled)),
+        Effect.flatMap((currentSeason) => fixturesByTeam(teamId, currentSeason, FixtureStatus.scheduled)),
         Effect.map(ROA.map(toFootballMatch(teamId))),
         Effect.orDie,
     )
