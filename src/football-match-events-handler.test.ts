@@ -21,9 +21,7 @@ test("create, update, ignore matches", async () => {
         calendarEvent(sameMatch.matchId, sameMatch.date, "5678"),
     ]
     const deps = DepsTest({
-        loadMatchesByTeam: () => Effect.succeed([newMatch, updatedMatch, sameMatch]),
         loadMatches: () => Effect.succeed([newMatch, updatedMatch, sameMatch]),
-        loadCalendarEventsByTeam: () => Effect.succeed(calendarEvents),
         loadCalendarEvents: () => Effect.succeed(calendarEvents),
         saveCalendarEvent: saveCalendarEventSpy,
     })

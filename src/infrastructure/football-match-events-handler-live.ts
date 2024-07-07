@@ -5,15 +5,7 @@ import * as Layer from "effect/Layer"
 import * as S from "@effect/schema/Schema"
 import { formatErrorSync } from "@effect/schema/TreeFormatter"
 import * as E from "effect/Either"
-import {
-    ApiFootballClient,
-    ApiFootballFixture,
-    FixtureStatus,
-    currentSeason,
-    currentSeasonByTeam,
-    fixtures,
-    fixturesByTeam,
-} from "../api-football"
+import { ApiFootballClient, ApiFootballFixture, FixtureStatus, currentSeason, fixtures } from "../api-football"
 import {
     CalendarEvent,
     FootballMatch,
@@ -33,9 +25,7 @@ export const FootballMatchEventsHandlerDepsLive = Layer.effect(
         Effect.context<GoogleCalendarClient | ApiFootballClient>(),
         Effect.map(
             (context): FootballMatchEventsHandlerDeps => ({
-                loadMatchesByTeam: F.flow(loadMatchesByTeam, Effect.provide(context)),
                 loadMatches: F.flow(loadMatches, Effect.provide(context)),
-                loadCalendarEventsByTeam: F.flow(loadCalendarEventsByTeam, Effect.provide(context)),
                 loadCalendarEvents: F.flow(loadCalendarEvents, Effect.provide(context)),
                 saveCalendarEvent: F.flow(saveCalendarEvent, Effect.provide(context)),
             }),
@@ -102,26 +92,11 @@ const updateCalendarEvent = ({ match, originalCalendarEvent }: UpdateFootballMat
         Effect.orDie,
     )
 
-const loadMatchesByTeam = (teamId: number) =>
-    F.pipe(
-        currentSeasonByTeam(teamId),
-        Effect.flatMap((currentSeason) => fixturesByTeam(teamId, currentSeason, FixtureStatus.scheduled)),
-        Effect.map(ROA.map(toFootballMatch(teamId))),
-        Effect.orDie,
-    )
-
 const loadMatches = (calendar: FootballCalendar) =>
     F.pipe(
         currentSeason(calendar),
         Effect.flatMap((currentSeason) => fixtures(calendar, currentSeason, FixtureStatus.scheduled)),
         Effect.map(ROA.map(toFootballMatchNew(calendar))),
-        Effect.orDie,
-    )
-
-const loadCalendarEventsByTeam = (teamId: number) =>
-    F.pipe(
-        listEvents(EventMatchId.encodeId(teamId)),
-        Effect.flatMap(Effect.forEach(validateCalendarEvent)),
         Effect.orDie,
     )
 
@@ -131,17 +106,6 @@ const loadCalendarEvents = (calendar: FootballCalendar) =>
         Effect.flatMap(Effect.forEach(validateCalendarEvent)),
         Effect.orDie,
     )
-
-const toFootballMatch =
-    (teamId: number) =>
-    ({ fixture, league, teams }: ApiFootballFixture): FootballMatch => ({
-        matchId: fixture.id,
-        calendar: { _tag: "Team", id: teamId },
-        date: fixture.date,
-        homeTeam: teams.home.name,
-        awayTeam: teams.away.name,
-        competition: league.name,
-    })
 
 const toFootballMatchCalendar = (calendar: FootballCalendar): FootballMatch["calendar"] =>
     F.pipe(
