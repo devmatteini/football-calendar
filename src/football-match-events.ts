@@ -2,47 +2,51 @@ import * as F from "effect/Function"
 import * as ROA from "effect/Array"
 import * as O from "effect/Option"
 import * as Match from "effect/Match"
-import * as Data from "effect/Data"
+import * as S from "@effect/schema/Schema"
 
-export type FootballMatchCalendar = {
-    _tag: "Team" | "League"
-    id: number
-}
+export const FootballMatchCalendar = S.Struct({
+    _tag: S.Literal("Team", "League"),
+    id: S.Number,
+})
+export type FootballMatchCalendar = typeof FootballMatchCalendar.Type
 
-export type FootballMatch = {
-    matchId: number
-    calendar: FootballMatchCalendar
-    date: Date
-    homeTeam: string
-    awayTeam: string
-    competition: string
-}
-export type CalendarEvent = {
-    matchId: number
-    startDate: Date
-    originalEvent: Record<string, any>
-}
+export const FootballMatch = S.Struct({
+    matchId: S.Number,
+    calendar: FootballMatchCalendar,
+    date: S.Date,
+    homeTeam: S.String,
+    awayTeam: S.String,
+    competition: S.String,
+})
+export type FootballMatch = typeof FootballMatch.Type
 
-export type CreateFootballMatchEvent = {
-    _tag: "CREATE"
-    match: FootballMatch
-}
-export const CreateFootballMatchEvent = Data.tagged<CreateFootballMatchEvent>("CREATE")
+export const CalendarEvent = S.Struct({
+    matchId: S.Number,
+    startDate: S.Date,
+    originalEvent: S.Record(S.String, S.Any),
+})
+export type CalendarEvent = typeof CalendarEvent.Type
 
-export type UpdateFootballMatchEvent = {
-    _tag: "UPDATE"
-    match: FootballMatch
-    originalCalendarEvent: CalendarEvent["originalEvent"]
-}
-export const UpdateFootballMatchEvent = Data.tagged<UpdateFootballMatchEvent>("UPDATE")
+export const CreateFootballMatchEvent = S.TaggedStruct("CREATE", { match: FootballMatch })
+export type CreateFootballMatchEvent = typeof CreateFootballMatchEvent.Type
 
-export type NothingChangedFootballMatchEvent = {
-    _tag: "NOTHING_CHANGED"
-    matchId: FootballMatch["matchId"]
-}
-export const NothingChangedFootballMatchEvent = Data.tagged<NothingChangedFootballMatchEvent>("NOTHING_CHANGED")
+export const UpdateFootballMatchEvent = S.TaggedStruct("UPDATE", {
+    match: FootballMatch,
+    originalCalendarEvent: CalendarEvent.fields.originalEvent,
+})
+export type UpdateFootballMatchEvent = typeof UpdateFootballMatchEvent.Type
 
-export type FootballMatchEvent = CreateFootballMatchEvent | UpdateFootballMatchEvent | NothingChangedFootballMatchEvent
+export const NothingChangedFootballMatchEvent = S.TaggedStruct("NOTHING_CHANGED", {
+    matchId: FootballMatch.fields.matchId,
+})
+export type NothingChangedFootballMatchEvent = typeof NothingChangedFootballMatchEvent.Type
+
+export const FootballMatchEvent = S.Union(
+    CreateFootballMatchEvent,
+    UpdateFootballMatchEvent,
+    NothingChangedFootballMatchEvent,
+)
+export type FootballMatchEvent = typeof FootballMatchEvent.Type
 
 export const footballMatchEvents = (
     matches: readonly FootballMatch[],
@@ -61,12 +65,12 @@ export const footballMatchEvents = (
 const footballMatchEvent = (match: FootballMatch, event: O.Option<CalendarEvent>): FootballMatchEvent =>
     F.pipe(
         Match.value(event),
-        Match.when({ _tag: "None" }, () => CreateFootballMatchEvent({ match })),
+        Match.when({ _tag: "None" }, () => CreateFootballMatchEvent.make({ match })),
         Match.when({ _tag: "Some", value: (x) => isSameDate(match.date, x.startDate) }, () =>
-            NothingChangedFootballMatchEvent({ matchId: match.matchId }),
+            NothingChangedFootballMatchEvent.make({ matchId: match.matchId }),
         ),
         Match.when({ _tag: "Some" }, ({ value }) =>
-            UpdateFootballMatchEvent({ match, originalCalendarEvent: value.originalEvent }),
+            UpdateFootballMatchEvent.make({ match, originalCalendarEvent: value.originalEvent }),
         ),
         Match.exhaustive,
     )
