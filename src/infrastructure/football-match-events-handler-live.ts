@@ -9,7 +9,9 @@ import {
     ApiFootballClient,
     ApiFootballFixture,
     FixtureStatus,
+    currentSeason,
     currentSeasonByTeam,
+    fixtures,
     fixturesByTeam,
 } from "../api-football"
 import {
@@ -108,7 +110,13 @@ const loadMatchesByTeam = (teamId: number) =>
         Effect.orDie,
     )
 
-const loadMatches = (calendar: FootballCalendar) => Effect.succeed([])
+const loadMatches = (calendar: FootballCalendar) =>
+    F.pipe(
+        currentSeason(calendar),
+        Effect.flatMap((currentSeason) => fixtures(calendar, currentSeason, FixtureStatus.scheduled)),
+        Effect.map(ROA.map(toFootballMatchNew(calendar))),
+        Effect.orDie,
+    )
 
 const loadCalendarEventsByTeam = (teamId: number) =>
     F.pipe(
@@ -117,7 +125,12 @@ const loadCalendarEventsByTeam = (teamId: number) =>
         Effect.orDie,
     )
 
-const loadCalendarEvents = (calendar: FootballCalendar) => Effect.succeed([])
+const loadCalendarEvents = (calendar: FootballCalendar) =>
+    F.pipe(
+        listEvents(EventMatchId.encodeId(toEventMatchId(calendar))),
+        Effect.flatMap(Effect.forEach(validateCalendarEvent)),
+        Effect.orDie,
+    )
 
 const toFootballMatch =
     (teamId: number) =>
@@ -129,6 +142,32 @@ const toFootballMatch =
         awayTeam: teams.away.name,
         competition: league.name,
     })
+
+const toFootballMatchCalendar = (calendar: FootballCalendar): FootballMatch["calendar"] =>
+    F.pipe(
+        Match.value(calendar),
+        Match.tag("Team", ({ teamId }) => ({ _tag: "Team" as const, id: teamId })),
+        Match.tag("League", ({ leagueId }) => ({ _tag: "League" as const, id: leagueId })),
+        Match.exhaustive,
+    )
+
+const toFootballMatchNew =
+    (calendar: FootballCalendar) =>
+    ({ fixture, league, teams }: ApiFootballFixture): FootballMatch => ({
+        matchId: fixture.id,
+        calendar: toFootballMatchCalendar(calendar),
+        date: fixture.date,
+        homeTeam: teams.home.name,
+        awayTeam: teams.away.name,
+        competition: league.name,
+    })
+
+const toEventMatchId = F.pipe(
+    Match.type<FootballCalendar>(),
+    Match.tag("Team", ({ teamId }) => teamId),
+    Match.tag("League", ({ leagueId }) => leagueId),
+    Match.exhaustive,
+)
 
 const validateCalendarEvent = (originalEvent: GoogleCalendarEvent) =>
     F.pipe(
