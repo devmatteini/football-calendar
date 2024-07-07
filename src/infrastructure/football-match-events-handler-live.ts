@@ -59,7 +59,7 @@ const createCalendarEvent = ({ match }: CreateFootballMatchEvent) =>
                 timeZone: "UTC",
             },
             extendedProperties: {
-                private: EventMatchId.encode({ id: match.teamId, matchId: match.matchId }),
+                private: EventMatchId.encode({ id: match.calendar.id, matchId: match.matchId }),
             },
         }),
         Effect.tap(() =>
@@ -116,7 +116,7 @@ const toFootballMatch =
     (teamId: number) =>
     ({ fixture, league, teams }: ApiFootballFixture): FootballMatch => ({
         matchId: fixture.id,
-        teamId,
+        calendar: { _tag: "Team", id: teamId },
         date: fixture.date,
         homeTeam: teams.home.name,
         awayTeam: teams.away.name,

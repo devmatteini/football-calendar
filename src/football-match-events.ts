@@ -4,9 +4,14 @@ import * as O from "effect/Option"
 import * as Match from "effect/Match"
 import * as Data from "effect/Data"
 
+export type FootballMatchCalendar = {
+    _tag: "Team" | "League"
+    id: number
+}
+
 export type FootballMatch = {
     matchId: number
-    teamId: number
+    calendar: FootballMatchCalendar
     date: Date
     homeTeam: string
     awayTeam: string
