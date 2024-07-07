@@ -96,7 +96,7 @@ const loadMatches = (calendar: FootballCalendar) =>
     F.pipe(
         currentSeason(calendar),
         Effect.flatMap((currentSeason) => fixtures(calendar, currentSeason, FixtureStatus.scheduled)),
-        Effect.map(ROA.map(toFootballMatchNew(calendar))),
+        Effect.map(ROA.map(toFootballMatch(calendar))),
         Effect.orDie,
     )
 
@@ -115,7 +115,7 @@ const toFootballMatchCalendar = (calendar: FootballCalendar): FootballMatch["cal
         Match.exhaustive,
     )
 
-const toFootballMatchNew =
+const toFootballMatch =
     (calendar: FootballCalendar) =>
     ({ fixture, league, teams }: ApiFootballFixture): FootballMatch => ({
         matchId: fixture.id,
