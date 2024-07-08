@@ -23,7 +23,7 @@ export type League = typeof League.Type
 export const FootballCalendar = S.Union(Team, League)
 export type FootballCalendar = typeof FootballCalendar.Type
 
-export const FootballCalendars = S.NonEmptyArray(Team)
+export const FootballCalendars = S.NonEmptyArray(FootballCalendar)
 export type FootballCalendars = typeof FootballCalendars.Type
 
 export const loadFootballCalendarConfig = Effect.gen(function* (_) {
