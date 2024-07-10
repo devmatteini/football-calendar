@@ -5,9 +5,12 @@ import * as F from "effect/Function"
 import * as FileSystem from "@effect/platform/FileSystem"
 import * as TreeFormatter from "@effect/schema/TreeFormatter"
 import * as Schema from "@effect/schema/Schema"
+import * as Duration from "effect/Duration"
 import * as path from "node:path"
 import * as os from "node:os"
 import { Cache } from "../cache"
+
+const TTL = Duration.days(1)
 
 export const FileSystemCache = Layer.effect(
     Cache,
@@ -24,7 +27,14 @@ export const FileSystemCache = Layer.effect(
 
                     const exists = yield* _(fs.exists(cacheFile))
                     if (!exists) return O.none()
-                    // TODO: check file TTL (using file update time)
+
+                    const stats = yield* _(fs.stat(cacheFile))
+                    const now = new Date()
+                    const lastUpdated = modifiedOrExpiredTime(stats, now, TTL)
+                    if (isExpired(now, lastUpdated, TTL)) {
+                        yield* _(Effect.logDebug(`Cache file ${key} is expired`))
+                        return O.none()
+                    }
 
                     const content = yield* _(fs.readFileString(cacheFile))
                     const json = yield* _(
@@ -52,6 +62,14 @@ export const FileSystemCache = Layer.effect(
         })
     }),
 )
+
+const modifiedOrExpiredTime = (stats: FileSystem.File.Info, now: Date, ttl: Duration.Duration) =>
+    O.getOrElse(stats.mtime, () => new Date(now.getTime() - Duration.toMillis(ttl)))
+
+export const isExpired = (now: Date, lastUpdated: Date, ttl: Duration.Duration) => {
+    const timePassed = Duration.millis(now.getTime() - lastUpdated.getTime())
+    return Duration.greaterThanOrEqualTo(timePassed, ttl)
+}
 
 const cacheDirPath = () =>
     F.pipe(
