@@ -12,6 +12,7 @@ import { ApiFootballClientLive } from "../api-football"
 import { GoogleCalendarClientLive } from "../google-calendar"
 import { LoggerLive, logUnexpectedError } from "../infrastructure/logger"
 import { loadFootballCalendarConfig } from "../config-file"
+import { FileSystemCache } from "../infrastructure/file-system-cache"
 
 const rootCommand = Command.make("football-calendar")
 
@@ -44,6 +45,7 @@ const FootballMatchEventsLive = F.pipe(
     FootballMatchEventsHandlerDepsLive,
     Layer.provide(ApiFootballClientLive),
     Layer.provide(GoogleCalendarClientLive),
+    Layer.provide(FileSystemCache),
 )
 
 const MainLive = F.pipe(

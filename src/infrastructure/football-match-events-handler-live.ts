@@ -19,11 +19,12 @@ import * as EventMatchId from "../event-match-id"
 import * as EffectExt from "../common/effect-ext"
 import * as Match from "effect/Match"
 import { FootballCalendar } from "../config-file"
+import { Cache } from "../cache"
 
 export const FootballMatchEventsHandlerDepsLive = Layer.effect(
     FootballMatchEventsHandlerDeps,
     F.pipe(
-        Effect.context<GoogleCalendarClient | ApiFootballClient>(),
+        Effect.context<GoogleCalendarClient | ApiFootballClient | Cache>(),
         Effect.map(
             (context): FootballMatchEventsHandlerDeps => ({
                 loadMatches: F.flow(loadMatches, Effect.provide(context)),
