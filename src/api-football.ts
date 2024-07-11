@@ -19,15 +19,17 @@ import * as crypto from "node:crypto"
 export type ApiFootballClient = {
     token: string
     baseUrl: string
+    cache: Cache
 }
 export const ApiFootballClient = Context.GenericTag<ApiFootballClient>("ApiFootballClient")
 
 export const ApiFootballClientLive = Layer.effect(
     ApiFootballClient,
-    F.pipe(
-        Config.string("API_FOOTBALL_TOKEN"),
-        Effect.map((token) => ApiFootballClient.of({ token, baseUrl: "https://v3.football.api-sports.io" })),
-    ),
+    Effect.gen(function* (_) {
+        const token = yield* _(Config.string("API_FOOTBALL_TOKEN"))
+        const cache = yield* _(Cache)
+        return ApiFootballClient.of({ token, baseUrl: "https://v3.football.api-sports.io", cache })
+    }),
 )
 
 export const currentSeason = F.pipe(
@@ -73,12 +75,11 @@ type QueryParams = Record<string, string>
 const get = <A, I>(endpoint: string, queryParams: QueryParams, schema: S.Schema<A, I>) =>
     Effect.gen(function* (_) {
         const client = yield* _(ApiFootballClient)
-        const cache = yield* _(Cache)
 
         const key = cacheKey(endpoint, queryParams)
         const Body = Response(schema)
 
-        const maybeValue = yield* _(cache.load(key, Body.fields.response))
+        const maybeValue = yield* _(client.cache.load(key, Body.fields.response))
         if (O.isSome(maybeValue)) return maybeValue.value
 
         const response = yield* _(
@@ -98,7 +99,7 @@ const get = <A, I>(endpoint: string, queryParams: QueryParams, schema: S.Schema<
             Effect.scoped,
         )
 
-        yield* _(cache.update(key, Body.fields.response, response))
+        yield* _(client.cache.update(key, Body.fields.response, response))
         return response
     })
 
