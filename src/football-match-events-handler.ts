@@ -9,7 +9,7 @@ import {
     UpdateFootballMatchEvent,
     footballMatchEvents,
 } from "./football-match-events"
-import { FootballCalendar } from "./config-file"
+import { FootballCalendar } from "./football-calendars-config"
 
 export type FootballMatchEventsHandlerDeps = {
     loadMatches: (calendar: FootballCalendar) => Effect.Effect<readonly FootballMatch[]>

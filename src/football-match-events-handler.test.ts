@@ -4,7 +4,7 @@ import * as F from "effect/Function"
 import * as Layer from "effect/Layer"
 import { FootballMatchEventsHandlerDeps, footballMatchEventsHandler } from "./football-match-events-handler"
 import { CalendarEvent, FootballMatch } from "./football-match-events"
-import { Team } from "./config-file"
+import { Team } from "./football-calendars-config"
 
 const saveCalendarEventSpy = vi.fn(() => Effect.void)
 

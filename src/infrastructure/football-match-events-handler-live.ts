@@ -18,7 +18,7 @@ import { listEvents, insertEvent, updateEvent, GoogleCalendarEvent, GoogleCalend
 import * as EventMatchId from "../event-match-id"
 import * as EffectExt from "../common/effect-ext"
 import * as Match from "effect/Match"
-import { FootballCalendar } from "../config-file"
+import { FootballCalendar } from "../football-calendars-config"
 
 export const FootballMatchEventsHandlerDepsLive = Layer.effect(
     FootballMatchEventsHandlerDeps,

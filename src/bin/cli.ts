@@ -11,7 +11,7 @@ import { FootballMatchEventsHandlerDepsLive } from "../infrastructure/football-m
 import { ApiFootballClientLive } from "../api-football"
 import { GoogleCalendarClientLive } from "../google-calendar"
 import { LoggerLive, logUnexpectedError } from "../infrastructure/logger"
-import { loadFootballCalendarConfig } from "../config-file"
+import { loadFootballCalendarConfig } from "../football-calendars-config"
 import { FileSystemCache } from "../infrastructure/file-system-cache"
 
 const rootCommand = Command.make("football-calendar")
