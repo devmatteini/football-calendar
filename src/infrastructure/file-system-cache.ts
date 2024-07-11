@@ -3,12 +3,14 @@ import * as Layer from "effect/Layer"
 import * as O from "effect/Option"
 import * as F from "effect/Function"
 import * as FileSystem from "@effect/platform/FileSystem"
+import * as PlatformError from "@effect/platform/Error"
 import * as TreeFormatter from "@effect/schema/TreeFormatter"
 import * as Schema from "@effect/schema/Schema"
 import * as Duration from "effect/Duration"
 import * as path from "node:path"
 import * as os from "node:os"
 import { Cache } from "../cache"
+import * as EffectExt from "../common/effect-ext"
 
 const TTL = Duration.days(1)
 
@@ -49,18 +51,23 @@ export const FileSystemCache = Layer.effect(
                     )
 
                     return O.some(cachedValue)
-                    // TODO: Do I want this to fail the pipeline if something is wrong? Or clean cache?
-                }).pipe(Effect.orDie),
+                }).pipe(invalidateCacheOnError),
             update: (key, schema, value) =>
                 Effect.gen(function* (_) {
                     const cacheFile = path.join(cacheDir, key)
 
                     const encoded = yield* _(Schema.encode(schema)(value))
                     yield* _(fs.writeFileString(cacheFile, JSON.stringify(encoded)))
-                    // TODO: Do I want this to fail the pipeline if something is wrong?
                 }).pipe(Effect.orDie),
         })
     }),
+)
+
+const invalidateCacheOnError = Effect.catchAll((error: string | PlatformError.PlatformError) =>
+    F.pipe(
+        EffectExt.logDebug("Cache invalidated because an error occurred", { error }),
+        Effect.zipRight(Effect.succeedNone),
+    ),
 )
 
 const modifiedOrExpiredTime = (stats: FileSystem.File.Info, now: Date, ttl: Duration.Duration) =>
