@@ -4,13 +4,13 @@ import * as O from "effect/Option"
 import * as F from "effect/Function"
 import * as FileSystem from "@effect/platform/FileSystem"
 import * as PlatformError from "@effect/platform/Error"
-import * as TreeFormatter from "@effect/schema/TreeFormatter"
 import * as Schema from "@effect/schema/Schema"
 import * as Duration from "effect/Duration"
 import * as path from "node:path"
 import * as os from "node:os"
 import { Cache } from "../cache"
 import * as EffectExt from "../common/effect-ext"
+import { parseJsonFile } from "../common/file"
 
 const TTL = Duration.days(1)
 
@@ -38,18 +38,7 @@ export const FileSystemCache = Layer.effect(
                         return O.none()
                     }
 
-                    const content = yield* _(fs.readFileString(cacheFile))
-                    const json = yield* _(
-                        Effect.try({
-                            try: () => JSON.parse(content),
-                            catch: (e) => `Unable to parse cache file: ${e}`,
-                        }),
-                    )
-                    const cachedValue = yield* _(
-                        Schema.decodeUnknown(schema)(json, { errors: "all" }),
-                        Effect.mapError((e) => `Cache file ${key} decode error: ${TreeFormatter.formatErrorSync(e)}`),
-                    )
-
+                    const cachedValue = yield* _(parseJsonFile(fs, cacheFile, schema))
                     return O.some(cachedValue)
                 }).pipe(invalidateCacheOnError),
             update: (key, schema, value) =>

@@ -1,11 +1,11 @@
 import * as Effect from "effect/Effect"
 import * as S from "@effect/schema/Schema"
-import * as TreeFormatter from "@effect/schema/TreeFormatter"
 import * as FileSystem from "@effect/platform/FileSystem"
 import * as O from "effect/Option"
 import * as F from "effect/Function"
 import * as os from "node:os"
 import * as path from "node:path"
+import { parseJsonFile } from "./common/file"
 
 export const Team = S.TaggedStruct("Team", {
     teamId: S.Int,
@@ -33,19 +33,7 @@ export const loadFootballCalendarConfig = Effect.gen(function* (_) {
     const configExists = yield* _(fs.exists(configFile))
     if (!configExists) return yield* _(Effect.fail(`Configuration file doesn't exists (${configFile})`))
 
-    const content = yield* _(fs.readFileString(configFile))
-    const json = yield* _(
-        Effect.try({
-            try: () => JSON.parse(content),
-            catch: (e) => `Unable to parse configuration file: ${e}`,
-        }),
-    )
-    const calendars = yield* _(
-        S.decodeUnknown(FootballCalendars)(json, { errors: "all" }),
-        Effect.mapError((e) => `Configuration file issues: ${TreeFormatter.formatErrorSync(e)}`),
-    )
-
-    return calendars
+    return yield* _(parseJsonFile(fs, configFile, FootballCalendars))
 }).pipe(Effect.orDie)
 
 const configFilePath = () =>
