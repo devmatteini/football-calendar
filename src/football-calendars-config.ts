@@ -33,7 +33,7 @@ export const loadFootballCalendarConfig = Effect.gen(function* (_) {
     const configExists = yield* _(fs.exists(configFile))
     if (!configExists) return yield* _(Effect.fail(`Configuration file doesn't exists (${configFile})`))
 
-    return yield* _(parseJsonFile(fs, configFile, FootballCalendars))
+    return yield* _(parseJsonFile(configFile, FootballCalendars))
 }).pipe(Effect.orDie)
 
 const configFilePath = () =>

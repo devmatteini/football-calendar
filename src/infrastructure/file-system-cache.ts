@@ -18,6 +18,8 @@ export const FileSystemCache = Layer.effect(
     Cache,
     Effect.gen(function* (_) {
         const fs = yield* _(FileSystem.FileSystem)
+        const context = yield* _(Effect.context<FileSystem.FileSystem>())
+
         const cacheDir = cacheDirPath()
 
         yield* _(fs.makeDirectory(cacheDir, { recursive: true }))
@@ -30,17 +32,16 @@ export const FileSystemCache = Layer.effect(
                     const exists = yield* _(fs.exists(cacheFile))
                     if (!exists) return O.none()
 
-                    const stats = yield* _(fs.stat(cacheFile))
                     const now = new Date()
-                    const lastUpdated = modifiedOrExpiredTime(stats, now, TTL)
+                    const lastUpdated = yield* _(modifiedOrExpiredTime(cacheFile, now, TTL))
                     if (isExpired(now, lastUpdated, TTL)) {
                         yield* _(Effect.logDebug(`Cache file ${key} is expired`))
                         return O.none()
                     }
 
-                    const cachedValue = yield* _(parseJsonFile(fs, cacheFile, schema))
+                    const cachedValue = yield* _(parseJsonFile(cacheFile, schema))
                     return O.some(cachedValue)
-                }).pipe(invalidateCacheOnError),
+                }).pipe(invalidateCacheOnError, Effect.provide(context)),
             update: (key, schema, value) =>
                 Effect.gen(function* (_) {
                     const cacheFile = path.join(cacheDir, key)
@@ -59,8 +60,12 @@ const invalidateCacheOnError = Effect.catchAll((error: string | PlatformError.Pl
     ),
 )
 
-const modifiedOrExpiredTime = (stats: FileSystem.File.Info, now: Date, ttl: Duration.Duration) =>
-    O.getOrElse(stats.mtime, () => new Date(now.getTime() - Duration.toMillis(ttl)))
+const modifiedOrExpiredTime = (cacheFile: string, now: Date, ttl: Duration.Duration) =>
+    Effect.gen(function* (_) {
+        const fs = yield* _(FileSystem.FileSystem)
+        const stats = yield* _(fs.stat(cacheFile))
+        return O.getOrElse(stats.mtime, () => new Date(now.getTime() - Duration.toMillis(ttl)))
+    })
 
 export const isExpired = (now: Date, lastUpdated: Date, ttl: Duration.Duration) => {
     const timePassed = Duration.millis(now.getTime() - lastUpdated.getTime())

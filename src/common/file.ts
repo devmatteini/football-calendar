@@ -3,8 +3,10 @@ import * as FileSystem from "@effect/platform/FileSystem"
 import * as Schema from "@effect/schema/Schema"
 import * as TreeFormatter from "@effect/schema/TreeFormatter"
 
-export const parseJsonFile = <A, I>(fs: FileSystem.FileSystem, filePath: string, schema: Schema.Schema<A, I>) =>
+export const parseJsonFile = <A, I>(filePath: string, schema: Schema.Schema<A, I>) =>
     Effect.gen(function* (_) {
+        const fs = yield* _(FileSystem.FileSystem)
+
         const content = yield* _(fs.readFileString(filePath))
         const json = yield* _(
             Effect.try({
