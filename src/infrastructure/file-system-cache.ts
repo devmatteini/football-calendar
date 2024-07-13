@@ -11,6 +11,7 @@ import * as os from "node:os"
 import { Cache } from "../cache"
 import * as EffectExt from "../common/effect-ext"
 import { parseJsonFile } from "../common/file"
+import * as Config from "effect/Config"
 
 const TTL = Duration.days(1)
 
@@ -20,7 +21,7 @@ export const FileSystemCache = Layer.effect(
         const fs = yield* _(FileSystem.FileSystem)
         const context = yield* _(Effect.context<FileSystem.FileSystem>())
 
-        const cacheDir = cacheDirPath()
+        const cacheDir = yield* _(cacheDirPath)
 
         yield* _(fs.makeDirectory(cacheDir, { recursive: true }))
 
@@ -72,13 +73,10 @@ export const isExpired = (now: Date, lastUpdated: Date, ttl: Duration.Duration) 
     return Duration.greaterThanOrEqualTo(timePassed, ttl)
 }
 
-const cacheDirPath = () =>
-    F.pipe(
-        O.fromNullable(process.env.FOOTBALL_CALENDAR_CACHE),
-        O.orElse(() =>
-            O.fromNullable(process.env.XDG_CACHE_HOME).pipe(O.map((configDir) => path.join(configDir, appDir))),
-        ),
-        O.getOrElse(() => path.join(os.homedir(), ".cache", appDir)),
-    )
-
 const appDir = "football-calendar" as const
+
+export const cacheDirPath = F.pipe(
+    Config.string("FOOTBALL_CALENDAR_CACHE"),
+    Config.orElse(() => Config.map(Config.string("XDG_CACHE_HOME"), (cacheDir) => path.join(cacheDir, appDir))),
+    Config.withDefault(path.join(os.homedir(), ".cache", appDir)),
+)
