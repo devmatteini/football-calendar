@@ -36,7 +36,7 @@ export const FileSystemCache = Layer.effect(
                     const now = new Date()
                     const lastUpdated = yield* _(modifiedOrExpiredTime(cacheFile, now, TTL))
                     if (isExpired(now, lastUpdated, TTL)) {
-                        yield* _(Effect.logDebug(`Cache file ${key} is expired`))
+                        yield* _(EffectExt.logDebug(`Cache file is expired`, { key }))
                         return O.none()
                     }
 

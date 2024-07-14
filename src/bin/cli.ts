@@ -25,7 +25,9 @@ const sync = Command.make("sync", {}, () =>
                 F.pipe(
                     footballMatchEventsHandler(calendar),
                     Effect.flatMap((summary) =>
-                        Console.log(`Football matches for ${calendar.name} import completed`, summary),
+                        Console.log(
+                            `Football matches for ${calendar.name} synced: ${summary.created} created | ${summary.updated} updated | ${summary.nothingChanged} unchanged`,
+                        ),
                     ),
                 ),
             ),

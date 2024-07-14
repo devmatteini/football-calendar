@@ -4,7 +4,6 @@ import * as Effect from "effect/Effect"
 import * as Layer from "effect/Layer"
 import * as S from "@effect/schema/Schema"
 import * as SchemaExt from "../common/schema-ext"
-import * as E from "effect/Either"
 import { ApiFootballClient, ApiFootballFixture, FixtureStatus, currentSeason, fixtures } from "../api-football"
 import {
     CalendarEvent,
