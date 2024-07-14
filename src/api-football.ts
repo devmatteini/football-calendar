@@ -11,7 +11,7 @@ import * as O from "effect/Option"
 import * as HttpClient from "@effect/platform/HttpClient"
 import * as HttpClientRequest from "@effect/platform/HttpClientRequest"
 import * as HttpClientResponse from "@effect/platform/HttpClientResponse"
-import { FootballCalendar } from "./football-calendars-config"
+import { FootballCalendar, LeagueRound } from "./football-calendars-config"
 import * as Match from "effect/Match"
 import { Cache } from "./cache"
 import * as crypto from "node:crypto"
@@ -55,7 +55,26 @@ export const fixtures = (calendar: FootballCalendar, season: number, status: str
     F.pipe(
         Match.value(calendar),
         Match.tag("Team", ({ teamId }) => fixturesByTeam(teamId, season, status)),
-        Match.tag("League", ({ leagueId }) => fixturesByLeague(leagueId, season, status)),
+        Match.tag("League", ({ leagueId, round }) =>
+            fixturesByLeague(leagueId, season, status).pipe(Effect.map(ROA.filter(byRound(round)))),
+        ),
+        Match.exhaustive,
+    )
+
+const KnockoutStages = [
+    "Knockout Round Play-offs",
+    "Round of 16",
+    "Quarter-finals",
+    "Semi-finals",
+    "3rd Place Final",
+    "Final",
+]
+
+const byRound = (round: LeagueRound) => (fixture: ApiFootballFixture) =>
+    F.pipe(
+        Match.value(round),
+        Match.when("All", F.constTrue),
+        Match.when("KnockoutStage", () => KnockoutStages.includes(fixture.league.round)),
         Match.exhaustive,
     )
 
@@ -121,6 +140,7 @@ const Fixture = S.Struct({
     }),
     league: S.Struct({
         name: S.String,
+        round: S.String,
     }),
     teams: S.Struct({
         home: FixtureTeam,
