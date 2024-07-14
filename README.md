@@ -89,7 +89,7 @@ Search your teams/leagues at these pages:
 -   https://dashboard.api-football.com/soccer/ids/teams
 -   https://dashboard.api-football.com/soccer/ids
 
-```json
+```json5
 [
     {
         "_tag": "Team",
@@ -100,7 +100,8 @@ Search your teams/leagues at these pages:
         "_tag": "League",
         "leagueId": 4, // Select League id v3
         "season": 2024,
-        "name": "Euro Championship"
+        "name": "Euro Championship",
+        "round": "All" | "KnockoutStage" // Default value is All
     }
 ]
 ```
