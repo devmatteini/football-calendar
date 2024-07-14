@@ -54,7 +54,7 @@ export const FileSystemCache = Layer.effect(
     }),
 )
 
-const invalidateCacheOnError = Effect.catchAll((error: string | PlatformError.PlatformError) =>
+const invalidateCacheOnError = Effect.catchAll((error: Error | PlatformError.PlatformError) =>
     F.pipe(
         EffectExt.logDebug("Cache invalidated because an error occurred", { error }),
         Effect.zipRight(Effect.succeedNone),

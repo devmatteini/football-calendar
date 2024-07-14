@@ -1,7 +1,7 @@
 import * as Effect from "effect/Effect"
 import * as FileSystem from "@effect/platform/FileSystem"
 import * as Schema from "@effect/schema/Schema"
-import * as TreeFormatter from "@effect/schema/TreeFormatter"
+import * as SchemaExt from "./schema-ext"
 
 export const parseJsonFile = <A, I>(filePath: string, schema: Schema.Schema<A, I>) =>
     Effect.gen(function* (_) {
@@ -11,12 +11,9 @@ export const parseJsonFile = <A, I>(filePath: string, schema: Schema.Schema<A, I
         const json = yield* _(
             Effect.try({
                 try: () => JSON.parse(content),
-                catch: (e) => `Unable to parse json ${filePath}: ${e}`,
+                catch: (e) => new Error(`Unable to parse json ${filePath}: ${e}`),
             }),
         )
 
-        return yield* _(
-            Schema.decodeUnknown(schema)(json, { errors: "all" }),
-            Effect.mapError((e) => `Decode error ${filePath}: ${TreeFormatter.formatErrorSync(e)}`),
-        )
+        return yield* _(SchemaExt.decode(schema, json))
     })
