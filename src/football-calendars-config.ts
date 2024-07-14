@@ -13,10 +13,14 @@ export const Team = S.TaggedStruct("Team", {
 })
 export type Team = typeof Team.Type
 
+export const LeagueRound = S.Literal("All", "KnockoutStage")
+export type LeagueRound = typeof LeagueRound.Type
+
 export const League = S.TaggedStruct("League", {
     leagueId: S.Int,
     name: S.String,
     season: S.Int.pipe(S.positive()),
+    round: S.optional(LeagueRound, { default: () => "All" }),
 })
 export type League = typeof League.Type
 
