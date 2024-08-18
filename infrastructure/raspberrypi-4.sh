@@ -45,8 +45,8 @@ API_FOOTBALL_TOKEN=$API_FOOTBALL_TOKEN
 GOOGLE_CALENDAR_KEY_FILE=$remote_google_calendar_key_file
 GOOGLE_CALENDAR_ID=$GOOGLE_CALENDAR_ID
 LOG=Debug
-# Run every monday at 10:00 (https://crontab.guru/#0_10_*_*_1)
-0 10 * * 1 $user bash -lc '$BIN sync' >> $APP/football-calendar-logs.txt 2>&1
+# Run every monday/wednesday at 10:00 (https://crontab.guru/#0_10_*_*_1)
+0 10 * * 1,3 $user bash -lc '$BIN sync' >> $APP/football-calendar-logs.txt 2>&1
 EOL
 SCRIPT
 }
