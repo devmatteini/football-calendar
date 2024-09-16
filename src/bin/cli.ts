@@ -6,6 +6,7 @@ import * as Layer from "effect/Layer"
 import * as Console from "effect/Console"
 import { Command, Span } from "@effect/cli"
 import { NodeContext, NodeRuntime } from "@effect/platform-node"
+import * as FetchHttpClient from "@effect/platform/FetchHttpClient"
 import { footballMatchEventsHandler } from "../football-match-events-handler"
 import { FootballMatchEventsHandlerDepsLive } from "../infrastructure/football-match-events-handler-live"
 import { ApiFootballClientLive } from "../api-football"
@@ -54,6 +55,7 @@ const MainLive = F.pipe(
     // keep new line
     NodeContext.layer,
     Layer.provideMerge(LoggerLive),
+    Layer.provideMerge(FetchHttpClient.layer),
 )
 
 F.pipe(

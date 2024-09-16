@@ -101,6 +101,8 @@ const get = <A, I>(endpoint: string, queryParams: QueryParams, schema: S.Schema<
         const maybeValue = yield* _(client.cache.load(key, Body.fields.response))
         if (O.isSome(maybeValue)) return maybeValue.value
 
+        const httpClient = (yield* _(HttpClient.HttpClient)).pipe(HttpClient.filterStatusOk)
+
         const response = yield* _(
             HttpClientRequest.get(new URL(endpoint, client.baseUrl).href, {
                 headers: {
@@ -108,7 +110,7 @@ const get = <A, I>(endpoint: string, queryParams: QueryParams, schema: S.Schema<
                 },
                 urlParams: queryParams,
             }),
-            HttpClient.fetchOk,
+            httpClient.execute,
             Effect.flatMap(HttpClientResponse.schemaBodyJson(Body)),
             Effect.flatMap((data) =>
                 isResponseOk(data)
@@ -149,7 +151,13 @@ const Fixture = S.Struct({
 })
 export type ApiFootballFixture = typeof Fixture.Type
 
-const ResponseError = S.Union(S.Array(S.Unknown), S.Record(S.String, S.Unknown))
+const ResponseError = S.Union(
+    S.Array(S.Unknown),
+    S.Record({
+        key: S.String,
+        value: S.Unknown,
+    }),
+)
 type ResponseError = typeof ResponseError.Type
 const ResponseErrorPrint = Pretty.make(ResponseError)
 

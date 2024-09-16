@@ -20,7 +20,7 @@ export const League = S.TaggedStruct("League", {
     leagueId: S.Int,
     name: S.String,
     season: S.Int.pipe(S.positive()),
-    round: S.optional(LeagueRound, { default: () => "All" }),
+    round: S.optionalWith(LeagueRound, { default: () => "All" }),
 })
 export type League = typeof League.Type
 

@@ -23,7 +23,10 @@ export type FootballMatch = typeof FootballMatch.Type
 export const CalendarEvent = S.Struct({
     matchId: S.Number,
     startDate: S.Date,
-    originalEvent: S.Record(S.String, S.Any),
+    originalEvent: S.Record({
+        key: S.String,
+        value: S.Any
+    }),
 })
 export type CalendarEvent = typeof CalendarEvent.Type
 
