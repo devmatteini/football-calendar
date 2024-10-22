@@ -4,7 +4,7 @@ import * as F from "effect/Function"
 import * as Context from "effect/Context"
 import * as Layer from "effect/Layer"
 import * as Config from "effect/Config"
-import * as ROA from "effect/Array"
+import * as Array from "effect/Array"
 
 type GoogleCalendar = calendar_v3.Calendar
 export type GoogleCalendarEvent = calendar_v3.Schema$Event
@@ -57,7 +57,7 @@ export const listEvents = (privateProperties: Record<string, string>, today: Dat
                         singleEvents: true,
                         privateExtendedProperty: F.pipe(
                             Object.entries(privateProperties),
-                            ROA.map(([key, value]) => `${key}=${value}`),
+                            Array.map(([key, value]) => `${key}=${value}`),
                         ),
                     }),
                 catch: (e) => new Error(`Unable to retrieve list of google calendar events: ${e}`),

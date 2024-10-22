@@ -1,6 +1,6 @@
 import * as Effect from "effect/Effect"
 import * as Context from "effect/Context"
-import * as ROA from "effect/Array"
+import * as Array from "effect/Array"
 import {
     CalendarEvent,
     FootballMatchEvent,
@@ -46,10 +46,10 @@ export const footballMatchEventsHandler = (calendar: FootballCalendar) =>
 
 type CreateOrUpdateEvent = Exclude<FootballMatchEvent, { _tag: "NOTHING_CHANGED" }>
 const onlyCreateOrUpdateEvents = (events: readonly FootballMatchEvent[]) =>
-    ROA.filter(events, (x): x is CreateOrUpdateEvent => x._tag !== "NOTHING_CHANGED")
+    Array.filter(events, (x): x is CreateOrUpdateEvent => x._tag !== "NOTHING_CHANGED")
 
 const toSummary = (events: readonly FootballMatchEvent[]): Summary => ({
-    created: ROA.filter(events, (x) => x._tag === "CREATE").length,
-    updated: ROA.filter(events, (x) => x._tag === "UPDATE").length,
-    nothingChanged: ROA.filter(events, (x) => x._tag === "NOTHING_CHANGED").length,
+    created: Array.filter(events, (x) => x._tag === "CREATE").length,
+    updated: Array.filter(events, (x) => x._tag === "UPDATE").length,
+    nothingChanged: Array.filter(events, (x) => x._tag === "NOTHING_CHANGED").length,
 })

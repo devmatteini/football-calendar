@@ -5,7 +5,7 @@ import * as Layer from "effect/Layer"
 import * as Config from "effect/Config"
 import * as Schema from "effect/Schema"
 import * as Pretty from "effect/Pretty"
-import * as ROA from "effect/Array"
+import * as Array from "effect/Array"
 import * as ORD from "effect/Order"
 import * as O from "effect/Option"
 import * as HttpClient from "@effect/platform/HttpClient"
@@ -44,9 +44,9 @@ const currentSeasonByTeam = (team: number) =>
     F.pipe(
         get("/teams/seasons", { team: team.toString() }, TeamSeason),
         Effect.flatMap(
-            ROA.match({
+            Array.match({
                 onEmpty: () => Effect.fail(new Error(`No seasons for team ${team}`)),
-                onNonEmpty: (seasons) => Effect.succeed(ROA.max(seasons, ORD.number)),
+                onNonEmpty: (seasons) => Effect.succeed(Array.max(seasons, ORD.number)),
             }),
         ),
     )
@@ -56,7 +56,7 @@ export const fixtures = (calendar: FootballCalendar, season: number, status: str
         Match.value(calendar),
         Match.tag("Team", ({ teamId }) => fixturesByTeam(teamId, season, status)),
         Match.tag("League", ({ leagueId, round }) =>
-            fixturesByLeague(leagueId, season, status).pipe(Effect.map(ROA.filter(byRound(round)))),
+            fixturesByLeague(leagueId, season, status).pipe(Effect.map(Array.filter(byRound(round)))),
         ),
         Match.exhaustive,
     )

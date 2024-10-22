@@ -1,5 +1,5 @@
 import * as F from "effect/Function"
-import * as ROA from "effect/Array"
+import * as Array from "effect/Array"
 import * as Effect from "effect/Effect"
 import * as Layer from "effect/Layer"
 import * as Schema from "effect/Schema"
@@ -97,7 +97,7 @@ const loadMatches = (calendar: FootballCalendar) =>
     F.pipe(
         currentSeason(calendar),
         Effect.flatMap((currentSeason) => fixtures(calendar, currentSeason, FixtureStatus.scheduled)),
-        Effect.map(ROA.map(toFootballMatch(calendar))),
+        Effect.map(Array.map(toFootballMatch(calendar))),
         Effect.orDie,
     )
 

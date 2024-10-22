@@ -1,5 +1,5 @@
 import * as F from "effect/Function"
-import * as ROA from "effect/Array"
+import * as Array from "effect/Array"
 import * as O from "effect/Option"
 import * as Match from "effect/Match"
 import * as Schema from "effect/Schema"
@@ -57,10 +57,10 @@ export const footballMatchEvents = (
 ): readonly FootballMatchEvent[] =>
     F.pipe(
         matches,
-        ROA.map((match) =>
+        Array.map((match) =>
             footballMatchEvent(
                 match,
-                ROA.findFirst(calendarEvents, (x) => x.matchId === match.matchId),
+                Array.findFirst(calendarEvents, (x) => x.matchId === match.matchId),
             ),
         ),
     )
