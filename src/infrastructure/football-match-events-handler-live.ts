@@ -152,7 +152,7 @@ const CalendarListEvent = S.Struct({
         dateTime: S.Date,
     }),
     extendedProperties: S.Struct({
-        private: EventMatchId.Schema,
+        private: EventMatchId.EventMatchId,
     }),
 })
 
