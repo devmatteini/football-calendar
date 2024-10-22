@@ -19,14 +19,13 @@
     "scripts:list-events": "tsx scripts/list-events.ts"
   },
   "dependencies": {
-    "@effect/schema": "0.73.0",
-    "@effect/platform": "0.65.1",
-    "@effect/platform-node": "0.60.1",
-    "@effect/typeclass": "0.27.0",
-    "@effect/printer": "0.36.0",
-    "@effect/printer-ansi": "0.36.0",
-    "@effect/cli": "0.44.1",
-    "effect": "3.8.0",
+    "@effect/platform": "0.69.2",
+    "@effect/platform-node": "0.64.3",
+    "@effect/typeclass": "0.29.0",
+    "@effect/printer": "0.38.0",
+    "@effect/printer-ansi": "0.38.0",
+    "@effect/cli": "0.48.2",
+    "effect": "3.10.0",
     "@googleapis/calendar": "9.7.5"
   },
   "devDependencies": {

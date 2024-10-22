@@ -1,5 +1,5 @@
 import * as Effect from "effect/Effect"
-import * as S from "@effect/schema/Schema"
+import * as S from "effect/Schema"
 import * as FileSystem from "@effect/platform/FileSystem"
 import * as F from "effect/Function"
 import * as Config from "effect/Config"

@@ -1,7 +1,7 @@
 import * as Effect from "effect/Effect"
 import * as Context from "effect/Context"
 import * as O from "effect/Option"
-import * as Schema from "@effect/schema/Schema"
+import * as Schema from "effect/Schema"
 
 export type Cache = {
     load: <A, I>(key: string, schema: Schema.Schema<A, I>) => Effect.Effect<O.Option<A>>

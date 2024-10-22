@@ -2,7 +2,7 @@ import * as F from "effect/Function"
 import * as ROA from "effect/Array"
 import * as O from "effect/Option"
 import * as Match from "effect/Match"
-import * as S from "@effect/schema/Schema"
+import * as S from "effect/Schema"
 
 export const FootballMatchCalendar = S.Struct({
     origin: S.Literal("Team", "League"),
@@ -25,7 +25,7 @@ export const CalendarEvent = S.Struct({
     startDate: S.Date,
     originalEvent: S.Record({
         key: S.String,
-        value: S.Any
+        value: S.Any,
     }),
 })
 export type CalendarEvent = typeof CalendarEvent.Type

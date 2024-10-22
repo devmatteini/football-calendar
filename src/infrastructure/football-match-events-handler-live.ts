@@ -2,7 +2,7 @@ import * as F from "effect/Function"
 import * as ROA from "effect/Array"
 import * as Effect from "effect/Effect"
 import * as Layer from "effect/Layer"
-import * as S from "@effect/schema/Schema"
+import * as S from "effect/Schema"
 import * as SchemaExt from "../common/schema-ext"
 import { ApiFootballClient, ApiFootballFixture, FixtureStatus, currentSeason, fixtures } from "../api-football"
 import {
@@ -23,7 +23,7 @@ import * as HttpClient from "@effect/platform/HttpClient"
 export const FootballMatchEventsHandlerDepsLive = Layer.effect(
     FootballMatchEventsHandlerDeps,
     F.pipe(
-        Effect.context<GoogleCalendarClient | ApiFootballClient | HttpClient.HttpClient.Service>(),
+        Effect.context<GoogleCalendarClient | ApiFootballClient | HttpClient.HttpClient>(),
         Effect.map(
             (context): FootballMatchEventsHandlerDeps => ({
                 loadMatches: F.flow(loadMatches, Effect.provide(context)),

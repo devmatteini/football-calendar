@@ -1,5 +1,5 @@
 import * as NodeFileSystem from "@effect/platform-node/NodeFileSystem"
-import * as Schema from "@effect/schema/Schema"
+import * as Schema from "effect/Schema"
 import * as Effect from "effect/Effect"
 import * as Layer from "effect/Layer"
 import * as O from "effect/Option"

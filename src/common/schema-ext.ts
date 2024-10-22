@@ -1,7 +1,7 @@
 import * as F from "effect/Function"
-import * as Schema from "@effect/schema/Schema"
+import * as Schema from "effect/Schema"
 import * as Effect from "effect/Effect"
-import * as TreeFormatter from "@effect/schema/TreeFormatter"
+import { TreeFormatter } from "effect/ParseResult"
 
 export const decode = <A, I>(schema: Schema.Schema<A, I>, input: unknown) =>
     F.pipe(

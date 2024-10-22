@@ -1,6 +1,6 @@
 import * as Effect from "effect/Effect"
 import * as FileSystem from "@effect/platform/FileSystem"
-import * as Schema from "@effect/schema/Schema"
+import * as Schema from "effect/Schema"
 import * as SchemaExt from "./schema-ext"
 
 export const parseJsonFile = <A, I>(filePath: string, schema: Schema.Schema<A, I>) =>
