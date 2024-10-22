@@ -9,7 +9,6 @@ import * as Array from "effect/Array"
 import * as ORD from "effect/Order"
 import * as O from "effect/Option"
 import * as HttpClient from "@effect/platform/HttpClient"
-import * as HttpClientRequest from "@effect/platform/HttpClientRequest"
 import * as HttpClientResponse from "@effect/platform/HttpClientResponse"
 import { FootballCalendar, LeagueRound } from "./football-calendars-config"
 import * as Match from "effect/Match"
@@ -104,13 +103,12 @@ const get = <A, I>(endpoint: string, queryParams: QueryParams, schema: Schema.Sc
         const httpClient = (yield* _(HttpClient.HttpClient)).pipe(HttpClient.filterStatusOk)
 
         const response = yield* _(
-            HttpClientRequest.get(new URL(endpoint, client.baseUrl).href, {
+            httpClient.get(new URL(endpoint, client.baseUrl), {
                 headers: {
                     "x-apisports-key": client.token,
                 },
                 urlParams: queryParams,
             }),
-            httpClient.execute,
             Effect.flatMap(HttpClientResponse.schemaBodyJson(Body)),
             Effect.flatMap((data) =>
                 isResponseOk(data)
