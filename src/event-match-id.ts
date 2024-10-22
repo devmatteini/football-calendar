@@ -1,8 +1,8 @@
-import * as S from "effect/Schema"
+import * as Schema from "effect/Schema"
 
-export const EventMatchId = S.Struct({
-    matchId: S.NumberFromString,
-    id: S.NumberFromString,
+export const EventMatchId = Schema.Struct({
+    matchId: Schema.NumberFromString,
+    id: Schema.NumberFromString,
 })
 export type EventMatchId = typeof EventMatchId.Type
 export type EventMatchIdEncoded = typeof EventMatchId.Encoded

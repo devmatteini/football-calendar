@@ -2,49 +2,49 @@ import * as F from "effect/Function"
 import * as ROA from "effect/Array"
 import * as O from "effect/Option"
 import * as Match from "effect/Match"
-import * as S from "effect/Schema"
+import * as Schema from "effect/Schema"
 
-export const FootballMatchCalendar = S.Struct({
-    origin: S.Literal("Team", "League"),
-    id: S.Number,
+export const FootballMatchCalendar = Schema.Struct({
+    origin: Schema.Literal("Team", "League"),
+    id: Schema.Number,
 })
 export type FootballMatchCalendar = typeof FootballMatchCalendar.Type
 
-export const FootballMatch = S.Struct({
-    matchId: S.Number,
+export const FootballMatch = Schema.Struct({
+    matchId: Schema.Number,
     calendar: FootballMatchCalendar,
-    date: S.Date,
-    homeTeam: S.String,
-    awayTeam: S.String,
-    competition: S.String,
+    date: Schema.Date,
+    homeTeam: Schema.String,
+    awayTeam: Schema.String,
+    competition: Schema.String,
 })
 export type FootballMatch = typeof FootballMatch.Type
 
-export const CalendarEvent = S.Struct({
-    matchId: S.Number,
-    startDate: S.Date,
-    originalEvent: S.Record({
-        key: S.String,
-        value: S.Any,
+export const CalendarEvent = Schema.Struct({
+    matchId: Schema.Number,
+    startDate: Schema.Date,
+    originalEvent: Schema.Record({
+        key: Schema.String,
+        value: Schema.Any,
     }),
 })
 export type CalendarEvent = typeof CalendarEvent.Type
 
-export const CreateFootballMatchEvent = S.TaggedStruct("CREATE", { match: FootballMatch })
+export const CreateFootballMatchEvent = Schema.TaggedStruct("CREATE", { match: FootballMatch })
 export type CreateFootballMatchEvent = typeof CreateFootballMatchEvent.Type
 
-export const UpdateFootballMatchEvent = S.TaggedStruct("UPDATE", {
+export const UpdateFootballMatchEvent = Schema.TaggedStruct("UPDATE", {
     match: FootballMatch,
     originalCalendarEvent: CalendarEvent.fields.originalEvent,
 })
 export type UpdateFootballMatchEvent = typeof UpdateFootballMatchEvent.Type
 
-export const NothingChangedFootballMatchEvent = S.TaggedStruct("NOTHING_CHANGED", {
+export const NothingChangedFootballMatchEvent = Schema.TaggedStruct("NOTHING_CHANGED", {
     matchId: FootballMatch.fields.matchId,
 })
 export type NothingChangedFootballMatchEvent = typeof NothingChangedFootballMatchEvent.Type
 
-export const FootballMatchEvent = S.Union(
+export const FootballMatchEvent = Schema.Union(
     CreateFootballMatchEvent,
     UpdateFootballMatchEvent,
     NothingChangedFootballMatchEvent,

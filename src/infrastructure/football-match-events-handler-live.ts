@@ -2,7 +2,7 @@ import * as F from "effect/Function"
 import * as ROA from "effect/Array"
 import * as Effect from "effect/Effect"
 import * as Layer from "effect/Layer"
-import * as S from "effect/Schema"
+import * as Schema from "effect/Schema"
 import * as SchemaExt from "../common/schema-ext"
 import { ApiFootballClient, ApiFootballFixture, FixtureStatus, currentSeason, fixtures } from "../api-football"
 import {
@@ -147,11 +147,11 @@ const validateCalendarEvent = (originalEvent: GoogleCalendarEvent) =>
         ),
     )
 
-const CalendarListEvent = S.Struct({
-    start: S.Struct({
-        dateTime: S.Date,
+const CalendarListEvent = Schema.Struct({
+    start: Schema.Struct({
+        dateTime: Schema.Date,
     }),
-    extendedProperties: S.Struct({
+    extendedProperties: Schema.Struct({
         private: EventMatchId.EventMatchId,
     }),
 })

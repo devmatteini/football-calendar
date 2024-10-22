@@ -3,7 +3,7 @@ import * as F from "effect/Function"
 import * as Context from "effect/Context"
 import * as Layer from "effect/Layer"
 import * as Config from "effect/Config"
-import * as S from "effect/Schema"
+import * as Schema from "effect/Schema"
 import * as Pretty from "effect/Pretty"
 import * as ROA from "effect/Array"
 import * as ORD from "effect/Order"
@@ -91,7 +91,7 @@ export const FixtureStatus = {
 }
 
 type QueryParams = Record<string, string>
-const get = <A, I>(endpoint: string, queryParams: QueryParams, schema: S.Schema<A, I>) =>
+const get = <A, I>(endpoint: string, queryParams: QueryParams, schema: Schema.Schema<A, I>) =>
     Effect.gen(function* (_) {
         const client = yield* _(ApiFootballClient)
 
@@ -129,42 +129,42 @@ const cacheKey = (endpoint: string, queryParams: QueryParams) => {
     return crypto.createHash("sha256").update(keyRaw).digest("hex")
 }
 
-const TeamSeason = S.Number
+const TeamSeason = Schema.Number
 
-const FixtureTeam = S.Struct({
-    id: S.Number,
-    name: S.String,
+const FixtureTeam = Schema.Struct({
+    id: Schema.Number,
+    name: Schema.String,
 })
-const Fixture = S.Struct({
-    fixture: S.Struct({
-        id: S.Number,
-        date: S.Date,
+const Fixture = Schema.Struct({
+    fixture: Schema.Struct({
+        id: Schema.Number,
+        date: Schema.Date,
     }),
-    league: S.Struct({
-        name: S.String,
-        round: S.String,
+    league: Schema.Struct({
+        name: Schema.String,
+        round: Schema.String,
     }),
-    teams: S.Struct({
+    teams: Schema.Struct({
         home: FixtureTeam,
         away: FixtureTeam,
     }),
 })
 export type ApiFootballFixture = typeof Fixture.Type
 
-const ResponseError = S.Union(
-    S.Array(S.Unknown),
-    S.Record({
-        key: S.String,
-        value: S.Unknown,
+const ResponseError = Schema.Union(
+    Schema.Array(Schema.Unknown),
+    Schema.Record({
+        key: Schema.String,
+        value: Schema.Unknown,
     }),
 )
 type ResponseError = typeof ResponseError.Type
 const ResponseErrorPrint = Pretty.make(ResponseError)
 
-const Response = <A, I>(responseItem: S.Schema<A, I>) =>
-    S.Struct({
+const Response = <A, I>(responseItem: Schema.Schema<A, I>) =>
+    Schema.Struct({
         errors: ResponseError,
-        response: S.Array(responseItem),
+        response: Schema.Array(responseItem),
     })
 
 const isResponseOk = <T extends { errors: ResponseError }>(response: T) =>
