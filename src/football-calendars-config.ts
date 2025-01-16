@@ -30,14 +30,14 @@ export type FootballCalendar = typeof FootballCalendar.Type
 export const FootballCalendars = Schema.NonEmptyArray(FootballCalendar)
 export type FootballCalendars = typeof FootballCalendars.Type
 
-export const loadFootballCalendarConfig = Effect.gen(function* (_) {
-    const fs = yield* _(FileSystem.FileSystem)
+export const loadFootballCalendarConfig = Effect.gen(function* () {
+    const fs = yield* FileSystem.FileSystem
 
-    const configFile = yield* _(configFilePath)
-    const configExists = yield* _(fs.exists(configFile))
-    if (!configExists) return yield* _(Effect.fail(`Configuration file doesn't exists (${configFile})`))
+    const configFile = yield* configFilePath
+    const configExists = yield* fs.exists(configFile)
+    if (!configExists) return yield* Effect.fail(`Configuration file doesn't exists (${configFile})`)
 
-    return yield* _(parseJsonFile(configFile, FootballCalendars))
+    return yield* parseJsonFile(configFile, FootballCalendars)
 }).pipe(Effect.orDie)
 
 const configJson = ["football-calendar", "config.json"] as const

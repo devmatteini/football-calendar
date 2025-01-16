@@ -17,38 +17,38 @@ const TTL = Duration.days(1)
 
 export const FileSystemCache = Layer.effect(
     Cache,
-    Effect.gen(function* (_) {
-        const fs = yield* _(FileSystem.FileSystem)
-        const context = yield* _(Effect.context<FileSystem.FileSystem>())
+    Effect.gen(function* () {
+        const fs = yield* FileSystem.FileSystem
+        const context = yield* Effect.context<FileSystem.FileSystem>()
 
-        const cacheDir = yield* _(cacheDirPath)
+        const cacheDir = yield* cacheDirPath
 
-        yield* _(fs.makeDirectory(cacheDir, { recursive: true }))
+        yield* fs.makeDirectory(cacheDir, { recursive: true })
 
         return Cache.of({
             load: (key, schema) =>
-                Effect.gen(function* (_) {
+                Effect.gen(function* () {
                     const cacheFile = path.join(cacheDir, key)
 
-                    const exists = yield* _(fs.exists(cacheFile))
+                    const exists = yield* fs.exists(cacheFile)
                     if (!exists) return O.none()
 
                     const now = new Date()
-                    const lastUpdated = yield* _(modifiedOrExpiredTime(cacheFile, now, TTL))
+                    const lastUpdated = yield* modifiedOrExpiredTime(cacheFile, now, TTL)
                     if (isExpired(now, lastUpdated, TTL)) {
-                        yield* _(EffectExt.logDebug(`Cache file is expired`, { key }))
+                        yield* EffectExt.logDebug(`Cache file is expired`, { key })
                         return O.none()
                     }
 
-                    const cachedValue = yield* _(parseJsonFile(cacheFile, schema))
+                    const cachedValue = yield* parseJsonFile(cacheFile, schema)
                     return O.some(cachedValue)
                 }).pipe(invalidateCacheOnError, Effect.provide(context)),
             update: (key, schema, value) =>
-                Effect.gen(function* (_) {
+                Effect.gen(function* () {
                     const cacheFile = path.join(cacheDir, key)
 
-                    const encoded = yield* _(Schema.encode(schema)(value))
-                    yield* _(fs.writeFileString(cacheFile, JSON.stringify(encoded)))
+                    const encoded = yield* Schema.encode(schema)(value)
+                    yield* fs.writeFileString(cacheFile, JSON.stringify(encoded))
                 }).pipe(Effect.orDie),
         })
     }),
@@ -62,9 +62,9 @@ const invalidateCacheOnError = Effect.catchAll((error: Error | PlatformError.Pla
 )
 
 const modifiedOrExpiredTime = (cacheFile: string, now: Date, ttl: Duration.Duration) =>
-    Effect.gen(function* (_) {
-        const fs = yield* _(FileSystem.FileSystem)
-        const stats = yield* _(fs.stat(cacheFile))
+    Effect.gen(function* () {
+        const fs = yield* FileSystem.FileSystem
+        const stats = yield* fs.stat(cacheFile)
         return O.getOrElse(stats.mtime, () => new Date(now.getTime() - Duration.toMillis(ttl)))
     })
 

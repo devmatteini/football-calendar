@@ -18,17 +18,15 @@ import { FileSystemCache } from "../infrastructure/file-system-cache"
 const rootCommand = Command.make("football-calendar")
 
 const sync = Command.make("sync", {}, () =>
-    Effect.gen(function* (_) {
-        const calendars = yield* _(loadFootballCalendarConfig)
+    Effect.gen(function* () {
+        const calendars = yield* loadFootballCalendarConfig
 
-        yield* _(
-            Effect.forEach(calendars, (calendar) =>
-                F.pipe(
-                    footballMatchEventsHandler(calendar),
-                    Effect.flatMap((summary) =>
-                        Console.log(
-                            `Football matches for ${calendar.name} synced: ${summary.created} created | ${summary.updated} updated | ${summary.nothingChanged} unchanged`,
-                        ),
+        yield* Effect.forEach(calendars, (calendar) =>
+            F.pipe(
+                footballMatchEventsHandler(calendar),
+                Effect.flatMap((summary) =>
+                    Console.log(
+                        `Football matches for ${calendar.name} synced: ${summary.created} created | ${summary.updated} updated | ${summary.nothingChanged} unchanged`,
                     ),
                 ),
             ),

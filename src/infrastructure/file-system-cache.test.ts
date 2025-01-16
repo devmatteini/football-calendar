@@ -22,10 +22,10 @@ beforeAll(() => {
 })
 
 test("load - key not exists", async () => {
-    const program = Effect.gen(function* (_) {
-        const cache = yield* _(Cache)
+    const program = Effect.gen(function* () {
+        const cache = yield* Cache
         const key = "key-not-exists"
-        return yield* _(cache.load(key, TestSchema))
+        return yield* cache.load(key, TestSchema)
     })
 
     const cachedValue = await run(program)
@@ -34,12 +34,12 @@ test("load - key not exists", async () => {
 })
 
 test("update and load", async () => {
-    const program = Effect.gen(function* (_) {
-        const cache = yield* _(Cache)
+    const program = Effect.gen(function* () {
+        const cache = yield* Cache
         const key = "update-and-load-key"
 
-        yield* _(cache.update(key, TestSchema, anyTestSchema))
-        return yield* _(cache.load(key, TestSchema))
+        yield* cache.update(key, TestSchema, anyTestSchema)
+        return yield* cache.load(key, TestSchema)
     })
 
     const cachedValue = await run(program)
@@ -48,14 +48,14 @@ test("update and load", async () => {
 })
 
 test("load expired key", async () => {
-    const program = Effect.gen(function* (_) {
-        const cache = yield* _(Cache)
+    const program = Effect.gen(function* () {
+        const cache = yield* Cache
         const key = "load-expired-key"
 
         const cacheFile = path.join(cacheDir, key)
-        yield* _(createFileModifiedAt(cacheFile, yesterday()))
+        yield* createFileModifiedAt(cacheFile, yesterday())
 
-        return yield* _(cache.load(key, TestSchema))
+        return yield* cache.load(key, TestSchema)
     })
 
     const cachedValue = await run(program)

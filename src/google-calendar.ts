@@ -22,15 +22,13 @@ const realPath = (path: string) => {
 
 export const GoogleCalendarClientLive = Layer.effect(
     GoogleCalendarClient,
-    Effect.gen(function* (_) {
-        const { calendarId, keyFile } = yield* _(
-            Config.all({
-                keyFile: Config.string("GOOGLE_CALENDAR_KEY_FILE").pipe(Config.map(realPath)),
-                calendarId: Config.string("GOOGLE_CALENDAR_ID"),
-            }),
-        )
+    Effect.gen(function* () {
+        const { calendarId, keyFile } = yield* Config.all({
+            keyFile: Config.string("GOOGLE_CALENDAR_KEY_FILE").pipe(Config.map(realPath)),
+            calendarId: Config.string("GOOGLE_CALENDAR_ID"),
+        })
 
-        const client = yield* _(
+        const client = yield* F.pipe(
             Effect.tryPromise({
                 try: () => auth.getClient({ keyFile, scopes: "https://www.googleapis.com/auth/calendar.events" }),
                 catch: (e) => new Error(`Unable to authenticate with google api: ${e}`),
@@ -44,10 +42,10 @@ export const GoogleCalendarClientLive = Layer.effect(
 
 // https://developers.google.com/calendar/api/v3/reference/events/list
 export const listEvents = (privateProperties: Record<string, string>, today: Date = new Date()) =>
-    Effect.gen(function* (_) {
-        const { client, calendarId } = yield* _(GoogleCalendarClient)
+    Effect.gen(function* () {
+        const { client, calendarId } = yield* GoogleCalendarClient
 
-        const response = yield* _(
+        const response = yield* F.pipe(
             Effect.tryPromise({
                 try: () =>
                     client.events.list({
@@ -70,10 +68,10 @@ export const listEvents = (privateProperties: Record<string, string>, today: Dat
 
 // https://developers.google.com/calendar/api/v3/reference/events/insert
 export const insertEvent = (event: GoogleCalendarEvent) =>
-    Effect.gen(function* (_) {
-        const { client, calendarId } = yield* _(GoogleCalendarClient)
+    Effect.gen(function* () {
+        const { client, calendarId } = yield* GoogleCalendarClient
 
-        yield* _(
+        yield* F.pipe(
             Effect.tryPromise({
                 try: () =>
                     client.events.insert({
@@ -88,10 +86,10 @@ export const insertEvent = (event: GoogleCalendarEvent) =>
 
 // https://developers.google.com/calendar/api/v3/reference/events/update
 export const updateEvent = (event: GoogleCalendarEvent) =>
-    Effect.gen(function* (_) {
-        const { client, calendarId } = yield* _(GoogleCalendarClient)
+    Effect.gen(function* () {
+        const { client, calendarId } = yield* GoogleCalendarClient
 
-        yield* _(
+        yield* F.pipe(
             Effect.tryPromise({
                 try: () =>
                     client.events.update({

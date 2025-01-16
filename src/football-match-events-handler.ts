@@ -1,3 +1,4 @@
+import * as F from "effect/Function"
 import * as Effect from "effect/Effect"
 import * as Context from "effect/Context"
 import * as Array from "effect/Array"
@@ -24,18 +25,18 @@ export const FootballMatchEventsHandlerDeps = Context.GenericTag<FootballMatchEv
 type Summary = { created: number; updated: number; nothingChanged: number }
 
 export const footballMatchEventsHandler = (calendar: FootballCalendar) =>
-    Effect.gen(function* (_) {
-        const { loadMatches, loadCalendarEvents, saveCalendarEvent } = yield* _(FootballMatchEventsHandlerDeps)
+    Effect.gen(function* () {
+        const { loadMatches, loadCalendarEvents, saveCalendarEvent } = yield* FootballMatchEventsHandlerDeps
 
-        const [matches, calendarEvents] = yield* _(
-            Effect.all([loadMatches(calendar), loadCalendarEvents(calendar)], {
-                concurrency: 2,
-            }),
+        const [matches, calendarEvents] = yield* Effect.all(
+            // keep new line
+            [loadMatches(calendar), loadCalendarEvents(calendar)],
+            { concurrency: 2 },
         )
 
         const matchEvents = footballMatchEvents(matches, calendarEvents)
 
-        yield* _(
+        yield* F.pipe(
             matchEvents,
             onlyCreateOrUpdateEvents,
             Effect.forEach((x) => saveCalendarEvent(x), { concurrency: 2, discard: true }),
