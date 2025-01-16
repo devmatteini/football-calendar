@@ -27,8 +27,8 @@ importers:
         specifier: 0.31.4
         version: 0.31.4(effect@3.12.4)
       '@googleapis/calendar':
-        specifier: 9.7.5
-        version: 9.7.5
+        specifier: 9.7.9
+        version: 9.7.9
       effect:
         specifier: 3.12.4
         version: 3.12.4
@@ -372,8 +372,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@googleapis/calendar@9.7.5':
-    resolution: {integrity: sha512-NfHmolp7HHgbuurIgjiKbTvQAJLuAJJ1p+8YX90uxuUG3lrF2fbMI7yG9hhVfJnfWuzwHrnjyg2RO8e9K4VO3g==}
+  '@googleapis/calendar@9.7.9':
+    resolution: {integrity: sha512-s1dD/j+WtJpdJ7dxmJL1NeSSvoO4D+hcGqSGw4+UtEUpGgBmmlE9Ptxf04cRj1T9Y2xEUfhszKI87+rgxcW2iA==}
     engines: {node: '>=12.0.0'}
 
   '@jest/schemas@29.6.3':
@@ -1269,7 +1269,7 @@ snapshots:
   '@esbuild/win32-x64@0.21.5':
     optional: true
 
-  '@googleapis/calendar@9.7.5':
+  '@googleapis/calendar@9.7.9':
     dependencies:
       googleapis-common: 7.0.1
     transitivePeerDependencies:
