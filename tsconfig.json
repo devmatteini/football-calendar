@@ -1,15 +1,15 @@
 {
-    "$schema": "https://json.schemastore.org/tsconfig",
-    "display": "Node 18",
-    "compilerOptions": {
-        "lib": ["es2022"],
-        "module": "node16",
-        "target": "es2022",
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "moduleResolution": "node16"
-    },
-    "include": ["src/**/*.ts", "scripts/**/*.ts"]
+  "$schema": "https://json.schemastore.org/tsconfig",
+  // Template Node22: https://github.com/tsconfig/bases/blob/7522ff8914c9b4bcaf2c880934afdc71157790c8/bases/node22.json
+  "compilerOptions": {
+    "lib": ["es2023"],
+    "module": "node16",
+    "target": "es2022",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node16"
+  },
+  "include": ["src/**/*.ts", "scripts/**/*.ts"]
 }
