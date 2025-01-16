@@ -6,7 +6,7 @@
   "license": "MIT",
   "packageManager": "pnpm@9.10.0",
   "scripts": {
-    "format": "prettier -w src/**/*.ts",
+    "format": "prettier -w src scripts",
     "typecheck": "tsc --noEmit",
     "typecheck:w": "tsc --noEmit --watch",
     "test": "vitest run",
