@@ -89,21 +89,25 @@ Search your teams/leagues at these pages:
 -   https://dashboard.api-football.com/soccer/ids/teams
 -   https://dashboard.api-football.com/soccer/ids
 
+You can start from an example running `football-calendar config example`, or you can get the JSON Schema with
+`football-calendar config schema`
+
 ```json5
 [
-    {
-        "_tag": "Team",
-        "teamId": 529,
-        "name": "Barcelona" // This is just to easily identify the team
-    },
-    {
-        "_tag": "League",
-        "leagueId": 4, // Select League id v3
-        "season": 2024,
-        "name": "Euro Championship",
-        "round": "All" | "KnockoutStage" // Default value is All
-    }
+  {
+    "_tag": "Team",
+    "teamId": 529,
+    "name": "Barcelona"  // This is just to easily identify the team
+  },
+  {
+    "_tag": "League",
+    "leagueId": 4, // Select League id v3
+    "name": "Euro Championship",
+    "season": 2024,
+    "round": "KnockoutStage"
+  }
 ]
+
 ```
 
 ### Run the application
