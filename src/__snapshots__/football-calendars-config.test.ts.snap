@@ -1,0 +1,80 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FootballCalendars JSON Schema - if this test fails the public API contract may be broken 1`] = `
+{
+  "$defs": {
+    "Int": {
+      "description": "an integer",
+      "title": "int",
+      "type": "integer",
+    },
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "items": {
+    "anyOf": [
+      {
+        "additionalProperties": false,
+        "properties": {
+          "_tag": {
+            "enum": [
+              "Team",
+            ],
+            "type": "string",
+          },
+          "name": {
+            "type": "string",
+          },
+          "teamId": {
+            "$ref": "#/$defs/Int",
+          },
+        },
+        "required": [
+          "_tag",
+          "teamId",
+          "name",
+        ],
+        "type": "object",
+      },
+      {
+        "additionalProperties": false,
+        "properties": {
+          "_tag": {
+            "enum": [
+              "League",
+            ],
+            "type": "string",
+          },
+          "leagueId": {
+            "$ref": "#/$defs/Int",
+          },
+          "name": {
+            "type": "string",
+          },
+          "round": {
+            "enum": [
+              "All",
+              "KnockoutStage",
+            ],
+            "type": "string",
+          },
+          "season": {
+            "$ref": "#/$defs/Int",
+            "description": "a positive number",
+            "exclusiveMinimum": 0,
+            "title": "positive",
+          },
+        },
+        "required": [
+          "_tag",
+          "leagueId",
+          "name",
+          "season",
+        ],
+        "type": "object",
+      },
+    ],
+  },
+  "minItems": 1,
+  "type": "array",
+}
+`;

@@ -6,6 +6,7 @@ import * as Config from "effect/Config"
 import * as os from "node:os"
 import * as path from "node:path"
 import { parseJsonFile } from "./common/file"
+import * as JSONSchema from "effect/JSONSchema"
 
 export const Team = Schema.TaggedStruct("Team", {
     teamId: Schema.Int,
@@ -29,6 +30,8 @@ export type FootballCalendar = typeof FootballCalendar.Type
 
 export const FootballCalendars = Schema.NonEmptyArray(FootballCalendar)
 export type FootballCalendars = typeof FootballCalendars.Type
+
+export const FootballCalendarsJsonSchema = JSONSchema.make(FootballCalendars)
 
 export const loadFootballCalendarConfig = Effect.gen(function* () {
     const fs = yield* FileSystem.FileSystem
