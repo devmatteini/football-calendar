@@ -31,12 +31,12 @@
     "@googleapis/calendar": "9.7.9"
   },
   "devDependencies": {
-    "@types/node": "22.10.7",
-    "typescript": "5.7.3",
-    "prettier": "3.4.2",
+    "@types/node": "22.14.0",
+    "typescript": "5.8.3",
+    "prettier": "3.5.3",
     "vitest": "2.1.9",
     "esbuild": "0.24.2",
-    "tsx": "4.19.2"
+    "tsx": "4.19.3"
   },
   "keywords": []
 }
