@@ -16,7 +16,9 @@
     "start": "pnpm build && .build/football-calendar",
     "dev": "tsx ./src/bin/cli.ts",
     "scripts:delete-events": "tsx scripts/delete-events.ts",
-    "scripts:list-events": "tsx scripts/list-events.ts"
+    "scripts:list-events": "tsx scripts/list-events.ts",
+    "docker:build": "docker build -f Dockerfile -t football-calendar .",
+    "docker:run": "docker run -v \"$PWD\"/.config:/config/ --env-file=.env.dev football-calendar"
   },
   "dependencies": {
     "@effect/platform": "0.73.1",
