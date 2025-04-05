@@ -4,6 +4,7 @@ import * as Effect from "effect/Effect"
 import * as F from "effect/Function"
 import * as Layer from "effect/Layer"
 import * as Console from "effect/Console"
+import * as Schema from "effect/Schema"
 import { Command, Span } from "@effect/cli"
 import { NodeContext, NodeRuntime } from "@effect/platform-node"
 import * as FetchHttpClient from "@effect/platform/FetchHttpClient"
@@ -12,7 +13,12 @@ import { FootballMatchEventsHandlerDepsLive } from "../infrastructure/football-m
 import { ApiFootballClientLive } from "../api-football"
 import { GoogleCalendarClientLive } from "../google-calendar"
 import { LoggerLive, logUnexpectedError } from "../infrastructure/logger"
-import { loadFootballCalendarConfig } from "../football-calendars-config"
+import {
+    exampleFootballCalendars,
+    FootballCalendars,
+    FootballCalendarsJsonSchema,
+    loadFootballCalendarConfig,
+} from "../football-calendars-config"
 import { FileSystemCache } from "../infrastructure/file-system-cache"
 
 const rootCommand = Command.make("football-calendar")
@@ -34,7 +40,24 @@ const sync = Command.make("sync", {}, () =>
     }).pipe(Effect.provide(FootballMatchEventsLive)),
 )
 
-const command = rootCommand.pipe(Command.withSubcommands([sync]))
+const configExample = Command.make("example", {}, () =>
+    Effect.gen(function* () {
+        const encoded = yield* Schema.encode(FootballCalendars)(exampleFootballCalendars)
+        yield* Console.log(JSON.stringify(encoded, null, 2))
+    }),
+).pipe(Command.withDescription("Print example configuration file"))
+
+const configSchema = Command.make("schema", {}, () =>
+    // keep new line
+    Console.log(JSON.stringify(FootballCalendarsJsonSchema, null, 2)),
+).pipe(Command.withDescription("Print configuration file JSON schema"))
+
+const config = Command.make("config", {}, () => Console.log("Use subcommands or run with --help")).pipe(
+    Command.withDescription("Configuration file"),
+    Command.withSubcommands([configExample, configSchema]),
+)
+
+const command = rootCommand.pipe(Command.withSubcommands([sync, config]))
 
 const cli = Command.run(command, {
     name: "football-calendar",

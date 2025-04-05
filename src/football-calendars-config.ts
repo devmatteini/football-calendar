@@ -33,6 +33,11 @@ export type FootballCalendars = typeof FootballCalendars.Type
 
 export const FootballCalendarsJsonSchema = JSONSchema.make(FootballCalendars)
 
+export const exampleFootballCalendars: FootballCalendars = [
+    Team.make({ teamId: 529, name: "Barcelona" }),
+    League.make({ leagueId: 4, season: 2024, name: "Euro Championship", round: "KnockoutStage" }),
+]
+
 export const loadFootballCalendarConfig = Effect.gen(function* () {
     const fs = yield* FileSystem.FileSystem
 
