@@ -22,6 +22,7 @@ import {
     loadFootballCalendarConfig,
 } from "../football-calendars-config"
 import { FileSystemCache } from "../infrastructure/file-system-cache"
+import { serveHandler } from "../serve-handler"
 
 const rootCommand = Command.make("football-calendar")
 
@@ -59,7 +60,9 @@ const config = Command.make("config", {}, () => Console.log("Use subcommands or 
     Command.withSubcommands([configExample, configSchema]),
 )
 
-const command = rootCommand.pipe(Command.withSubcommands([sync, config]))
+const serve = Command.make("serve", {}, () => serveHandler).pipe(Command.withDescription("Start an HTTP server"))
+
+const command = rootCommand.pipe(Command.withSubcommands([sync, config, serve]))
 
 const cli = Command.run(command, {
     name: "football-calendar",
