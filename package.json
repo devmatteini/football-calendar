@@ -21,13 +21,13 @@
     "docker:run": "docker run -v \"$PWD\"/.config:/config/ --env-file=.env.dev football-calendar"
   },
   "dependencies": {
-    "@effect/platform": "0.80.6",
-    "@effect/platform-node": "0.76.10",
-    "@effect/typeclass": "0.33.6",
-    "@effect/printer": "0.42.6",
-    "@effect/printer-ansi": "0.42.6",
-    "@effect/cli": "0.59.6",
-    "effect": "3.14.6",
+    "@effect/platform": "0.80.13",
+    "@effect/platform-node": "0.77.1",
+    "@effect/typeclass": "0.33.13",
+    "@effect/printer": "0.42.13",
+    "@effect/printer-ansi": "0.42.13",
+    "@effect/cli": "0.59.13",
+    "effect": "3.14.13",
     "@googleapis/calendar": "9.8.0"
   },
   "devDependencies": {
