@@ -55,7 +55,7 @@ Build and then move the executable to a directory in your `$PATH`
 
 ```bash
 pnpm build
-mv .build/football-calendar ~/.local/bin
+mv dist/football-calendar ~/.local/bin
 football-calendar --help
 ```
 

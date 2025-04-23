@@ -11,7 +11,7 @@ ENV NODE_ENV=production
 RUN pnpm run build
 
 FROM node:22-alpine
-COPY --from=build /app/.build/football-calendar /usr/local/bin
+COPY --from=build /app/dist/football-calendar /usr/local/bin
 ENV NODE_NO_WARNINGS=1
 USER node
 ENTRYPOINT [ "node", "/usr/local/bin/football-calendar" ]

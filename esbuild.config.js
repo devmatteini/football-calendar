@@ -1,7 +1,7 @@
 const esbuild = require("esbuild")
 const fs = require("fs/promises")
 
-const executable = ".build/football-calendar"
+const executable = "dist/football-calendar"
 
 esbuild
     .build({
