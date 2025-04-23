@@ -11,6 +11,9 @@ ENV NODE_ENV=production
 RUN pnpm run build
 
 FROM node:22-alpine
+LABEL org.opencontainers.image.source=https://github.com/devmatteini/football-calendar
+LABEL org.opencontainers.image.description="Automatically sync your google calendar with football matches of your favorite team!"
+LABEL org.opencontainers.image.licenses=MIT
 COPY --from=build /app/dist/football-calendar /usr/local/bin
 ENV NODE_NO_WARNINGS=1
 USER node
