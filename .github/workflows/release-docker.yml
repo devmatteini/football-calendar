@@ -1,0 +1,33 @@
+name: Release Docker
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: github.repository_owner == 'devmatteini'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Prepare docker settings
+        run: ./scripts/ci-docker-setup.sh
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: linux/arm64
+
+      - name: Push to GitHub Container Registry
+        env:
+          GITHUB_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./scripts/docker-publish.sh
