@@ -85,5 +85,5 @@ F.pipe(
     Effect.suspend(() => cli(process.argv)),
     Effect.provide(MainLive),
     Effect.tapErrorCause(logUnexpectedError),
-    (x) => NodeRuntime.runMain(x, { disableErrorReporting: true }),
+    (x) => NodeRuntime.runMain(x, { disableErrorReporting: true, disablePrettyLogger: true }),
 )
