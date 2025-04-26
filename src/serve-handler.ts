@@ -43,12 +43,7 @@ const app = router.pipe(
 const port = 6789
 const ServerLive = NodeHttpServer.layer(() => createServer(), { port })
 
-const ServeLive = F.pipe(
-    app,
-    Layer.provide(NextMatchesDepsLive),
-    Layer.provide(GoogleCalendarClientLive),
-    Layer.provide(ServerLive),
-)
+const ServeLive = F.pipe(app, Layer.provide(NextMatchesDepsLive), Layer.provide(ServerLive))
 
 export const serveHandler = Effect.gen(function* () {
     yield* registerBackgroundJob(syncFootballCalendar)

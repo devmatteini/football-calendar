@@ -75,7 +75,7 @@ const cli = Command.run(command, {
 const FootballMatchEventsLive = F.pipe(
     FootballMatchEventsHandlerDepsLive,
     Layer.provide(ApiFootballClientLive),
-    Layer.provide(GoogleCalendarClientLive),
+    Layer.provideMerge(GoogleCalendarClientLive),
     Layer.provide(FileSystemCache),
 )
 
