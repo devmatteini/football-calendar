@@ -11,6 +11,8 @@ import * as Schema from "effect/Schema"
 import { GoogleCalendarClientLive } from "./google-calendar"
 import { nextMatchesHandler, NextMatchesResponse } from "./server/next-matches-handler"
 import { NextMatchesDepsLive } from "./server/next-matches-deps-live"
+import * as Cron from "effect/Cron"
+import { registerBackgroundJob } from "./server/background-jobs"
 
 const DEFAULT_NEXT_MATCHES_COUNT = 5
 
@@ -48,6 +50,7 @@ const ServeLive = F.pipe(
     Layer.provide(ServerLive),
 )
 
-// TODO:
-//  2. setup cron job(s) to sync calendar
-export const serveHandler = Layer.launch(ServeLive)
+export const serveHandler = Effect.gen(function* () {
+    yield* registerBackgroundJob({ job: Effect.logInfo("Running every minute"), cron: Cron.unsafeParse("* * * * *") })
+    return yield* Layer.launch(ServeLive)
+})
