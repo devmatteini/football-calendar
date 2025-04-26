@@ -25,18 +25,18 @@ export const NextMatchesResponse = Schema.Array(NextMatchResponse).pipe(
     Schema.annotations({ identifier: "NextMatchesResponse" }),
 )
 
-export const nextMatchesHandler = Effect.gen(function* () {
-    const { loadMatches } = yield* NextMatchesDeps
+export const nextMatchesHandler = (count: number) =>
+    Effect.gen(function* () {
+        const { loadMatches } = yield* NextMatchesDeps
 
-    const matches = yield* loadMatches
-    return F.pipe(
-        matches,
-        Array.sort(byMostRecent),
-        // TODO: make this value configurable?
-        Array.take(5),
-        Array.map((x) => NextMatchResponse.make({ summary: x.summary, date: x.startDate })),
-    )
-})
+        const matches = yield* loadMatches
+        return F.pipe(
+            matches,
+            Array.sort(byMostRecent),
+            Array.take(count),
+            Array.map((x) => NextMatchResponse.make({ summary: x.summary, date: x.startDate })),
+        )
+    })
 
 const byMostRecent = F.pipe(
     ORD.Date,

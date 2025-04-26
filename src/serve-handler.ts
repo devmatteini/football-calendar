@@ -12,12 +12,14 @@ import { GoogleCalendarClient, GoogleCalendarClientLive, GoogleCalendarEvent, li
 import * as SchemaExt from "./common/schema-ext"
 import { CalendarEvent, NextMatchesDeps, nextMatchesHandler, NextMatchesResponse } from "./server/next-matches-handler"
 
+const DEFAULT_NEXT_MATCHES_COUNT = 5
+
 const router = HttpRouter.empty.pipe(
     HttpRouter.get(
         "/next-matches",
         // TODO: add error handling
         Effect.gen(function* () {
-            const nextMatches = yield* nextMatchesHandler
+            const nextMatches = yield* nextMatchesHandler(DEFAULT_NEXT_MATCHES_COUNT)
             const response = yield* Schema.encode(NextMatchesResponse)(nextMatches)
             return yield* HttpServerResponse.json(response)
         }),
