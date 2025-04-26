@@ -10,37 +10,19 @@ import * as Span from "@effect/cli/HelpDoc/Span"
 import * as NodeContext from "@effect/platform-node/NodeContext"
 import * as NodeRuntime from "@effect/platform-node/NodeRuntime"
 import * as FetchHttpClient from "@effect/platform/FetchHttpClient"
-import { footballMatchEventsHandler } from "../football-match-events-handler"
 import { FootballMatchEventsHandlerDepsLive } from "../infrastructure/football-match-events-handler-live"
 import { ApiFootballClientLive } from "../api-football"
 import { GoogleCalendarClientLive } from "../google-calendar"
 import { LoggerLive, logUnexpectedError } from "../infrastructure/logger"
-import {
-    exampleFootballCalendars,
-    FootballCalendars,
-    FootballCalendarsJsonSchema,
-    loadFootballCalendarConfig,
-} from "../football-calendars-config"
+import { exampleFootballCalendars, FootballCalendars, FootballCalendarsJsonSchema } from "../football-calendars-config"
 import { FileSystemCache } from "../infrastructure/file-system-cache"
 import { serveHandler } from "../serve-handler"
+import { syncCommandHandler } from "../cli/sync"
 
 const rootCommand = Command.make("football-calendar")
 
-const sync = Command.make("sync", {}, () =>
-    Effect.gen(function* () {
-        const calendars = yield* loadFootballCalendarConfig
-
-        yield* Effect.forEach(calendars, (calendar) =>
-            F.pipe(
-                footballMatchEventsHandler(calendar),
-                Effect.flatMap((summary) =>
-                    Console.log(
-                        `Football matches for ${calendar.name} synced: ${summary.created} created | ${summary.updated} updated | ${summary.nothingChanged} unchanged`,
-                    ),
-                ),
-            ),
-        )
-    }).pipe(Effect.provide(FootballMatchEventsLive)),
+const sync = Command.make("sync", {}, () => syncCommandHandler).pipe(
+    Command.withDescription("Sync football matches with your calendar"),
 )
 
 const configExample = Command.make("example", {}, () =>
