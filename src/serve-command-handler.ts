@@ -46,7 +46,7 @@ const app = router.pipe(
 const port = 6789
 const ServerLive = NodeHttpServer.layer(() => createServer(), { port })
 
-const ServeLive = F.pipe(app, Layer.provide(NextMatchesDepsLive), Layer.provide(ServerLive))
+const AppServerLive = F.pipe(app, Layer.provide(NextMatchesDepsLive), Layer.provide(ServerLive))
 
 const FootballMatchEventsLive = F.pipe(
     FootballMatchEventsHandlerDepsLive,
@@ -57,5 +57,5 @@ const FootballMatchEventsLive = F.pipe(
 
 export const serveCommandHandler = Effect.gen(function* () {
     yield* registerBackgroundJob(syncFootballCalendar)
-    return yield* Layer.launch(ServeLive)
+    return yield* Layer.launch(AppServerLive)
 }).pipe(Effect.provide(FootballMatchEventsLive))
