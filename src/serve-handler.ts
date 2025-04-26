@@ -14,7 +14,7 @@ import { CalendarEvent, NextMatchesDeps, nextMatchesHandler, NextMatchesResponse
 
 const router = HttpRouter.empty.pipe(
     HttpRouter.get(
-        "/",
+        "/next-matches",
         // TODO: add error handling
         Effect.gen(function* () {
             const nextMatches = yield* nextMatchesHandler
