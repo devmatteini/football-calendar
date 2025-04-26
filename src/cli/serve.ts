@@ -8,14 +8,14 @@ import * as HttpMiddleware from "@effect/platform/HttpMiddleware"
 import * as NodeHttpServer from "@effect/platform-node/NodeHttpServer"
 import { createServer } from "node:http"
 import * as Schema from "effect/Schema"
-import { GoogleCalendarClientLive } from "./google-calendar"
-import { nextMatchesHandler, NextMatchesResponse } from "./server/next-matches-handler"
-import { NextMatchesDepsLive } from "./server/next-matches-deps-live"
-import { registerBackgroundJob } from "./server/background-jobs"
-import { syncFootballCalendar } from "./server/sync-football-calendar"
-import { FootballMatchEventsHandlerDepsLive } from "./infrastructure/football-match-events-handler-live"
-import { ApiFootballClientLive } from "./api-football"
-import { FileSystemCache } from "./infrastructure/file-system-cache"
+import { GoogleCalendarClientLive } from "../google-calendar"
+import { nextMatchesHandler, NextMatchesResponse } from "../server/next-matches-handler"
+import { NextMatchesDepsLive } from "../server/next-matches-deps-live"
+import { registerBackgroundJob } from "../server/background-jobs"
+import { syncFootballCalendar } from "../server/sync-football-calendar"
+import { FootballMatchEventsHandlerDepsLive } from "../infrastructure/football-match-events-handler-live"
+import { ApiFootballClientLive } from "../api-football"
+import { FileSystemCache } from "../infrastructure/file-system-cache"
 
 const DEFAULT_NEXT_MATCHES_COUNT = 5
 
@@ -55,7 +55,7 @@ const FootballMatchEventsLive = F.pipe(
     Layer.provide(FileSystemCache),
 )
 
-export const serveHandler = Effect.gen(function* () {
+export const serveCommandHandler = Effect.gen(function* () {
     yield* registerBackgroundJob(syncFootballCalendar)
     return yield* Layer.launch(ServeLive)
 }).pipe(Effect.provide(FootballMatchEventsLive))
