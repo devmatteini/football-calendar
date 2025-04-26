@@ -18,7 +18,7 @@ export class NextMatchesDeps extends Context.Tag("NextMatchesDeps")<
 
 const NextMatchResponse = Schema.Struct({
     summary: Schema.String,
-    startDate: Schema.Date,
+    date: Schema.Date,
 }).pipe(Schema.annotations({ identifier: "NextMatchResponse" }))
 
 export const NextMatchesResponse = Schema.Array(NextMatchResponse).pipe(
@@ -34,7 +34,7 @@ export const nextMatchesHandler = Effect.gen(function* () {
         Array.sort(byMostRecent),
         // TODO: make this value configurable?
         Array.take(5),
-        Array.map((x) => NextMatchResponse.make({ summary: x.summary, startDate: x.startDate })),
+        Array.map((x) => NextMatchResponse.make({ summary: x.summary, date: x.startDate })),
     )
 })
 
