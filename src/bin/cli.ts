@@ -60,7 +60,9 @@ const config = Command.make("config", {}, () => Console.log("Use subcommands or 
     Command.withSubcommands([configExample, configSchema]),
 )
 
-const serve = Command.make("serve", {}, () => serveHandler).pipe(Command.withDescription("Start an HTTP server"))
+const serve = Command.make("serve", {}, () => serveHandler.pipe(Effect.provide(FootballMatchEventsLive))).pipe(
+    Command.withDescription("Start an HTTP server"),
+)
 
 const command = rootCommand.pipe(Command.withSubcommands([sync, config, serve]))
 

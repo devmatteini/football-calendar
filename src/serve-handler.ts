@@ -13,6 +13,7 @@ import { nextMatchesHandler, NextMatchesResponse } from "./server/next-matches-h
 import { NextMatchesDepsLive } from "./server/next-matches-deps-live"
 import * as Cron from "effect/Cron"
 import { registerBackgroundJob } from "./server/background-jobs"
+import { syncFootballCalendar } from "./server/sync-football-calendar"
 
 const DEFAULT_NEXT_MATCHES_COUNT = 5
 
@@ -52,5 +53,6 @@ const ServeLive = F.pipe(
 
 export const serveHandler = Effect.gen(function* () {
     yield* registerBackgroundJob({ job: Effect.logInfo("Running every minute"), cron: Cron.unsafeParse("* * * * *") })
+    yield* registerBackgroundJob(syncFootballCalendar)
     return yield* Layer.launch(ServeLive)
 })
