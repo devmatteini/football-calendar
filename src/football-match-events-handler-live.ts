@@ -3,21 +3,21 @@ import * as Array from "effect/Array"
 import * as Effect from "effect/Effect"
 import * as Layer from "effect/Layer"
 import * as Schema from "effect/Schema"
-import * as SchemaExt from "../common/schema-ext"
-import { ApiFootballClient, ApiFootballFixture, FixtureStatus, currentSeason, fixtures } from "../api-football"
+import * as SchemaExt from "./common/schema-ext"
+import { ApiFootballClient, ApiFootballFixture, FixtureStatus, currentSeason, fixtures } from "./api-football"
 import {
     CalendarEvent,
     FootballMatch,
     CreateFootballMatchEvent,
     UpdateFootballMatchEvent,
     FootballMatchCalendar,
-} from "../football-match-events"
-import { FootballMatchEventsHandlerDeps } from "../football-match-events-handler"
-import { listEvents, insertEvent, updateEvent, GoogleCalendarEvent, GoogleCalendarClient } from "../google-calendar"
-import * as EventMatchId from "../event-match-id"
-import * as EffectExt from "../common/effect-ext"
+} from "./football-match-events"
+import { FootballMatchEventsHandlerDeps } from "./football-match-events-handler"
+import { listEvents, insertEvent, updateEvent, GoogleCalendarEvent, GoogleCalendarClient } from "./google-calendar"
+import * as EventMatchId from "./event-match-id"
+import * as EffectExt from "./common/effect-ext"
 import * as Match from "effect/Match"
-import { FootballCalendar } from "../football-calendars-config"
+import { FootballCalendar } from "./football-calendars-config"
 import * as HttpClient from "@effect/platform/HttpClient"
 
 export const FootballMatchEventsHandlerDepsLive = Layer.effect(

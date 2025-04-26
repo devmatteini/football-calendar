@@ -8,9 +8,9 @@ import * as Schema from "effect/Schema"
 import * as Duration from "effect/Duration"
 import * as path from "node:path"
 import * as os from "node:os"
-import { Cache } from "../cache"
-import * as EffectExt from "../common/effect-ext"
-import { parseJsonFile } from "../common/file"
+import { Cache } from "./cache"
+import * as EffectExt from "./common/effect-ext"
+import { parseJsonFile } from "./common/file"
 import * as Config from "effect/Config"
 
 const TTL = Duration.days(1)

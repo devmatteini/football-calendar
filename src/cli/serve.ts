@@ -13,9 +13,9 @@ import { nextMatchesHandler, NextMatchesResponse } from "../server/next-matches-
 import { NextMatchesDepsLive } from "../server/next-matches-deps-live"
 import { registerBackgroundJob } from "../server/background-jobs"
 import { syncFootballCalendar } from "../server/sync-football-calendar"
-import { FootballMatchEventsHandlerDepsLive } from "../infrastructure/football-match-events-handler-live"
+import { FootballMatchEventsHandlerDepsLive } from "../football-match-events-handler-live"
 import { ApiFootballClientLive } from "../api-football"
-import { FileSystemCache } from "../infrastructure/file-system-cache"
+import { FileSystemCache } from "../file-system-cache"
 
 const DEFAULT_NEXT_MATCHES_COUNT = 5
 
