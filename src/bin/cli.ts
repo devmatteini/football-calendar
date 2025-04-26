@@ -10,10 +10,10 @@ import * as NodeContext from "@effect/platform-node/NodeContext"
 import * as NodeRuntime from "@effect/platform-node/NodeRuntime"
 import * as FetchHttpClient from "@effect/platform/FetchHttpClient"
 import { LoggerLive, logUnexpectedError } from "../logger"
-import { serveCommandHandler } from "../cli/serve"
-import { syncCommandHandler } from "../cli/sync"
-import { configExampleCommandHandler } from "../cli/config-example"
-import { configSchemaCommandHandler } from "../cli/config-schema"
+import { serveCommandHandler } from "../serve-command-handler"
+import { syncCommandHandler } from "../sync-command-handler"
+import { configExampleCommandHandler } from "../config-example-command-handler"
+import { configSchemaCommandHandler } from "../config-schema-command-handler"
 
 const rootCommand = Command.make("football-calendar")
 

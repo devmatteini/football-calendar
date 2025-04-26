@@ -1,13 +1,13 @@
 import * as Effect from "effect/Effect"
-import { loadFootballCalendarConfig } from "../football-calendars-config"
+import { loadFootballCalendarConfig } from "./football-calendars-config"
 import * as F from "effect/Function"
-import { footballMatchEventsHandler } from "../football-match-events-handler"
+import { footballMatchEventsHandler } from "./football-match-events-handler"
 import * as Console from "effect/Console"
-import { FootballMatchEventsHandlerDepsLive } from "../football-match-events-handler-live"
+import { FootballMatchEventsHandlerDepsLive } from "./football-match-events-handler-live"
 import * as Layer from "effect/Layer"
-import { ApiFootballClientLive } from "../api-football"
-import { GoogleCalendarClientLive } from "../google-calendar"
-import { FileSystemCache } from "../file-system-cache"
+import { ApiFootballClientLive } from "./api-football"
+import { GoogleCalendarClientLive } from "./google-calendar"
+import { FileSystemCache } from "./file-system-cache"
 
 const FootballMatchEventsLive = F.pipe(
     FootballMatchEventsHandlerDepsLive,
