@@ -7,53 +7,18 @@ import * as HttpServerResponse from "@effect/platform/HttpServerResponse"
 import * as HttpMiddleware from "@effect/platform/HttpMiddleware"
 import * as NodeHttpServer from "@effect/platform-node/NodeHttpServer"
 import { createServer } from "node:http"
-import * as Context from "effect/Context"
 import * as Schema from "effect/Schema"
-import * as Array from "effect/Array"
-import * as ORD from "effect/Order"
 import { GoogleCalendarClient, GoogleCalendarClientLive, GoogleCalendarEvent, listEvents } from "./google-calendar"
 import * as SchemaExt from "./common/schema-ext"
-
-const CalendarEvent = Schema.Struct({
-    summary: Schema.String,
-    startDate: Schema.Date,
-})
-type CalendarEvent = typeof CalendarEvent.Type
-
-class NextMatchesDeps extends Context.Tag("NextMatchesDeps")<
-    NextMatchesDeps,
-    { loadMatches: Effect.Effect<CalendarEvent[]> }
->() {}
-
-const MatchResponse = Schema.Struct({
-    summary: Schema.String,
-    startDate: Schema.Date,
-}).pipe(Schema.annotations({ identifier: "MatchResponse" }))
-
-const Response = Schema.Array(MatchResponse).pipe(Schema.annotations({ identifier: "Response" }))
-
-const byMostRecent = F.pipe(
-    ORD.Date,
-    ORD.mapInput((x: CalendarEvent) => x.startDate),
-)
+import { CalendarEvent, NextMatchesDeps, nextMatchesHandler, NextMatchesResponse } from "./server/next-matches-handler"
 
 const router = HttpRouter.empty.pipe(
     HttpRouter.get(
         "/",
         // TODO: add error handling
         Effect.gen(function* () {
-            const { loadMatches } = yield* NextMatchesDeps
-
-            const matches = yield* loadMatches
-            const nextMatches = F.pipe(
-                matches,
-                Array.sort(byMostRecent),
-                // TODO: make this value configurable?
-                Array.take(5),
-            )
-
-            const response = yield* Schema.encode(Response)(nextMatches)
-
+            const nextMatches = yield* nextMatchesHandler
+            const response = yield* Schema.encode(NextMatchesResponse)(nextMatches)
             return yield* HttpServerResponse.json(response)
         }),
     ),
