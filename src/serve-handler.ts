@@ -17,7 +17,6 @@ const DEFAULT_NEXT_MATCHES_COUNT = 5
 const router = HttpRouter.empty.pipe(
     HttpRouter.get(
         "/next-matches",
-        // TODO: add error handling
         Effect.gen(function* () {
             const nextMatches = yield* nextMatchesHandler(DEFAULT_NEXT_MATCHES_COUNT)
             const response = yield* Schema.encode(NextMatchesResponse)(nextMatches)
@@ -26,7 +25,6 @@ const router = HttpRouter.empty.pipe(
     ),
 )
 
-const notFound = (message: string) => HttpServerResponse.json({ error: message }, { status: 404 })
 const internalServerError = HttpServerResponse.json({ error: "Internal server error" }, { status: 500 })
 
 const app = router.pipe(
