@@ -13,6 +13,9 @@ import { nextMatchesHandler, NextMatchesResponse } from "./server/next-matches-h
 import { NextMatchesDepsLive } from "./server/next-matches-deps-live"
 import { registerBackgroundJob } from "./server/background-jobs"
 import { syncFootballCalendar } from "./server/sync-football-calendar"
+import { FootballMatchEventsHandlerDepsLive } from "./infrastructure/football-match-events-handler-live"
+import { ApiFootballClientLive } from "./api-football"
+import { FileSystemCache } from "./infrastructure/file-system-cache"
 
 const DEFAULT_NEXT_MATCHES_COUNT = 5
 
@@ -45,7 +48,14 @@ const ServerLive = NodeHttpServer.layer(() => createServer(), { port })
 
 const ServeLive = F.pipe(app, Layer.provide(NextMatchesDepsLive), Layer.provide(ServerLive))
 
+const FootballMatchEventsLive = F.pipe(
+    FootballMatchEventsHandlerDepsLive,
+    Layer.provide(ApiFootballClientLive),
+    Layer.provideMerge(GoogleCalendarClientLive),
+    Layer.provide(FileSystemCache),
+)
+
 export const serveHandler = Effect.gen(function* () {
     yield* registerBackgroundJob(syncFootballCalendar)
     return yield* Layer.launch(ServeLive)
-})
+}).pipe(Effect.provide(FootballMatchEventsLive))

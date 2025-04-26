@@ -9,12 +9,7 @@ import * as Span from "@effect/cli/HelpDoc/Span"
 import * as NodeContext from "@effect/platform-node/NodeContext"
 import * as NodeRuntime from "@effect/platform-node/NodeRuntime"
 import * as FetchHttpClient from "@effect/platform/FetchHttpClient"
-import { FootballMatchEventsHandlerDepsLive } from "../infrastructure/football-match-events-handler-live"
-import { ApiFootballClientLive } from "../api-football"
-import { GoogleCalendarClientLive } from "../google-calendar"
 import { LoggerLive, logUnexpectedError } from "../infrastructure/logger"
-import { FootballCalendarsJsonSchema } from "../football-calendars-config"
-import { FileSystemCache } from "../infrastructure/file-system-cache"
 import { serveHandler } from "../serve-handler"
 import { syncCommandHandler } from "../cli/sync"
 import { configExampleCommandHandler } from "../cli/config-example"
@@ -39,9 +34,7 @@ const config = Command.make("config", {}, () => Console.log("Use subcommands or 
     Command.withSubcommands([configExample, configSchema]),
 )
 
-const serve = Command.make("serve", {}, () => serveHandler.pipe(Effect.provide(FootballMatchEventsLive))).pipe(
-    Command.withDescription("Start an HTTP server"),
-)
+const serve = Command.make("serve", {}, () => serveHandler).pipe(Command.withDescription("Start an HTTP server"))
 
 const command = rootCommand.pipe(Command.withSubcommands([sync, config, serve]))
 
@@ -50,13 +43,6 @@ const cli = Command.run(command, {
     summary: Span.text("Automatically sync your google calendar with football matches of your favorite team!"),
     version: "v1.0.0",
 })
-
-const FootballMatchEventsLive = F.pipe(
-    FootballMatchEventsHandlerDepsLive,
-    Layer.provide(ApiFootballClientLive),
-    Layer.provideMerge(GoogleCalendarClientLive),
-    Layer.provide(FileSystemCache),
-)
 
 const MainLive = F.pipe(
     // keep new line
