@@ -54,6 +54,7 @@ exports[`FootballCalendars JSON Schema - if this test fails the public API contr
             "enum": [
               "All",
               "KnockoutStage",
+              "Final",
             ],
             "type": "string",
           },

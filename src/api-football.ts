@@ -60,13 +60,15 @@ export const fixtures = (calendar: FootballCalendar, season: number, status: str
         Match.exhaustive,
     )
 
+const Final = "Final"
+
 const KnockoutStages = [
     "Knockout Round Play-offs",
     "Round of 16",
     "Quarter-finals",
     "Semi-finals",
     "3rd Place Final",
-    "Final",
+    Final,
 ]
 
 const byRound = (round: LeagueRound) => (fixture: ApiFootballFixture) =>
@@ -74,6 +76,7 @@ const byRound = (round: LeagueRound) => (fixture: ApiFootballFixture) =>
         Match.value(round),
         Match.when("All", F.constTrue),
         Match.when("KnockoutStage", () => KnockoutStages.includes(fixture.league.round)),
+        Match.when("Final", () => fixture.league.round === Final),
         Match.exhaustive,
     )
 

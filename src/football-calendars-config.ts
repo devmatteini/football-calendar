@@ -14,7 +14,7 @@ export const Team = Schema.TaggedStruct("Team", {
 })
 export type Team = typeof Team.Type
 
-export const LeagueRound = Schema.Literal("All", "KnockoutStage")
+export const LeagueRound = Schema.Literal("All", "KnockoutStage", "Final")
 export type LeagueRound = typeof LeagueRound.Type
 
 export const League = Schema.TaggedStruct("League", {

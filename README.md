@@ -104,7 +104,7 @@ You can start from an example running `football-calendar config example`, or you
     "leagueId": 4, // Select League id v3
     "name": "Euro Championship",
     "season": 2024,
-    "round": "KnockoutStage"
+    "round": "KnockoutStage" // possible options: All, KnockoutStage, Final 
   }
 ]
 
