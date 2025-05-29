@@ -14,7 +14,7 @@ import { syncFootballCalendar } from "./server/sync-football-calendar"
 import { FootballMatchEventsHandlerDepsLive } from "./football-match-events-handler-live"
 import { ApiFootballClientLive } from "./api-football"
 import { FileSystemCache } from "./file-system-cache"
-import { GoogleCalendarLive } from "./google-calendar-v2"
+import { GoogleCalendarLive } from "./google-calendar"
 
 const DEFAULT_NEXT_MATCHES_COUNT = 5
 

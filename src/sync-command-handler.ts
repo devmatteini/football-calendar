@@ -7,7 +7,7 @@ import { FootballMatchEventsHandlerDepsLive } from "./football-match-events-hand
 import * as Layer from "effect/Layer"
 import { ApiFootballClientLive } from "./api-football"
 import { FileSystemCache } from "./file-system-cache"
-import { GoogleCalendarLive } from "./google-calendar-v2"
+import { GoogleCalendarLive } from "./google-calendar"
 
 const FootballMatchEventsLive = F.pipe(
     FootballMatchEventsHandlerDepsLive,
