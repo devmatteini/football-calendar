@@ -2,21 +2,9 @@ import * as Effect from "effect/Effect"
 import * as F from "effect/Function"
 import * as Array from "effect/Array"
 import * as ORD from "effect/Order"
-import * as Context from "effect/Context"
 import * as Schema from "effect/Schema"
 import { Calendar } from "../calendar"
-import { CalendarEvent as CalendarEvent_ } from "../football-match-events"
-
-export const CalendarEvent = Schema.Struct({
-    summary: Schema.String,
-    startDate: Schema.Date,
-})
-export type CalendarEvent = typeof CalendarEvent.Type
-
-export class NextMatchesDeps extends Context.Tag("NextMatchesDeps")<
-    NextMatchesDeps,
-    { loadMatches: Effect.Effect<CalendarEvent[]> }
->() {}
+import { CalendarEvent } from "../football-match-events"
 
 const NextMatchResponse = Schema.Struct({
     summary: Schema.String,
@@ -43,5 +31,5 @@ export const nextMatchesHandler = (count: number) =>
 
 const byMostRecent = F.pipe(
     ORD.Date,
-    ORD.mapInput((x: CalendarEvent_) => x.startDate),
+    ORD.mapInput((x: CalendarEvent) => x.startDate),
 )

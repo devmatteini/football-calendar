@@ -10,7 +10,6 @@ import { createServer } from "node:http"
 import * as Schema from "effect/Schema"
 import { GoogleCalendarClientLive } from "./google-calendar"
 import { nextMatchesHandler, NextMatchesResponse } from "./server/next-matches-handler"
-import { NextMatchesDepsLive } from "./server/next-matches-deps-live"
 import { registerBackgroundJob } from "./server/background-jobs"
 import { syncFootballCalendar } from "./server/sync-football-calendar"
 import { FootballMatchEventsHandlerDepsLive } from "./football-match-events-handler-live"
@@ -47,7 +46,7 @@ const app = router.pipe(
 const port = 6789
 const ServerLive = NodeHttpServer.layer(() => createServer(), { port })
 
-const AppServerLive = F.pipe(app, Layer.provide(NextMatchesDepsLive), Layer.provide(ServerLive))
+const AppServerLive = F.pipe(app, Layer.provide(ServerLive))
 
 const FootballMatchEventsLive = F.pipe(
     FootballMatchEventsHandlerDepsLive,
