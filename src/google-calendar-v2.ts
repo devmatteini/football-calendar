@@ -34,28 +34,25 @@ export const GoogleCalendarLive = Layer.effect(
 
         // https://developers.google.com/calendar/api/v3/reference/events/list
         const listEvents = (privateProperties: Record<string, string>, today: Date = new Date()) =>
-            // TODO: rewrite this to pipeline
-            Effect.gen(function* () {
-                const response = yield* F.pipe(
-                    Effect.tryPromise({
-                        try: () =>
-                            client.events.list({
-                                calendarId,
-                                timeMin: today.toISOString(),
-                                timeZone: "UTC",
-                                singleEvents: true,
-                                privateExtendedProperty: F.pipe(
-                                    Object.entries(privateProperties),
-                                    Array.map(([key, value]) => `${key}=${value}`),
-                                ),
-                            }),
-                        catch: (e) => new Error(`Unable to retrieve list of google calendar events: ${e}`),
-                    }),
-                    Effect.orDie,
-                )
-
-                return response.data.items || []
-            })
+            F.pipe(
+                Effect.tryPromise({
+                    try: () =>
+                        client.events.list({
+                            calendarId,
+                            timeMin: today.toISOString(),
+                            timeZone: "UTC",
+                            singleEvents: true,
+                            privateExtendedProperty: F.pipe(
+                                Object.entries(privateProperties),
+                                Array.map(([key, value]) => `${key}=${value}`),
+                            ),
+                        }),
+                    catch: (e) => new Error(`Unable to retrieve list of google calendar events: ${e}`),
+                }),
+                Effect.map((response) => response.data.items || []),
+                Effect.flatMap(Effect.forEach(validateCalendarEvent)),
+                Effect.orDie,
+            )
 
         // https://developers.google.com/calendar/api/v3/reference/events/insert
         const createCalendarEvent = ({ match }: CreateFootballMatchEvent) =>
@@ -127,19 +124,8 @@ export const GoogleCalendarLive = Layer.effect(
             )
 
         return {
-            loadEventsFromDate: (date) =>
-                F.pipe(
-                    // keep new line
-                    listEvents({}, date),
-                    Effect.flatMap(Effect.forEach(validateCalendarEvent)),
-                    Effect.orDie,
-                ),
-            loadEventsByFootballCalendar: (calendar) =>
-                F.pipe(
-                    listEvents(EventMatchId.encodeId(toEventMatchId(calendar))),
-                    Effect.flatMap(Effect.forEach(validateCalendarEvent)),
-                    Effect.orDie,
-                ),
+            loadEventsFromDate: (date) => listEvents({}, date),
+            loadEventsByFootballCalendar: (calendar) => listEvents(EventMatchId.encodeId(toEventMatchId(calendar))),
             saveEvent: (event) =>
                 F.pipe(
                     Match.value(event),
