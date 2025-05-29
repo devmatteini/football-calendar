@@ -25,10 +25,6 @@ export const CalendarEvent = Schema.Struct({
     matchId: Schema.Number,
     startDate: Schema.Date,
     summary: Schema.String,
-    originalEvent: Schema.Record({
-        key: Schema.String,
-        value: Schema.Any,
-    }),
 }).pipe(Schema.annotations({ identifier: "CalendarEvent" }))
 export type CalendarEvent = typeof CalendarEvent.Type
 
@@ -40,7 +36,6 @@ export type CreateFootballMatchEvent = typeof CreateFootballMatchEvent.Type
 export const UpdateFootballMatchEvent = Schema.TaggedStruct("UPDATE", {
     match: FootballMatch,
     eventId: CalendarEvent.fields.id,
-    originalCalendarEvent: CalendarEvent.fields.originalEvent,
 }).pipe(Schema.annotations({ identifier: "UpdateFootballMatchEvent" }))
 export type UpdateFootballMatchEvent = typeof UpdateFootballMatchEvent.Type
 
@@ -77,9 +72,7 @@ const footballMatchEvent = (match: FootballMatch, event: O.Option<CalendarEvent>
         Match.when({ _tag: "Some", value: (x) => isSameDate(match.date, x.startDate) }, () =>
             NothingChangedFootballMatchEvent.make({ matchId: match.matchId }),
         ),
-        Match.when({ _tag: "Some" }, ({ value }) =>
-            UpdateFootballMatchEvent.make({ match, originalCalendarEvent: value.originalEvent, eventId: value.id }),
-        ),
+        Match.when({ _tag: "Some" }, ({ value }) => UpdateFootballMatchEvent.make({ match, eventId: value.id })),
         Match.exhaustive,
     )
 

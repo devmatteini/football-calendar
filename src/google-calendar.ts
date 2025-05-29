@@ -171,7 +171,6 @@ const validateCalendarEvent = (originalEvent: calendar_v3.Schema$Event) =>
                 matchId: validated.extendedProperties.private.matchId,
                 startDate: validated.start.dateTime,
                 summary: validated.summary,
-                originalEvent,
             }),
         ),
     )

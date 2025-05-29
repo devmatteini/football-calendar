@@ -1,11 +1,10 @@
-import { test, expect } from "vitest"
+import { expect, test } from "vitest"
 import {
-    CalendarEvent,
     CreateFootballMatchEvent,
     FootballMatch,
+    footballMatchEvents,
     NothingChangedFootballMatchEvent,
     UpdateFootballMatchEvent,
-    footballMatchEvents,
 } from "./football-match-events"
 
 test("new match, no calendar event", () => {
@@ -23,12 +22,11 @@ test("match time updated", () => {
         id: anyEventId,
         matchId: match.matchId,
         startDate: date("2023-09-03", "15:00"),
-        originalEvent: anyOriginalEvent,
         summary: "ANY_SUMMARY",
     }
     const result = footballMatchEvents([match], [calendarEvent])
 
-    expect(result).toStrictEqual([update(match, calendarEvent.originalEvent, anyEventId)])
+    expect(result).toStrictEqual([update(match, anyEventId)])
 })
 
 test("match date updated", () => {
@@ -38,12 +36,11 @@ test("match date updated", () => {
         id: anyEventId,
         matchId: match.matchId,
         startDate: date("2023-09-04", "18:30"),
-        originalEvent: anyOriginalEvent,
         summary: "ANY_SUMMARY",
     }
     const result = footballMatchEvents([match], [calendarEvent])
 
-    expect(result).toStrictEqual([update(match, calendarEvent.originalEvent, anyEventId)])
+    expect(result).toStrictEqual([update(match, anyEventId)])
 })
 
 test("match not changed", () => {
@@ -53,7 +50,6 @@ test("match not changed", () => {
         id: anyEventId,
         matchId: match1.matchId,
         startDate: date("2023-09-03", "18:30"),
-        originalEvent: anyOriginalEvent,
         summary: "ANY_SUMMARY",
     }
     const result = footballMatchEvents([match1], [calendarEvent])
@@ -73,39 +69,27 @@ test("many matches, many calendar events", () => {
                 id: "1234",
                 matchId: updatedMatch.matchId,
                 startDate: date("2023-09-17", "12:30"),
-                originalEvent: originalEvent("1234"),
                 summary: "ANY_SUMMARY",
             },
             {
                 id: "5678",
                 matchId: sameMatch.matchId,
                 startDate: sameMatch.date,
-                originalEvent: originalEvent("5678"),
                 summary: "ANY_SUMMARY",
             },
         ],
     )
 
-    expect(result).toStrictEqual([
-        create(newMatch),
-        update(updatedMatch, originalEvent("1234"), "1234"),
-        nothingChanged(sameMatch.matchId),
-    ])
+    expect(result).toStrictEqual([create(newMatch), update(updatedMatch, "1234"), nothingChanged(sameMatch.matchId)])
 })
 
 const create = (match: FootballMatch) => CreateFootballMatchEvent.make({ match })
-const update = (
-    match: FootballMatch,
-    originalCalendarEvent: UpdateFootballMatchEvent["originalCalendarEvent"],
-    eventId: UpdateFootballMatchEvent["eventId"],
-) => UpdateFootballMatchEvent.make({ match, originalCalendarEvent, eventId })
+const update = (match: FootballMatch, eventId: UpdateFootballMatchEvent["eventId"]) =>
+    UpdateFootballMatchEvent.make({ match, eventId })
 const nothingChanged = (matchId: FootballMatch["matchId"]) => NothingChangedFootballMatchEvent.make({ matchId })
 
 const date = (date: `${number}-${number}-${number}`, time?: `${number}:${number}`) =>
     new Date(`${date}T${time || "00:00"}Z`)
-
-const anyOriginalEvent: CalendarEvent["originalEvent"] = { id: "1234" }
-const originalEvent = (id: string): CalendarEvent["originalEvent"] => ({ id })
 
 const footballMatch = (id: number, date: Date): FootballMatch => ({
     matchId: id,

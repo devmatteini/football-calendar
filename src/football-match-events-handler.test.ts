@@ -36,12 +36,7 @@ test("create, update, ignore matches", async () => {
 
     expect(saveCalendarEventSpy).toHaveBeenCalledTimes(2)
     expect(saveCalendarEventSpy).toHaveBeenNthCalledWith(1, { _tag: "CREATE", match: newMatch })
-    expect(saveCalendarEventSpy).toHaveBeenNthCalledWith(2, {
-        _tag: "UPDATE",
-        match: updatedMatch,
-        originalCalendarEvent: originalEvent("1234"),
-        eventId: "1234",
-    })
+    expect(saveCalendarEventSpy).toHaveBeenNthCalledWith(2, { _tag: "UPDATE", match: updatedMatch, eventId: "1234" })
 })
 
 const DepsTest = (deps: FootballMatchEventsHandlerDeps) => Layer.succeed(FootballMatchEventsHandlerDeps, deps)
@@ -59,13 +54,11 @@ const calendarEvent = (matchId: number, startDate: Date, eventId = "9999"): Cale
     id: eventId,
     matchId,
     startDate,
-    originalEvent: originalEvent(eventId),
     summary: "ANY_SUMMARY",
 })
 
 const date = (date: `${number}-${number}-${number}`, time?: `${number}:${number}`) =>
     new Date(`${date}T${time || "00:00"}Z`)
-const originalEvent = (id: string): CalendarEvent["originalEvent"] => ({ id })
 const anyTeam = Team.make({
     name: "ANY_TEAM",
     teamId: 1,
