@@ -22,11 +22,7 @@ test("create, update, ignore matches", async () => {
         calendarEvent(sameMatch.matchId, sameMatch.date, "5678"),
     ]
     const deps = Layer.mergeAll(
-        DepsTest({
-            loadMatches: () => Effect.succeed([newMatch, updatedMatch, sameMatch]),
-            loadCalendarEvents: () => Effect.succeed(calendarEvents),
-            saveCalendarEvent: saveCalendarEventSpy,
-        }),
+        DepsTest({ loadMatches: () => Effect.succeed([newMatch, updatedMatch, sameMatch]) }),
         CalendarTest({
             loadEvents: () => Effect.succeed(calendarEvents),
             saveEvent: saveCalendarEventSpy,

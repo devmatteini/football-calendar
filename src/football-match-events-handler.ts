@@ -2,21 +2,12 @@ import * as F from "effect/Function"
 import * as Effect from "effect/Effect"
 import * as Context from "effect/Context"
 import * as Array from "effect/Array"
-import {
-    CalendarEvent,
-    FootballMatchEvent,
-    FootballMatch,
-    CreateFootballMatchEvent,
-    UpdateFootballMatchEvent,
-    footballMatchEvents,
-} from "./football-match-events"
+import { FootballMatch, FootballMatchEvent, footballMatchEvents } from "./football-match-events"
 import { FootballCalendar } from "./football-calendars-config"
 import { Calendar } from "./calendar"
 
 export type FootballMatchEventsHandlerDeps = {
     loadMatches: (calendar: FootballCalendar) => Effect.Effect<readonly FootballMatch[]>
-    loadCalendarEvents: (calendar: FootballCalendar) => Effect.Effect<readonly CalendarEvent[]>
-    saveCalendarEvent: (event: CreateFootballMatchEvent | UpdateFootballMatchEvent) => Effect.Effect<void>
 }
 
 export const FootballMatchEventsHandlerDeps = Context.GenericTag<FootballMatchEventsHandlerDeps>(
