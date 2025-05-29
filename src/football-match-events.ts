@@ -39,6 +39,7 @@ export type CreateFootballMatchEvent = typeof CreateFootballMatchEvent.Type
 
 export const UpdateFootballMatchEvent = Schema.TaggedStruct("UPDATE", {
     match: FootballMatch,
+    eventId: CalendarEvent.fields.id,
     originalCalendarEvent: CalendarEvent.fields.originalEvent,
 }).pipe(Schema.annotations({ identifier: "UpdateFootballMatchEvent" }))
 export type UpdateFootballMatchEvent = typeof UpdateFootballMatchEvent.Type
@@ -77,7 +78,7 @@ const footballMatchEvent = (match: FootballMatch, event: O.Option<CalendarEvent>
             NothingChangedFootballMatchEvent.make({ matchId: match.matchId }),
         ),
         Match.when({ _tag: "Some" }, ({ value }) =>
-            UpdateFootballMatchEvent.make({ match, originalCalendarEvent: value.originalEvent }),
+            UpdateFootballMatchEvent.make({ match, originalCalendarEvent: value.originalEvent, eventId: value.id }),
         ),
         Match.exhaustive,
     )

@@ -28,7 +28,7 @@ test("match time updated", () => {
     }
     const result = footballMatchEvents([match], [calendarEvent])
 
-    expect(result).toStrictEqual([update(match, calendarEvent.originalEvent)])
+    expect(result).toStrictEqual([update(match, calendarEvent.originalEvent, anyEventId)])
 })
 
 test("match date updated", () => {
@@ -43,7 +43,7 @@ test("match date updated", () => {
     }
     const result = footballMatchEvents([match], [calendarEvent])
 
-    expect(result).toStrictEqual([update(match, calendarEvent.originalEvent)])
+    expect(result).toStrictEqual([update(match, calendarEvent.originalEvent, anyEventId)])
 })
 
 test("match not changed", () => {
@@ -70,14 +70,14 @@ test("many matches, many calendar events", () => {
         [newMatch, updatedMatch, sameMatch],
         [
             {
-                id: anyEventId,
+                id: "1234",
                 matchId: updatedMatch.matchId,
                 startDate: date("2023-09-17", "12:30"),
                 originalEvent: originalEvent("1234"),
                 summary: "ANY_SUMMARY",
             },
             {
-                id: anyEventId,
+                id: "5678",
                 matchId: sameMatch.matchId,
                 startDate: sameMatch.date,
                 originalEvent: originalEvent("5678"),
@@ -88,14 +88,17 @@ test("many matches, many calendar events", () => {
 
     expect(result).toStrictEqual([
         create(newMatch),
-        update(updatedMatch, originalEvent("1234")),
+        update(updatedMatch, originalEvent("1234"), "1234"),
         nothingChanged(sameMatch.matchId),
     ])
 })
 
 const create = (match: FootballMatch) => CreateFootballMatchEvent.make({ match })
-const update = (match: FootballMatch, originalCalendarEvent: UpdateFootballMatchEvent["originalCalendarEvent"]) =>
-    UpdateFootballMatchEvent.make({ match, originalCalendarEvent })
+const update = (
+    match: FootballMatch,
+    originalCalendarEvent: UpdateFootballMatchEvent["originalCalendarEvent"],
+    eventId: UpdateFootballMatchEvent["eventId"],
+) => UpdateFootballMatchEvent.make({ match, originalCalendarEvent, eventId })
 const nothingChanged = (matchId: FootballMatch["matchId"]) => NothingChangedFootballMatchEvent.make({ matchId })
 
 const date = (date: `${number}-${number}-${number}`, time?: `${number}:${number}`) =>

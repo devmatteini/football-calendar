@@ -40,6 +40,7 @@ test("create, update, ignore matches", async () => {
         _tag: "UPDATE",
         match: updatedMatch,
         originalCalendarEvent: originalEvent("1234"),
+        eventId: "1234",
     })
 })
 
