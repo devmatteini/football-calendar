@@ -96,27 +96,34 @@ export const GoogleCalendarLive = Layer.effect(
                 Effect.orDie,
             )
 
-        const updateCalendarEvent = ({ match, originalCalendarEvent }: UpdateFootballMatchEvent) =>
+        // https://developers.google.com/workspace/calendar/api/v3/reference/events/update
+        const updateCalendarEvent = ({ match, eventId }: UpdateFootballMatchEvent) =>
             F.pipe(
                 Effect.tryPromise({
-                    try: () =>
-                        client.events.update({
-                            calendarId,
-                            eventId: originalCalendarEvent.id || undefined,
-                            requestBody: {
-                                ...originalCalendarEvent,
-                                start: {
-                                    dateTime: match.date.toISOString(),
-                                    timeZone: "UTC",
-                                },
-                                end: {
-                                    dateTime: matchEndTime(match.date).toISOString(),
-                                    timeZone: "UTC",
-                                },
-                            },
-                        }),
-                    catch: GoogleCalendarError.fromUnknown("Unable to update google calendar event"),
+                    try: () => client.events.get({ calendarId, eventId }),
+                    catch: GoogleCalendarError.fromUnknown("Unable to get google calendar event"),
                 }),
+                Effect.flatMap((originalEvent) =>
+                    Effect.tryPromise({
+                        try: () =>
+                            client.events.update({
+                                calendarId,
+                                eventId,
+                                requestBody: {
+                                    ...originalEvent.data,
+                                    start: {
+                                        dateTime: match.date.toISOString(),
+                                        timeZone: "UTC",
+                                    },
+                                    end: {
+                                        dateTime: matchEndTime(match.date).toISOString(),
+                                        timeZone: "UTC",
+                                    },
+                                },
+                            }),
+                        catch: GoogleCalendarError.fromUnknown("Unable to update google calendar event"),
+                    }),
+                ),
                 Effect.tap(() =>
                     EffectExt.logDebug("Calendar event updated", {
                         matchId: match.matchId,
