@@ -3,16 +3,17 @@ import * as Layer from "effect/Layer"
 import { Calendar } from "./calendar"
 import * as Config from "effect/Config"
 import * as F from "effect/Function"
-import { auth, calendar } from "@googleapis/calendar"
+import { auth, calendar, calendar_v3 } from "@googleapis/calendar"
 import * as EventMatchId from "./event-match-id"
 import * as Match from "effect/Match"
 import { FootballCalendar } from "./football-calendars-config"
-import { GoogleCalendarEvent } from "./google-calendar"
 import * as SchemaExt from "./common/schema-ext"
 import { CalendarEvent, CreateFootballMatchEvent, UpdateFootballMatchEvent } from "./football-match-events"
 import * as Schema from "effect/Schema"
 import * as Array from "effect/Array"
 import * as EffectExt from "./common/effect-ext"
+
+type GoogleCalendarEvent = calendar_v3.Schema$Event
 
 export const GoogleCalendarLive = Layer.effect(
     Calendar,

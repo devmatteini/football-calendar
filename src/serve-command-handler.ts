@@ -8,7 +8,6 @@ import * as HttpMiddleware from "@effect/platform/HttpMiddleware"
 import * as NodeHttpServer from "@effect/platform-node/NodeHttpServer"
 import { createServer } from "node:http"
 import * as Schema from "effect/Schema"
-import { GoogleCalendarClientLive } from "./google-calendar"
 import { nextMatchesHandler, NextMatchesResponse } from "./server/next-matches-handler"
 import { registerBackgroundJob } from "./server/background-jobs"
 import { syncFootballCalendar } from "./server/sync-football-calendar"
@@ -52,7 +51,6 @@ const FootballMatchEventsLive = F.pipe(
     FootballMatchEventsHandlerDepsLive,
     Layer.merge(GoogleCalendarLive),
     Layer.provide(ApiFootballClientLive),
-    Layer.provideMerge(GoogleCalendarClientLive),
     Layer.provide(FileSystemCache),
 )
 
