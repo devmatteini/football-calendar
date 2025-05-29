@@ -126,7 +126,7 @@ export const GoogleCalendarLive = Layer.effect(
             )
 
         return {
-            loadEvents: (calendar) =>
+            loadEventsByFootballCalendar: (calendar) =>
                 F.pipe(
                     listEvents(EventMatchId.encodeId(toEventMatchId(calendar))),
                     Effect.flatMap(Effect.forEach(validateCalendarEvent)),

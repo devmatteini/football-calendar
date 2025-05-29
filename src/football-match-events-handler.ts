@@ -19,7 +19,7 @@ type Summary = { created: number; updated: number; nothingChanged: number }
 export const footballMatchEventsHandler = (calendar: FootballCalendar) =>
     Effect.gen(function* () {
         const { loadMatches } = yield* FootballMatchEventsHandlerDeps
-        const { loadEvents: loadCalendarEvents, saveEvent: saveCalendarEvent } = yield* Calendar
+        const { loadEventsByFootballCalendar: loadCalendarEvents, saveEvent: saveCalendarEvent } = yield* Calendar
 
         const [matches, calendarEvents] = yield* Effect.all(
             // keep new line

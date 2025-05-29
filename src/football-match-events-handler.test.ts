@@ -24,7 +24,7 @@ test("create, update, ignore matches", async () => {
     const deps = Layer.mergeAll(
         DepsTest({ loadMatches: () => Effect.succeed([newMatch, updatedMatch, sameMatch]) }),
         CalendarTest({
-            loadEvents: () => Effect.succeed(calendarEvents),
+            loadEventsByFootballCalendar: () => Effect.succeed(calendarEvents),
             saveEvent: saveCalendarEventSpy,
         }),
     )
