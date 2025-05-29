@@ -13,8 +13,6 @@ import * as Schema from "effect/Schema"
 import * as Array from "effect/Array"
 import * as EffectExt from "./common/effect-ext"
 
-type GoogleCalendarEvent = calendar_v3.Schema$Event
-
 export const GoogleCalendarLive = Layer.effect(
     Calendar,
     Effect.gen(function* () {
@@ -149,7 +147,7 @@ const toEventMatchId = F.pipe(
     Match.exhaustive,
 )
 
-const validateCalendarEvent = (originalEvent: GoogleCalendarEvent) =>
+const validateCalendarEvent = (originalEvent: calendar_v3.Schema$Event) =>
     F.pipe(
         SchemaExt.decode(CalendarListEvent, originalEvent),
         Effect.map(
@@ -162,7 +160,6 @@ const validateCalendarEvent = (originalEvent: GoogleCalendarEvent) =>
         ),
     )
 
-// TODO: add identifier annotation
 const CalendarListEvent = Schema.Struct({
     summary: Schema.String,
     start: Schema.Struct({
@@ -171,7 +168,7 @@ const CalendarListEvent = Schema.Struct({
     extendedProperties: Schema.Struct({
         private: EventMatchId.EventMatchId,
     }),
-})
+}).pipe(Schema.annotations({ identifier: "CalendarListEvent" }))
 
 const matchEndTime = (date: Date) => {
     const newDate = new Date(date)

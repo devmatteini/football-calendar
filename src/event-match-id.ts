@@ -3,7 +3,7 @@ import * as Schema from "effect/Schema"
 export const EventMatchId = Schema.Struct({
     matchId: Schema.NumberFromString,
     id: Schema.NumberFromString,
-})
+}).pipe(Schema.annotations({ identifier: "EventMatchId" }))
 export type EventMatchId = typeof EventMatchId.Type
 export type EventMatchIdEncoded = typeof EventMatchId.Encoded
 

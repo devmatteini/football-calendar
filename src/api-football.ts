@@ -135,7 +135,8 @@ const TeamSeason = Schema.Number
 const FixtureTeam = Schema.Struct({
     id: Schema.Number,
     name: Schema.String,
-})
+}).pipe(Schema.annotations({ identifier: "FixtureTeam" }))
+
 const Fixture = Schema.Struct({
     fixture: Schema.Struct({
         id: Schema.Number,
@@ -149,7 +150,7 @@ const Fixture = Schema.Struct({
         home: FixtureTeam,
         away: FixtureTeam,
     }),
-})
+}).pipe(Schema.annotations({ identifier: "Fixture" }))
 export type ApiFootballFixture = typeof Fixture.Type
 
 const ResponseError = Schema.Union(
@@ -158,7 +159,7 @@ const ResponseError = Schema.Union(
         key: Schema.String,
         value: Schema.Unknown,
     }),
-)
+).pipe(Schema.annotations({ identifier: "ResponseError" }))
 type ResponseError = typeof ResponseError.Type
 const ResponseErrorPrint = Pretty.make(ResponseError)
 
@@ -166,7 +167,7 @@ const Response = <A, I>(responseItem: Schema.Schema<A, I>) =>
     Schema.Struct({
         errors: ResponseError,
         response: Schema.Array(responseItem),
-    })
+    }).pipe(Schema.annotations({ identifier: "Response" }))
 
 const isResponseOk = <T extends { errors: ResponseError }>(response: T) =>
     Array.isArray(response.errors) && response.errors.length === 0

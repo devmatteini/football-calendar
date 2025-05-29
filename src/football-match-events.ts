@@ -7,7 +7,7 @@ import * as Schema from "effect/Schema"
 export const FootballMatchCalendar = Schema.Struct({
     origin: Schema.Literal("Team", "League"),
     id: Schema.Number,
-})
+}).pipe(Schema.annotations({ identifier: "FootballMatchCalendar" }))
 export type FootballMatchCalendar = typeof FootballMatchCalendar.Type
 
 export const FootballMatch = Schema.Struct({
@@ -17,7 +17,7 @@ export const FootballMatch = Schema.Struct({
     homeTeam: Schema.String,
     awayTeam: Schema.String,
     competition: Schema.String,
-})
+}).pipe(Schema.annotations({ identifier: "FootballMatch" }))
 export type FootballMatch = typeof FootballMatch.Type
 
 export const CalendarEvent = Schema.Struct({
@@ -28,28 +28,30 @@ export const CalendarEvent = Schema.Struct({
         key: Schema.String,
         value: Schema.Any,
     }),
-})
+}).pipe(Schema.annotations({ identifier: "CalendarEvent" }))
 export type CalendarEvent = typeof CalendarEvent.Type
 
-export const CreateFootballMatchEvent = Schema.TaggedStruct("CREATE", { match: FootballMatch })
+export const CreateFootballMatchEvent = Schema.TaggedStruct("CREATE", { match: FootballMatch }).pipe(
+    Schema.annotations({ identifier: "CreateFootballMatchEvent" }),
+)
 export type CreateFootballMatchEvent = typeof CreateFootballMatchEvent.Type
 
 export const UpdateFootballMatchEvent = Schema.TaggedStruct("UPDATE", {
     match: FootballMatch,
     originalCalendarEvent: CalendarEvent.fields.originalEvent,
-})
+}).pipe(Schema.annotations({ identifier: "UpdateFootballMatchEvent" }))
 export type UpdateFootballMatchEvent = typeof UpdateFootballMatchEvent.Type
 
 export const NothingChangedFootballMatchEvent = Schema.TaggedStruct("NOTHING_CHANGED", {
     matchId: FootballMatch.fields.matchId,
-})
+}).pipe(Schema.annotations({ identifier: "NothingChangedFootballMatchEvent" }))
 export type NothingChangedFootballMatchEvent = typeof NothingChangedFootballMatchEvent.Type
 
 export const FootballMatchEvent = Schema.Union(
     CreateFootballMatchEvent,
     UpdateFootballMatchEvent,
     NothingChangedFootballMatchEvent,
-)
+).pipe(Schema.annotations({ identifier: "FootballMatchEvent" }))
 export type FootballMatchEvent = typeof FootballMatchEvent.Type
 
 export const footballMatchEvents = (
