@@ -1,35 +1,40 @@
-import * as Effect from "effect/Effect"
 import * as F from "effect/Function"
-import { GoogleCalendarClient, GoogleCalendarClientLive, listEvents } from "../src/google-calendar"
-import { calendar_v3 } from "@googleapis/calendar"
+import { auth, calendar } from "@googleapis/calendar"
 import * as EventMatchId from "../src/event-match-id"
+import * as Array from "effect/Array"
 
-const main = () => {
+const main = async () => {
     const teamId = Number(process.argv[2])
     if (Number.isNaN(teamId)) throw new Error("Missing teamId as argument or not a number")
 
-    return F.pipe(
-        listEvents(EventMatchId.encodeId(teamId)),
-        Effect.flatMap(Effect.forEach(deleteEvent, { discard: true, concurrency: 2 })),
-        Effect.provide(GoogleCalendarClientLive),
-        Effect.runPromise,
-    )
-}
+    const client = await auth.getClient({
+        keyFile: process.env.GOOGLE_CALENDAR_KEY_FILE,
+        scopes: ["https://www.googleapis.com/auth/calendar.events"],
+    })
+    const calendarClient = calendar({ version: "v3", auth: client })
+    const calendarId = process.env.GOOGLE_CALENDAR_ID
 
-const deleteEvent = (event: calendar_v3.Schema$Event) =>
-    F.pipe(
-        GoogleCalendarClient,
-        Effect.flatMap(({ calendarId, client }) =>
-            Effect.promise(() =>
-                client.events.delete({
-                    calendarId,
-                    eventId: event.id || undefined,
-                    sendNotifications: false,
-                }),
-            ),
+    const listResponse = await calendarClient.events.list({
+        calendarId,
+        timeMin: new Date().toISOString(),
+        timeZone: "UTC",
+        singleEvents: true,
+        privateExtendedProperty: F.pipe(
+            Object.entries(EventMatchId.encodeId(teamId)),
+            Array.map(([key, value]) => `${key}=${value}`),
         ),
-        Effect.tap(() => Effect.logInfo(`Deleted ${event.summary} - ${formatDate(event.start?.dateTime || "")}`)),
-    )
+    })
+    const events = listResponse.data.items || []
+
+    for (const event of events) {
+        await calendarClient.events.delete({
+            calendarId,
+            eventId: event.id || undefined,
+            sendNotifications: false,
+        })
+        console.log(`Deleted ${event.summary} - ${formatDate(event.start?.dateTime || "")}`)
+    }
+}
 
 const formatDate = (rawDate: string) => new Date(rawDate).toISOString().split("T")[0]
 
