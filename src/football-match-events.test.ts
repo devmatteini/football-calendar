@@ -20,6 +20,7 @@ test("match time updated", () => {
     const match = footballMatch(1, date("2023-09-03", "18:30"))
 
     const calendarEvent = {
+        id: anyEventId,
         matchId: match.matchId,
         startDate: date("2023-09-03", "15:00"),
         originalEvent: anyOriginalEvent,
@@ -34,6 +35,7 @@ test("match date updated", () => {
     const match = footballMatch(1, date("2023-09-03", "18:30"))
 
     const calendarEvent = {
+        id: anyEventId,
         matchId: match.matchId,
         startDate: date("2023-09-04", "18:30"),
         originalEvent: anyOriginalEvent,
@@ -48,6 +50,7 @@ test("match not changed", () => {
     const match1 = footballMatch(1, date("2023-09-03", "18:30"))
 
     const calendarEvent = {
+        id: anyEventId,
         matchId: match1.matchId,
         startDate: date("2023-09-03", "18:30"),
         originalEvent: anyOriginalEvent,
@@ -67,12 +70,14 @@ test("many matches, many calendar events", () => {
         [newMatch, updatedMatch, sameMatch],
         [
             {
+                id: anyEventId,
                 matchId: updatedMatch.matchId,
                 startDate: date("2023-09-17", "12:30"),
                 originalEvent: originalEvent("1234"),
                 summary: "ANY_SUMMARY",
             },
             {
+                id: anyEventId,
                 matchId: sameMatch.matchId,
                 startDate: sameMatch.date,
                 originalEvent: originalEvent("5678"),
@@ -107,3 +112,5 @@ const footballMatch = (id: number, date: Date): FootballMatch => ({
     awayTeam: "ANY_AWAY_TEAM",
     competition: "ANY_COMPETITION",
 })
+
+const anyEventId = "ANY_EVENT_ID"

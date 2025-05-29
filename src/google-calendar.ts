@@ -160,6 +160,7 @@ const validateCalendarEvent = (originalEvent: calendar_v3.Schema$Event) =>
         SchemaExt.decode(CalendarListEvent, originalEvent),
         Effect.map(
             (validated): CalendarEvent => ({
+                id: validated.id,
                 matchId: validated.extendedProperties.private.matchId,
                 startDate: validated.start.dateTime,
                 summary: validated.summary,
@@ -169,6 +170,7 @@ const validateCalendarEvent = (originalEvent: calendar_v3.Schema$Event) =>
     )
 
 const CalendarListEvent = Schema.Struct({
+    id: Schema.String,
     summary: Schema.String,
     start: Schema.Struct({
         dateTime: Schema.Date,

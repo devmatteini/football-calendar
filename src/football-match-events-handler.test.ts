@@ -54,10 +54,11 @@ const footballMatch = (id: number, date: Date): FootballMatch => ({
     awayTeam: "ANY_AWAY_TEAM",
     competition: "ANY_COMPETITION",
 })
-const calendarEvent = (matchId: number, startDate: Date, eventId?: string): CalendarEvent => ({
+const calendarEvent = (matchId: number, startDate: Date, eventId = "9999"): CalendarEvent => ({
+    id: eventId,
     matchId,
     startDate,
-    originalEvent: originalEvent(eventId || "9999"),
+    originalEvent: originalEvent(eventId),
     summary: "ANY_SUMMARY",
 })
 

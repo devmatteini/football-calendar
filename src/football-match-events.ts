@@ -21,6 +21,7 @@ export const FootballMatch = Schema.Struct({
 export type FootballMatch = typeof FootballMatch.Type
 
 export const CalendarEvent = Schema.Struct({
+    id: Schema.String,
     matchId: Schema.Number,
     startDate: Schema.Date,
     summary: Schema.String,
