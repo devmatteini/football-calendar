@@ -126,6 +126,13 @@ export const GoogleCalendarLive = Layer.effect(
             )
 
         return {
+            loadEventsFromDate: (date) =>
+                F.pipe(
+                    // keep new line
+                    listEvents({}, date),
+                    Effect.flatMap(Effect.forEach(validateCalendarEvent)),
+                    Effect.orDie,
+                ),
             loadEventsByFootballCalendar: (calendar) =>
                 F.pipe(
                     listEvents(EventMatchId.encodeId(toEventMatchId(calendar))),
@@ -162,6 +169,7 @@ const validateCalendarEvent = (originalEvent: GoogleCalendarEvent) =>
             (validated): CalendarEvent => ({
                 matchId: validated.extendedProperties.private.matchId,
                 startDate: validated.start.dateTime,
+                summary: validated.summary,
                 originalEvent,
             }),
         ),
@@ -169,6 +177,7 @@ const validateCalendarEvent = (originalEvent: GoogleCalendarEvent) =>
 
 // TODO: add identifier annotation
 const CalendarListEvent = Schema.Struct({
+    summary: Schema.String,
     start: Schema.Struct({
         dateTime: Schema.Date,
     }),

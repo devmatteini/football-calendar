@@ -23,6 +23,7 @@ export type FootballMatch = typeof FootballMatch.Type
 export const CalendarEvent = Schema.Struct({
     matchId: Schema.Number,
     startDate: Schema.Date,
+    summary: Schema.String,
     originalEvent: Schema.Record({
         key: Schema.String,
         value: Schema.Any,

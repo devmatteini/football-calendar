@@ -23,6 +23,7 @@ test("match time updated", () => {
         matchId: match.matchId,
         startDate: date("2023-09-03", "15:00"),
         originalEvent: anyOriginalEvent,
+        summary: "ANY_SUMMARY",
     }
     const result = footballMatchEvents([match], [calendarEvent])
 
@@ -36,6 +37,7 @@ test("match date updated", () => {
         matchId: match.matchId,
         startDate: date("2023-09-04", "18:30"),
         originalEvent: anyOriginalEvent,
+        summary: "ANY_SUMMARY",
     }
     const result = footballMatchEvents([match], [calendarEvent])
 
@@ -49,6 +51,7 @@ test("match not changed", () => {
         matchId: match1.matchId,
         startDate: date("2023-09-03", "18:30"),
         originalEvent: anyOriginalEvent,
+        summary: "ANY_SUMMARY",
     }
     const result = footballMatchEvents([match1], [calendarEvent])
 
@@ -67,11 +70,13 @@ test("many matches, many calendar events", () => {
                 matchId: updatedMatch.matchId,
                 startDate: date("2023-09-17", "12:30"),
                 originalEvent: originalEvent("1234"),
+                summary: "ANY_SUMMARY",
             },
             {
                 matchId: sameMatch.matchId,
                 startDate: sameMatch.date,
                 originalEvent: originalEvent("5678"),
+                summary: "ANY_SUMMARY",
             },
         ],
     )

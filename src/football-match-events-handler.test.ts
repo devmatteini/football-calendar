@@ -26,6 +26,7 @@ test("create, update, ignore matches", async () => {
         CalendarTest({
             loadEventsByFootballCalendar: () => Effect.succeed(calendarEvents),
             saveEvent: saveCalendarEventSpy,
+            loadEventsFromDate: () => Effect.succeed([]),
         }),
     )
 
@@ -57,6 +58,7 @@ const calendarEvent = (matchId: number, startDate: Date, eventId?: string): Cale
     matchId,
     startDate,
     originalEvent: originalEvent(eventId || "9999"),
+    summary: "ANY_SUMMARY",
 })
 
 const date = (date: `${number}-${number}-${number}`, time?: `${number}:${number}`) =>

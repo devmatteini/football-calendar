@@ -4,6 +4,8 @@ import * as Array from "effect/Array"
 import * as ORD from "effect/Order"
 import * as Context from "effect/Context"
 import * as Schema from "effect/Schema"
+import { Calendar } from "../calendar"
+import { CalendarEvent as CalendarEvent_ } from "../football-match-events"
 
 export const CalendarEvent = Schema.Struct({
     summary: Schema.String,
@@ -27,9 +29,10 @@ export const NextMatchesResponse = Schema.Array(NextMatchResponse).pipe(
 
 export const nextMatchesHandler = (count: number) =>
     Effect.gen(function* () {
-        const { loadMatches } = yield* NextMatchesDeps
+        const { loadEventsFromDate } = yield* Calendar
 
-        const matches = yield* loadMatches
+        const now = new Date()
+        const matches = yield* loadEventsFromDate(now)
         return F.pipe(
             matches,
             Array.sort(byMostRecent),
@@ -40,5 +43,5 @@ export const nextMatchesHandler = (count: number) =>
 
 const byMostRecent = F.pipe(
     ORD.Date,
-    ORD.mapInput((x: CalendarEvent) => x.startDate),
+    ORD.mapInput((x: CalendarEvent_) => x.startDate),
 )
