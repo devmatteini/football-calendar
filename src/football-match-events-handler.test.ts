@@ -5,6 +5,7 @@ import * as Layer from "effect/Layer"
 import { FootballMatchEventsHandlerDeps, footballMatchEventsHandler } from "./football-match-events-handler"
 import { CalendarEvent, FootballMatch } from "./football-match-events"
 import { Team } from "./football-calendars-config"
+import { Calendar, CalendarService } from "./calendar"
 
 const saveCalendarEventSpy = vi.fn(() => Effect.void)
 
@@ -20,11 +21,17 @@ test("create, update, ignore matches", async () => {
         calendarEvent(updatedMatch.matchId, date("2023-09-17", "12:30"), "1234"),
         calendarEvent(sameMatch.matchId, sameMatch.date, "5678"),
     ]
-    const deps = DepsTest({
-        loadMatches: () => Effect.succeed([newMatch, updatedMatch, sameMatch]),
-        loadCalendarEvents: () => Effect.succeed(calendarEvents),
-        saveCalendarEvent: saveCalendarEventSpy,
-    })
+    const deps = Layer.mergeAll(
+        DepsTest({
+            loadMatches: () => Effect.succeed([newMatch, updatedMatch, sameMatch]),
+            loadCalendarEvents: () => Effect.succeed(calendarEvents),
+            saveCalendarEvent: saveCalendarEventSpy,
+        }),
+        CalendarTest({
+            loadEvents: () => Effect.succeed(calendarEvents),
+            saveEvent: saveCalendarEventSpy,
+        }),
+    )
 
     const result = await F.pipe(footballMatchEventsHandler(anyTeam), Effect.provide(deps), Effect.runPromise)
 
@@ -40,6 +47,7 @@ test("create, update, ignore matches", async () => {
 })
 
 const DepsTest = (deps: FootballMatchEventsHandlerDeps) => Layer.succeed(FootballMatchEventsHandlerDeps, deps)
+const CalendarTest = (deps: CalendarService) => Layer.succeed(Calendar, deps)
 
 const footballMatch = (id: number, date: Date): FootballMatch => ({
     matchId: id,

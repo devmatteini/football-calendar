@@ -6,5 +6,6 @@ import * as ParseResult from "effect/ParseResult"
 export const decode = <A, I>(schema: Schema.Schema<A, I>, input: unknown) =>
     F.pipe(
         Schema.decodeUnknown(schema)(input, { onExcessProperty: "ignore", errors: "all" }),
+        // TODO: remove native Error and use tagged error type
         Effect.mapError((e) => new Error(`Schema decode error: ${ParseResult.TreeFormatter.formatErrorSync(e)}`)),
     )

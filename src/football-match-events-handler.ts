@@ -11,6 +11,7 @@ import {
     footballMatchEvents,
 } from "./football-match-events"
 import { FootballCalendar } from "./football-calendars-config"
+import { Calendar } from "./calendar"
 
 export type FootballMatchEventsHandlerDeps = {
     loadMatches: (calendar: FootballCalendar) => Effect.Effect<readonly FootballMatch[]>
@@ -26,7 +27,8 @@ type Summary = { created: number; updated: number; nothingChanged: number }
 
 export const footballMatchEventsHandler = (calendar: FootballCalendar) =>
     Effect.gen(function* () {
-        const { loadMatches, loadCalendarEvents, saveCalendarEvent } = yield* FootballMatchEventsHandlerDeps
+        const { loadMatches } = yield* FootballMatchEventsHandlerDeps
+        const { loadEvents: loadCalendarEvents, saveEvent: saveCalendarEvent } = yield* Calendar
 
         const [matches, calendarEvents] = yield* Effect.all(
             // keep new line
