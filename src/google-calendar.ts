@@ -12,6 +12,15 @@ import { CalendarEvent, CreateFootballMatchEvent, UpdateFootballMatchEvent } fro
 import * as Schema from "effect/Schema"
 import * as Array from "effect/Array"
 import * as EffectExt from "./common/effect-ext"
+import * as Data from "effect/Data"
+
+class GoogleCalendarError extends Data.TaggedError("GoogleCalendarError")<{
+    message: string
+}> {
+    static fromUnknown(message: string): (cause: unknown) => GoogleCalendarError {
+        return (cause) => new GoogleCalendarError({ message: `${message}. [cause] ${cause}` })
+    }
+}
 
 export const GoogleCalendarLive = Layer.effect(
     Calendar,
@@ -24,8 +33,7 @@ export const GoogleCalendarLive = Layer.effect(
         const client = yield* F.pipe(
             Effect.tryPromise({
                 try: () => auth.getClient({ keyFile, scopes: "https://www.googleapis.com/auth/calendar.events" }),
-                // TODO: remove native Error and use tagged error type
-                catch: (e) => new Error(`Unable to authenticate with google api: ${e}`),
+                catch: GoogleCalendarError.fromUnknown("Unable to authenticate with google api"),
             }),
             Effect.map((client) => calendar({ version: "v3", auth: client })),
         )
@@ -45,7 +53,7 @@ export const GoogleCalendarLive = Layer.effect(
                                 Array.map(([key, value]) => `${key}=${value}`),
                             ),
                         }),
-                    catch: (e) => new Error(`Unable to retrieve list of google calendar events: ${e}`),
+                    catch: GoogleCalendarError.fromUnknown("Unable to retrieve list of google calendar events"),
                 }),
                 Effect.map((response) => response.data.items || []),
                 Effect.flatMap(Effect.forEach(validateCalendarEvent)),
@@ -74,7 +82,7 @@ export const GoogleCalendarLive = Layer.effect(
                                 },
                             },
                         }),
-                    catch: (e) => new Error(`Unable to insert google calendar event: ${e}`),
+                    catch: GoogleCalendarError.fromUnknown("Unable to insert google calendar event"),
                 }),
                 Effect.tap(() =>
                     EffectExt.logDebug("Calendar event created", {
@@ -107,7 +115,7 @@ export const GoogleCalendarLive = Layer.effect(
                                 },
                             },
                         }),
-                    catch: (e) => new Error(`Unable to update google calendar event: ${e}`),
+                    catch: GoogleCalendarError.fromUnknown("Unable to update google calendar event"),
                 }),
                 Effect.tap(() =>
                     EffectExt.logDebug("Calendar event updated", {
