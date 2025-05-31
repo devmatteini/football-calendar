@@ -16,9 +16,10 @@ import * as Data from "effect/Data"
 
 class GoogleCalendarError extends Data.TaggedError("GoogleCalendarError")<{
     message: string
+    cause?: unknown
 }> {
     static fromUnknown(message: string): (cause: unknown) => GoogleCalendarError {
-        return (cause) => new GoogleCalendarError({ message: `${message}. [cause] ${cause}` })
+        return (cause) => new GoogleCalendarError({ message, cause })
     }
 }
 
