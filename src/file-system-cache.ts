@@ -12,6 +12,7 @@ import { Cache } from "./cache"
 import * as EffectExt from "./common/effect-ext"
 import { parseJsonFile } from "./common/file"
 import * as Config from "effect/Config"
+import { GenericError } from "./common/generic-error"
 
 const TTL = Duration.days(1)
 
@@ -54,7 +55,7 @@ export const FileSystemCache = Layer.effect(
     }),
 )
 
-const invalidateCacheOnError = Effect.catchAll((error: Error | PlatformError.PlatformError) =>
+const invalidateCacheOnError = Effect.catchAll((error: GenericError | PlatformError.PlatformError) =>
     F.pipe(
         EffectExt.logDebug("Cache invalidated because an error occurred", { error }),
         Effect.zipRight(Effect.succeedNone),

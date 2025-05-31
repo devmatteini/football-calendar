@@ -14,4 +14,6 @@ const LogLevelLive = LOG_LEVEL.pipe(
 export const LoggerLive = Layer.merge(Logger.json, LogLevelLive)
 
 export const logUnexpectedError = (cause: Cause.Cause<unknown>) =>
-    Effect.sync(() => console.error(`Unexpected application error:\n${Cause.pretty(cause)}`))
+    Effect.sync(() =>
+        console.error(`Unexpected application error:\n${Cause.pretty(cause, { renderErrorCause: true })}`),
+    )

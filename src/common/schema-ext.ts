@@ -1,11 +1,10 @@
 import * as F from "effect/Function"
 import * as Schema from "effect/Schema"
 import * as Effect from "effect/Effect"
-import * as ParseResult from "effect/ParseResult"
+import { GenericError } from "./generic-error"
 
 export const decode = <A, I>(schema: Schema.Schema<A, I>, input: unknown) =>
     F.pipe(
         Schema.decodeUnknown(schema)(input, { onExcessProperty: "ignore", errors: "all" }),
-        // TODO: remove native Error and use tagged error type
-        Effect.mapError((e) => new Error(`Schema decode error: ${ParseResult.TreeFormatter.formatErrorSync(e)}`)),
+        Effect.mapError((e) => new GenericError({ message: `Schema decode error`, cause: e })),
     )
