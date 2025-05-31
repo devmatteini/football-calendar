@@ -11,7 +11,6 @@ import * as Schema from "effect/Schema"
 import { nextMatchesHandler, NextMatchesResponse } from "./server/next-matches-handler"
 import { registerBackgroundJob } from "./server/background-jobs"
 import { syncFootballCalendar } from "./server/sync-football-calendar"
-import { FootballMatchEventsHandlerDepsLive } from "./football-match-events-handler-live"
 import { ApiFootballClientLive } from "./api-football"
 import { FileSystemCache } from "./file-system-cache"
 import { GoogleCalendarLive } from "./google-calendar"
@@ -49,8 +48,7 @@ const ServerLive = NodeHttpServer.layer(() => createServer(), { port })
 const AppServerLive = F.pipe(app, Layer.provide(ServerLive))
 
 const FootballMatchEventsLive = F.pipe(
-    FootballMatchEventsHandlerDepsLive,
-    Layer.merge(GoogleCalendarLive),
+    GoogleCalendarLive,
     Layer.merge(ApiFootballFootballMatchesRepositoryLive),
     Layer.provide(ApiFootballClientLive),
     Layer.provide(FileSystemCache),

@@ -1,8 +1,8 @@
-import { test, expect, vi, beforeEach } from "vitest"
+import { beforeEach, expect, test, vi } from "vitest"
 import * as Effect from "effect/Effect"
 import * as F from "effect/Function"
 import * as Layer from "effect/Layer"
-import { FootballMatchEventsHandlerDeps, footballMatchEventsHandler } from "./football-match-events-handler"
+import { footballMatchEventsHandler } from "./football-match-events-handler"
 import { CalendarEvent, FootballMatch } from "./football-match-events"
 import { Team } from "./football-calendars-config"
 import { Calendar, CalendarService } from "./calendar"
@@ -23,7 +23,6 @@ test("create, update, ignore matches", async () => {
         calendarEvent(sameMatch.matchId, sameMatch.date, "5678"),
     ]
     const deps = Layer.mergeAll(
-        DepsTest({ loadMatches: () => Effect.succeed([newMatch, updatedMatch, sameMatch]) }),
         FootballMatchesRepoTest({ loadByFootballCalendar: () => Effect.succeed([newMatch, updatedMatch, sameMatch]) }),
         CalendarTest({
             loadEventsByFootballCalendar: () => Effect.succeed(calendarEvents),
@@ -41,7 +40,6 @@ test("create, update, ignore matches", async () => {
     expect(saveCalendarEventSpy).toHaveBeenNthCalledWith(2, { _tag: "UPDATE", match: updatedMatch, eventId: "1234" })
 })
 
-const DepsTest = (deps: FootballMatchEventsHandlerDeps) => Layer.succeed(FootballMatchEventsHandlerDeps, deps)
 const CalendarTest = (deps: CalendarService) => Layer.succeed(Calendar, deps)
 const FootballMatchesRepoTest = (deps: FootballMatchesRepositoryService) =>
     Layer.succeed(FootballMatchesRepository, deps)
