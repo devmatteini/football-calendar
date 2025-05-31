@@ -15,8 +15,17 @@ import * as HttpClientResponse from "@effect/platform/HttpClientResponse"
 import crypto from "node:crypto"
 import * as Pretty from "effect/Pretty"
 import * as ORD from "effect/Order"
+import * as Data from "effect/Data"
 
 type QueryParams = Record<string, string>
+
+class ApiFootballError extends Data.TaggedError("ApiFootballError")<{
+    message: string
+}> {
+    constructor(message: string) {
+        super({ message })
+    }
+}
 
 export const ApiFootballFootballMatchesRepositoryLive = Layer.effect(
     FootballMatchesRepository,
@@ -46,8 +55,9 @@ export const ApiFootballFootballMatchesRepositoryLive = Layer.effect(
                         isResponseOk(data)
                             ? Effect.succeed(data.response)
                             : Effect.fail(
-                                  // TODO: do not use native Error
-                                  new Error(`Response for ${endpoint} failed with ${ResponseErrorPrint(data.errors)}`),
+                                  new ApiFootballError(
+                                      `Response for ${endpoint} failed with ${ResponseErrorPrint(data.errors)}`,
+                                  ),
                               ),
                     ),
                     Effect.scoped,
@@ -63,8 +73,7 @@ export const ApiFootballFootballMatchesRepositoryLive = Layer.effect(
                 get("/teams/seasons", { team: team.toString() }, TeamSeason),
                 Effect.flatMap(
                     Array.match({
-                        // TODO: do not use native Error
-                        onEmpty: () => Effect.fail(new Error(`No seasons for team ${team}`)),
+                        onEmpty: () => Effect.fail(new ApiFootballError(`No seasons for team ${team}`)),
                         onNonEmpty: (seasons) => Effect.succeed(Array.max(seasons, ORD.number)),
                     }),
                 ),
