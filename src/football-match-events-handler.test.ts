@@ -6,6 +6,7 @@ import { FootballMatchEventsHandlerDeps, footballMatchEventsHandler } from "./fo
 import { CalendarEvent, FootballMatch } from "./football-match-events"
 import { Team } from "./football-calendars-config"
 import { Calendar, CalendarService } from "./calendar"
+import { FootballMatchesRepository, FootballMatchesRepositoryService } from "./football-matches-repository"
 
 const saveCalendarEventSpy = vi.fn(() => Effect.void)
 
@@ -23,6 +24,7 @@ test("create, update, ignore matches", async () => {
     ]
     const deps = Layer.mergeAll(
         DepsTest({ loadMatches: () => Effect.succeed([newMatch, updatedMatch, sameMatch]) }),
+        FootballMatchesRepoTest({ loadByFootballCalendar: () => Effect.succeed([newMatch, updatedMatch, sameMatch]) }),
         CalendarTest({
             loadEventsByFootballCalendar: () => Effect.succeed(calendarEvents),
             saveEvent: saveCalendarEventSpy,
@@ -41,6 +43,8 @@ test("create, update, ignore matches", async () => {
 
 const DepsTest = (deps: FootballMatchEventsHandlerDeps) => Layer.succeed(FootballMatchEventsHandlerDeps, deps)
 const CalendarTest = (deps: CalendarService) => Layer.succeed(Calendar, deps)
+const FootballMatchesRepoTest = (deps: FootballMatchesRepositoryService) =>
+    Layer.succeed(FootballMatchesRepository, deps)
 
 const footballMatch = (id: number, date: Date): FootballMatch => ({
     matchId: id,

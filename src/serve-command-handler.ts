@@ -15,6 +15,7 @@ import { FootballMatchEventsHandlerDepsLive } from "./football-match-events-hand
 import { ApiFootballClientLive } from "./api-football"
 import { FileSystemCache } from "./file-system-cache"
 import { GoogleCalendarLive } from "./google-calendar"
+import { ApiFootballFootballMatchesRepositoryLive } from "./api-football-football-matches-repository"
 
 const DEFAULT_NEXT_MATCHES_COUNT = 5
 
@@ -50,6 +51,7 @@ const AppServerLive = F.pipe(app, Layer.provide(ServerLive))
 const FootballMatchEventsLive = F.pipe(
     FootballMatchEventsHandlerDepsLive,
     Layer.merge(GoogleCalendarLive),
+    Layer.merge(ApiFootballFootballMatchesRepositoryLive),
     Layer.provide(ApiFootballClientLive),
     Layer.provide(FileSystemCache),
 )
