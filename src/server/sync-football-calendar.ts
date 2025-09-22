@@ -4,8 +4,8 @@ import * as Cron from "effect/Cron"
 import { loadFootballCalendarConfig } from "../football-calendars-config"
 import { footballMatchEventsHandler } from "../football-match-events-handler"
 
-// https://crontab.guru/#0_10_*_*_1
-const everyMondayWednesdayAt10AM = Cron.unsafeParse("0 10 * * 1,3")
+// https://crontab.guru/#0_10_*_*_1,3,5
+const everyMondayWednesdayFridayAt10AM = Cron.unsafeParse("0 10 * * 1,3,5")
 
 const syncFootballCalendarHandler = Effect.gen(function* () {
     const calendars = yield* loadFootballCalendarConfig
@@ -26,5 +26,5 @@ const syncFootballCalendarHandler = Effect.gen(function* () {
 
 export const syncFootballCalendar = {
     job: syncFootballCalendarHandler,
-    cron: everyMondayWednesdayAt10AM,
+    cron: everyMondayWednesdayFridayAt10AM,
 }
