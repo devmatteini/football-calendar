@@ -5,6 +5,7 @@ import * as ORD from "effect/Order"
 import * as Schema from "effect/Schema"
 import { Calendar } from "../calendar"
 import { CalendarEvent } from "../football-match-events"
+import { Locale } from "./locale"
 
 const NextMatchResponse = Schema.Struct({
     summary: Schema.String,
@@ -16,7 +17,7 @@ export const NextMatchesResponse = Schema.Array(NextMatchResponse).pipe(
     Schema.annotations({ identifier: "NextMatchesResponse" }),
 )
 
-export const nextMatchesHandler = (count: number, locale: string) =>
+export const nextMatchesHandler = (count: number, locale: Locale) =>
     Effect.gen(function* () {
         const { loadEventsFromDate } = yield* Calendar
 
@@ -41,7 +42,7 @@ const byMostRecent = F.pipe(
     ORD.mapInput((x: CalendarEvent) => x.startDate),
 )
 
-const localizeDate = (date: Date, locale: string) => {
+const localizeDate = (date: Date, locale: Locale) => {
     const formatter = new Intl.DateTimeFormat(locale, {
         day: "numeric",
         month: "short",

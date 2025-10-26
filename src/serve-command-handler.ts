@@ -15,11 +15,12 @@ import { syncFootballCalendar } from "./server/sync-football-calendar"
 import { FileSystemCache } from "./file-system-cache"
 import { GoogleCalendarLive } from "./google-calendar"
 import { ApiFootballFootballMatchesRepositoryLive } from "./api-football-football-matches-repository"
+import * as Locale from "./server/locale"
 
 const DEFAULT_NEXT_MATCHES_COUNT = 5
 
 const NextMatchesQueryParams = Schema.Struct({
-    locale: Schema.optionalWith(Schema.String, { default: () => "en-GB" }),
+    locale: Schema.optionalWith(Locale.Locale, { default: () => Locale.EN_GB }),
 }).pipe(Schema.annotations({ identifier: "NextMatchesQueryParams" }))
 
 const router = HttpRouter.empty.pipe(
