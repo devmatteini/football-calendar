@@ -19,7 +19,7 @@
     "scripts:delete-events": "tsx scripts/delete-events.ts",
     "scripts:list-events": "tsx scripts/list-events.ts",
     "docker:build": "docker build -f Dockerfile -t football-calendar .",
-    "docker:run": "docker run -v \"$PWD\"/.config:/config/ --env-file=.env.dev football-calendar"
+    "docker:run": "docker run -v \"$PWD\"/.config:/config/ --env-file=.env.dev -p 6789:6789 football-calendar"
   },
   "dependencies": {
     "@effect/platform": "0.80.13",
