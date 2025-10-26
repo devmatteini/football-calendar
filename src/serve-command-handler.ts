@@ -3,6 +3,7 @@ import * as F from "effect/Function"
 import * as Layer from "effect/Layer"
 import * as HttpRouter from "@effect/platform/HttpRouter"
 import * as HttpServer from "@effect/platform/HttpServer"
+import * as HttpServerRequest from "@effect/platform/HttpServerRequest"
 import * as HttpServerResponse from "@effect/platform/HttpServerResponse"
 import * as HttpMiddleware from "@effect/platform/HttpMiddleware"
 import * as NodeHttpServer from "@effect/platform-node/NodeHttpServer"
@@ -17,11 +18,16 @@ import { ApiFootballFootballMatchesRepositoryLive } from "./api-football-footbal
 
 const DEFAULT_NEXT_MATCHES_COUNT = 5
 
+const NextMatchesQueryParams = Schema.Struct({
+    locale: Schema.optionalWith(Schema.String, { default: () => "en-GB" }),
+}).pipe(Schema.annotations({ identifier: "NextMatchesQueryParams" }))
+
 const router = HttpRouter.empty.pipe(
     HttpRouter.get(
         "/next-matches",
         Effect.gen(function* () {
-            const nextMatches = yield* nextMatchesHandler(DEFAULT_NEXT_MATCHES_COUNT)
+            const params = yield* HttpServerRequest.schemaSearchParams(NextMatchesQueryParams)
+            const nextMatches = yield* nextMatchesHandler(DEFAULT_NEXT_MATCHES_COUNT, params.locale)
             const response = yield* Schema.encode(NextMatchesResponse)(nextMatches)
             return yield* HttpServerResponse.json(response)
         }),

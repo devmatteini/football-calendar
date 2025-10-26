@@ -16,7 +16,7 @@ export const NextMatchesResponse = Schema.Array(NextMatchResponse).pipe(
     Schema.annotations({ identifier: "NextMatchesResponse" }),
 )
 
-export const nextMatchesHandler = (count: number) =>
+export const nextMatchesHandler = (count: number, locale: string) =>
     Effect.gen(function* () {
         const { loadEventsFromDate } = yield* Calendar
 
