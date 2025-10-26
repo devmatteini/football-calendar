@@ -30,7 +30,7 @@ export const nextMatchesHandler = (count: number, locale: string) =>
                 NextMatchResponse.make({
                     summary: x.summary,
                     date: x.startDate,
-                    localizedDate: localizeDate(x.startDate),
+                    localizedDate: localizeDate(x.startDate, locale),
                 }),
             ),
         )
@@ -41,13 +41,14 @@ const byMostRecent = F.pipe(
     ORD.mapInput((x: CalendarEvent) => x.startDate),
 )
 
-const formatter = new Intl.DateTimeFormat("it-IT", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    weekday: "long",
-})
-
-const localizeDate = (date: Date) => formatter.format(date)
+const localizeDate = (date: Date, locale: string) => {
+    const formatter = new Intl.DateTimeFormat(locale, {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        weekday: "long",
+    })
+    return formatter.format(date)
+}
