@@ -9,6 +9,7 @@ import { CalendarEvent } from "../football-match-events"
 const NextMatchResponse = Schema.Struct({
     summary: Schema.String,
     date: Schema.Date,
+    localizedDate: Schema.String,
 }).pipe(Schema.annotations({ identifier: "NextMatchResponse" }))
 
 export const NextMatchesResponse = Schema.Array(NextMatchResponse).pipe(
@@ -25,7 +26,13 @@ export const nextMatchesHandler = (count: number) =>
             matches,
             Array.sort(byMostRecent),
             Array.take(count),
-            Array.map((x) => NextMatchResponse.make({ summary: x.summary, date: x.startDate })),
+            Array.map((x) =>
+                NextMatchResponse.make({
+                    summary: x.summary,
+                    date: x.startDate,
+                    localizedDate: localizeDate(x.startDate),
+                }),
+            ),
         )
     })
 
@@ -33,3 +40,14 @@ const byMostRecent = F.pipe(
     ORD.Date,
     ORD.mapInput((x: CalendarEvent) => x.startDate),
 )
+
+const formatter = new Intl.DateTimeFormat("it-IT", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    weekday: "long",
+})
+
+const localizeDate = (date: Date) => formatter.format(date)
