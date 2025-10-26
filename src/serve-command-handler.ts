@@ -23,6 +23,9 @@ const NextMatchesQueryParams = Schema.Struct({
     locale: Schema.optionalWith(Locale.Locale, { default: () => Locale.EN_GB }),
 }).pipe(Schema.annotations({ identifier: "NextMatchesQueryParams" }))
 
+const internalServerError = HttpServerResponse.json({ error: "Internal server error" }, { status: 500 })
+const badRequest = HttpServerResponse.json({ error: "Bad request" }, { status: 400 })
+
 const router = HttpRouter.empty.pipe(
     HttpRouter.get(
         "/next-matches",
@@ -31,11 +34,13 @@ const router = HttpRouter.empty.pipe(
             const nextMatches = yield* nextMatchesHandler(DEFAULT_NEXT_MATCHES_COUNT, params.locale)
             const response = yield* Schema.encode(NextMatchesResponse)(nextMatches)
             return yield* HttpServerResponse.json(response)
-        }),
+        }).pipe(
+            Effect.catchTag("ParseError", (error) =>
+                F.pipe(Effect.logError("Decode error", error), Effect.zipRight(badRequest)),
+            ),
+        ),
     ),
 )
-
-const internalServerError = HttpServerResponse.json({ error: "Internal server error" }, { status: 500 })
 
 const app = router.pipe(
     Effect.catchAllCause((cause) =>
