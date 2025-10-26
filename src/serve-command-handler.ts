@@ -17,10 +17,9 @@ import { GoogleCalendarLive } from "./google-calendar"
 import { ApiFootballFootballMatchesRepositoryLive } from "./api-football-football-matches-repository"
 import * as Locale from "./server/locale"
 
-const DEFAULT_NEXT_MATCHES_COUNT = 5
-
 const NextMatchesQueryParams = Schema.Struct({
     locale: Schema.optionalWith(Locale.Locale, { default: () => Locale.EN_GB }),
+    count: Schema.optionalWith(Schema.NumberFromString, { default: () => 5 }),
 }).pipe(Schema.annotations({ identifier: "NextMatchesQueryParams" }))
 
 const internalServerError = HttpServerResponse.json({ error: "Internal server error" }, { status: 500 })
@@ -31,7 +30,7 @@ const router = HttpRouter.empty.pipe(
         "/next-matches",
         Effect.gen(function* () {
             const params = yield* HttpServerRequest.schemaSearchParams(NextMatchesQueryParams)
-            const nextMatches = yield* nextMatchesHandler(DEFAULT_NEXT_MATCHES_COUNT, params.locale)
+            const nextMatches = yield* nextMatchesHandler(params.count, params.locale)
             const response = yield* Schema.encode(NextMatchesResponse)(nextMatches)
             return yield* HttpServerResponse.json(response)
         }).pipe(
