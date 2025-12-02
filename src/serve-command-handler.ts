@@ -39,6 +39,7 @@ const router = HttpRouter.empty.pipe(
             ),
         ),
     ),
+    HttpRouter.get("/health", HttpServerResponse.json({ status: "healthy" })),
 )
 
 const app = router.pipe(
