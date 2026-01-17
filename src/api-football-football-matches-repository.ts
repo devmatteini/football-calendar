@@ -162,6 +162,7 @@ const KnockoutStages = [
     "Quarter-finals",
     "Semi-finals",
     "3rd Place Final",
+    "3rd place",
     Final,
 ]
 
