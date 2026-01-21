@@ -39,10 +39,6 @@ const router = HttpRouter.empty.pipe(
             ),
         ),
     ),
-    HttpRouter.get(
-        "/health",
-        F.pipe(HttpServerResponse.json({ status: "healthy" }), HttpMiddleware.withLoggerDisabled),
-    ),
 )
 
 const app = router.pipe(
