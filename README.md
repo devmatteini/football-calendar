@@ -4,6 +4,16 @@
 
 Automatically sync your google calendar with football matches of your favorite team!
 
+
+> [!WARNING]
+> In March 2026, [api-football](https://www.api-football.com/) changed their Free plan, which no longer allows
+> loading current season fixtures. Their paid plans are too expensive for a hobby project. After
+> evaluating alternatives (the most promising is [football-data](https://www.football-data.org/)), I couldn't find a
+> proper alternative with a wide range of competitions. Therefore, this project won't be maintained anymore going
+> forward, and my suggestion is to use [fotmob](https://www.fotmob.com/) "Sync to calendar" feature for a team or
+> competition/league.
+
+
 Table of content:
 
 -   [Installation](#installation)
